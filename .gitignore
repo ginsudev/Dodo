@@ -1,0 +1,11 @@
+.DS_Store
+/.build
+/Packages
+/*.xcodeproj
+xcuserdata/
+
+.theos
+.swiftpm
+dodo/.theos
+dodo/.swiftpm
+/packages

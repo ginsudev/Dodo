@@ -1,0 +1,4 @@
+module DodoC {
+    umbrella "."
+    export *
+}

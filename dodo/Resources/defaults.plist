@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>isEnabled</key>
+	<true/>
+	<key>fontType</key>
+	<integer>2</integer>
+	<key>timeMediaPlayerStyle</key>
+	<integer>2</integer>
+	<key>playerStyle</key>
+	<integer>0</integer>
+	<key>showDivider</key>
+	<true/>
+	<key>hasModularBounceEffect</key>
+	<true/>
+	<key>hasChargingIndication</key>
+	<true/>
+	<key>timeTemplate</key>
+	<integer>0</integer>
+	<key>timeTemplateCustom</key>
+	<string>h:mm</string>
+	<key>dateTemplate</key>
+	<integer>0</integer>
+	<key>dateTemplateCustom</key>
+	<string>EEEE, MMMM d</string>
+	<key>timeColor</key>
+	<string>#FFFFFFFF</string>
+	<key>dateColor</key>
+	<string>#FFFFFFFF</string>
+	<key>weatherColor</key>
+	<string>#FFFFFFFF</string>
+	<key>lockIconColor</key>
+	<string>#FFFFFFFF</string>
+	<key>dividerColor</key>
+	<string>#FFFFFFFF</string>
+	<key>hasFavouriteApps</key>
+	<true/>
+	<key>dodoHeight</key>
+	<real>250.0</real>
+</dict>
+</plist>

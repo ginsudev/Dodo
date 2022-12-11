@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Time formatting</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSSegmentCell</string>
+            <key>defaults</key>
+            <string>com.ginsu.dodo</string>
+            <key>default</key>
+            <integer>0</integer>
+            <key>key</key>
+            <string>timeTemplate</string>
+            <key>validTitles</key>
+            <array>
+                <string>Default</string>
+                <string>Show seconds</string>
+                <string>Custom</string>
+            </array>
+            <key>validValues</key>
+            <array>
+                <integer>0</integer>
+                <integer>1</integer>
+                <integer>2</integer>
+            </array>
+            <key>id</key>
+            <string>timeTemplateStatus</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>label</key>
+			<string>Custom format:</string>
+			<key>placeholder</key>
+			<string>h:mm</string>
+			<key>default</key>
+			<string>h:mm</string>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>timeTemplateCustom</string>
+			<key>dynamicRule</key>
+            <string>timeTemplateStatus,!=,2</string>
+		</dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Date formatting</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSSegmentCell</string>
+            <key>defaults</key>
+            <string>com.ginsu.dodo</string>
+            <key>default</key>
+            <integer>0</integer>
+            <key>key</key>
+            <string>dateTemplate</string>
+            <key>validTitles</key>
+            <array>
+                <string>Default</string>
+                <string>Custom</string>
+            </array>
+            <key>validValues</key>
+            <array>
+                <integer>0</integer>
+                <integer>1</integer>
+            </array>
+            <key>id</key>
+            <string>dateTemplateStatus</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>label</key>
+			<string>Custom format:</string>
+			<key>placeholder</key>
+			<string>EEEE, MMMM d</string>
+			<key>default</key>
+			<string>EEEE, MMMM d</string>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>dateTemplateCustom</string>
+			<key>dynamicRule</key>
+            <string>dateTemplateStatus,!=,1</string>
+		</dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Favourite apps</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>hasFavouriteApps</string>
+			<key>label</key>
+			<string>Show favourite apps</string>
+            <key>id</key>
+            <string>hasFavouriteAppsStatus</string>
+		</dict>
+        <dict>
+            <key>bundle</key>
+            <string>AltList</string>
+            <key>cell</key>
+            <string>PSLinkListCell</string>
+            <key>detail</key>
+            <string>ATLApplicationListMultiSelectionController</string>
+            <key>key</key>
+            <string>favouriteApps</string>
+            <key>defaults</key>
+            <string>com.ginsu.dodo</string>
+            <key>sections</key>
+            <array>
+                <dict>
+                    <key>sectionType</key>
+                    <string>Visible</string>
+                </dict>
+            </array>
+            <key>isController</key>
+            <true/>
+            <key>overridePrincipalClass</key>
+            <true/>
+            <key>label</key>
+            <string>Favourite apps</string>
+            <key>useSearchBar</key>
+            <true/>
+            <key>alphabeticIndexingEnabled</key>
+            <true/>
+			<key>dynamicRule</key>
+            <string>hasFavouriteAppsStatus,==,0</string>
+        </dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Dimensions</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSTableCell</string>
+			<key>cellClass</key>
+			<string>GSSliderCell</string>
+			<key>title</key>
+			<string>Dodo height</string>
+			<key>default</key>
+			<real>250.0</real>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>dodoHeight</string>
+			<key>min</key>
+			<real>70.0</real>
+			<key>max</key>
+			<real>250.0</real>
+		</dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Misc</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>cellClass</key>
+			<string>PSSubtitleSwitchTableCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>hasChargingIndication</string>
+			<key>label</key>
+			<string>Charging indication</string>
+			<key>cellSubtitleText</key>
+			<string>Flash screen green while charging.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>cellClass</key>
+			<string>PSSubtitleSwitchTableCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>hasModularBounceEffect</string>
+			<key>label</key>
+			<string>Bounce effect</string>
+			<key>cellSubtitleText</key>
+			<string>Modular player only: Tap/Hold to bounce</string>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Behaviour</string>
+</dict>
+</plist>

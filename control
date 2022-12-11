@@ -1,0 +1,10 @@
+Package: com.ginsu.dodo
+Name: Dodo
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: The perfect Lock Screen redesign.
+Maintainer: Ginsu
+Author: Ginsu
+Section: Tweaks
+Depends: dev.theos.orion14, firmware (>= 14.0), com.opa334.altlist, preferenceloader, com.ginsu.libgscommon, com.ginsu.libgsweather
+
