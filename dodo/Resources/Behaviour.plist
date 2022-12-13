@@ -197,7 +197,7 @@
 			<key>cellClass</key>
 			<string>PSSubtitleSwitchTableCell</string>
 			<key>default</key>
-			<true/>
+			<false/>
 			<key>defaults</key>
 			<string>com.ginsu.dodo</string>
 			<key>key</key>

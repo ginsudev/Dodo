@@ -236,6 +236,24 @@ class SBUIProudLockIconView_Hook: ClassHook<SBUIProudLockIconView> {
     }
 }
 
+class SBUICallToActionLabel_Hook: ClassHook<SBUICallToActionLabel> {
+    func initWithFrame(_ rect: CGRect) -> Target? {
+        return nil
+    }
+}
+
+class CSHomeAffordanceView_Hook: ClassHook<CSHomeAffordanceView> {
+    func initWithFrame(_ rect: CGRect) -> Target? {
+        return nil
+    }
+}
+
+class CSPageControl_Hook: ClassHook<CSPageControl> {
+    func initWithFrame(_ rect: CGRect) -> Target? {
+        return nil
+    }
+}
+
 class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationStructuredListViewController> {
     typealias Group = Main
     
@@ -304,18 +322,48 @@ fileprivate func prefsDict() -> [String : AnyObject]? {
 
 fileprivate func readPrefs() {
 
-    let dict = prefsDict() ?? [String : AnyObject]()
+    let dict = prefsDict() ?? [String : Any]()
 
     //Reading values
-    Settings.isEnabled = dict["isEnabled"] as? Bool ?? true
+    Settings.isEnabled = dict[
+        "isEnabled",
+        default: true
+    ] as! Bool
     
-    Settings.timeMediaPlayerStyle = TimeMediaPlayerStyle(rawValue: dict["timeMediaPlayerStyle"] as? Int ?? 2)!
-    Settings.playerStyle = MediaPlayerStyle(rawValue: dict["playerStyle"] as? Int ?? 0)!
-    Settings.hasModularBounceEffect = dict["hasModularBounceEffect"] as? Bool ?? true
-    Settings.hasChargingIndication = dict["hasChargingIndication"] as? Bool ?? true
-    Settings.showDivider = dict["showDivider"] as? Bool ?? true
-    Settings.themeName = dict["themeName"] as? String ?? "Rounded"
+    Settings.timeMediaPlayerStyle = TimeMediaPlayerStyle(
+        rawValue: dict[
+            "timeMediaPlayerStyle",
+            default: 2
+        ] as! Int
+    )!
     
+    Settings.playerStyle = MediaPlayerStyle(
+        rawValue: dict[
+            "playerStyle",
+            default: 0
+        ] as! Int
+    )!
+    
+    Settings.hasModularBounceEffect = dict[
+        "hasModularBounceEffect",
+        default: true
+    ] as! Bool
+    
+    Settings.hasChargingIndication = dict[
+        "hasChargingIndication",
+        default: true
+    ] as! Bool
+    
+    Settings.showDivider = dict[
+        "showDivider",
+        default: true
+    ] as! Bool
+    
+    Settings.themeName = dict[
+        "themeName",
+        default: "Rounded"
+    ] as! String
+
     let fontType = dict["fontType"] as? Int ?? 2
     switch fontType {
     case 1:
@@ -336,7 +384,11 @@ fileprivate func readPrefs() {
     }
     
     //TimeDate
-    let timeTemplate = dict["timeTemplate"] as? Int ?? 0
+    let timeTemplate = dict[
+        "timeTemplate",
+        default: 0
+    ] as! Int
+    
     switch timeTemplate {
     case 0:
         Settings.timeTemplate = .time
@@ -352,7 +404,11 @@ fileprivate func readPrefs() {
         break
     }
     
-    let dateTemplate = dict["dateTemplate"] as? Int ?? 0
+    let dateTemplate = dict[
+        "dateTemplate",
+        default: 0
+    ] as! Int
+    
     switch dateTemplate {
     case 0:
         Settings.dateTemplate = .date
@@ -366,23 +422,62 @@ fileprivate func readPrefs() {
     }
     
     //Favourite apps
-    Settings.hasFavouriteApps = dict["hasFavouriteApps"] as? Bool ?? true
-    AppsManager.favouriteAppBundleIdentifiers = dict["favouriteApps"] as? [String] ?? [
-        "com.apple.camera",
-        "com.apple.Preferences",
-        "com.apple.MobileSMS",
-        "com.apple.mobilemail"
-    ]
+    Settings.hasFavouriteApps = dict[
+        "hasFavouriteApps",
+        default: true
+    ] as! Bool
+    
+    AppsManager.favouriteAppBundleIdentifiers = dict[
+        "favouriteApps",
+        default: [
+            "com.apple.camera",
+            "com.apple.Preferences",
+            "com.apple.MobileSMS",
+            "com.apple.mobilemail"
+        ]
+    ] as! [String]
     
     //Dimensions
-    Settings.dodoHeight = dict["dodoHeight"] as? Double ?? 250.0
+    Settings.dodoHeight = dict[
+        "dodoHeight",
+        default: 250.0
+    ] as! Double
 
     //Colors
-    Colors.timeColor = UIColor(hexString: dict["timeColor"] as? String ?? "#FFFFFFFF")
-    Colors.dateColor = UIColor(hexString: dict["dateColor"] as? String ?? "#FFFFFFFF")
-    Colors.dividerColor = UIColor(hexString: dict["dividerColor"] as? String ?? "#FFFFFFFF")
-    Colors.weatherColor = UIColor(hexString: dict["weatherColor"] as? String ?? "#FFFFFFFF")
-    Colors.lockIconColor = UIColor(hexString: dict["lockIconColor"] as? String ?? "#FFFFFFFF")
+    Colors.timeColor = UIColor(
+        hexString: dict[
+            "timeColor",
+            default: "#FFFFFFFF"
+        ] as! String
+    )
+    
+    Colors.dateColor = UIColor(
+        hexString: dict[
+            "dateColor",
+            default: "#FFFFFFFF"
+        ] as! String
+    )
+    
+    Colors.dividerColor = UIColor(
+        hexString: dict[
+            "dividerColor",
+            default: "#FFFFFFFF"
+        ] as! String
+    )
+    
+    Colors.weatherColor = UIColor(
+        hexString: dict[
+            "weatherColor",
+            default: "#FFFFFFFF"
+        ] as! String
+    )
+    
+    Colors.lockIconColor = UIColor(
+        hexString: dict[
+            "lockIconColor",
+            default: "#FFFFFFFF"
+        ] as! String
+    )
 }
 
 struct Gradi: Tweak {

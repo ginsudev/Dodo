@@ -13,7 +13,7 @@
 	<key>showDivider</key>
 	<true/>
 	<key>hasModularBounceEffect</key>
-	<true/>
+	<false/>
 	<key>hasChargingIndication</key>
 	<true/>
 	<key>timeTemplate</key>

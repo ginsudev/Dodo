@@ -61,6 +61,15 @@ struct SBIconImageInfo {
 @interface SBUIProudLockIconView : UIView
 @end
 
+@interface SBUICallToActionLabel : UIView
+@end
+
+@interface CSHomeAffordanceView : UIView
+@end
+
+@interface CSPageControl : UIView
+@end
+
 #pragma mark - Checking if LS is active
 @interface SBLockScreenManager : NSObject
 - (BOOL)isLockScreenActive;

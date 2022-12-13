@@ -45,39 +45,36 @@ private extension Container {
         .animation(.easeInOut, value: mediaModel.artworkColour)
     }
     
+    @ViewBuilder
     var mediaPlayer: some View {
-        Group {
-            if Settings.showDivider {
-                Divider()
-                    .overlay(Color(Colors.dividerColor).opacity(0.5))
-            }
-            
-            if Settings.playerStyle == .modular {
-                ModularMediaPlayerContainer()
-                    .environmentObject(mediaModel)
-            } else if Settings.playerStyle == .classic && mediaModel.hasActiveMediaApp {
-                MediaPlayer(artworkRadius: 5.0)
-                    .environmentObject(mediaModel)
-            } else if Settings.playerStyle == .classic && !mediaModel.hasActiveMediaApp{
-                SuggestionView()
-            }
+        if Settings.showDivider {
+            Divider()
+                .overlay(Color(Colors.dividerColor).opacity(0.5))
+        }
+        
+        if Settings.playerStyle == .modular {
+            ModularMediaPlayerContainer()
+                .environmentObject(mediaModel)
+        } else if Settings.playerStyle == .classic && mediaModel.hasActiveMediaApp {
+            MediaPlayer(artworkRadius: 5.0)
+                .environmentObject(mediaModel)
+        } else if Settings.playerStyle == .classic && !mediaModel.hasActiveMediaApp{
+            SuggestionView()
         }
     }
     
     var mainContent: some View {
-        Group {
-            VStack(spacing: 20.0) {
-                if Settings.timeMediaPlayerStyle == .both {
-                    MainContent()
-                    mediaPlayer
-                        .frame(alignment: .bottom)
-                } else if Settings.timeMediaPlayerStyle == .time {
-                    Spacer()
-                    MainContent()
-                } else {
-                    Spacer()
-                    mediaPlayer
-                }
+        VStack(spacing: 20.0) {
+            if Settings.timeMediaPlayerStyle == .both {
+                MainContent()
+                mediaPlayer
+                    .frame(alignment: .bottom)
+            } else if Settings.timeMediaPlayerStyle == .time {
+                Spacer()
+                MainContent()
+            } else {
+                Spacer()
+                mediaPlayer
             }
         }
         .padding(.horizontal)

@@ -13,23 +13,25 @@ case modular = 0, classic = 1
 }
 
 struct Settings {
-    //Global on/off
+    // Global on/off
     static var isEnabled = true
-    //Media player
+    // Media player
     static var timeMediaPlayerStyle: TimeMediaPlayerStyle = .both
     static var playerStyle: MediaPlayerStyle = .modular
     static var showDivider = true
     static var hasModularBounceEffect = true
     static var hasChargingIndication = true
-    //Aesthetics
+    // Aesthetics
     static var fontType: Font.Design = .rounded
     static var themeName = "Rounded"
-    //Positioning & Dimensions
+    // Positioning & Dimensions
     static var notificationVerticalOffset: Double = 190
     static var dodoHeight: Double = 250
-    //TimeDate
+    // TimeDate
     static var timeTemplate: DateTemplate = .time
     static var dateTemplate: DateTemplate = .date
-    //Favourite apps
+    // Favourite apps
     static var hasFavouriteApps = true
+    // Weather
+    static var showsWeather = true
 }

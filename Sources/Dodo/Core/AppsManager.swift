@@ -8,8 +8,8 @@
 import DodoC
 import SwiftUI
 
-///AppsManager
-///Storing app identifiers and shortcuts to opening applications.
+/// AppsManager
+/// Storing app identifiers and shortcuts to opening applications.
 
 struct AppsManager {
     static func openApplication(withIdentifier identifier: String) {

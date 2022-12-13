@@ -15,6 +15,7 @@ final class DDHostingController<Content>: UIHostingController<Content> where Con
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NSLog("[Dodo]: DDHostingController viewDidLoad")
         view.backgroundColor = .clear
     }
 }
