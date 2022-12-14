@@ -8,7 +8,7 @@
 import UIKit
 
 final class DDBaseController: UIViewController {
-    private let hostingController = DDHostingController(rootView: Container())
+    private let hostingController = LSPresentableHostingController(rootView: Container())
     
     override func _canShowWhileLocked() -> Bool {
         return true
@@ -16,9 +16,10 @@ final class DDBaseController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .clear
-        addChild(hostingController)
+        view.backgroundColor = nil
+        hostingController.view.backgroundColor = nil
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        addChild(hostingController)
         view.addSubview(hostingController.view)
     }
     

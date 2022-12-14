@@ -45,10 +45,10 @@ private extension SuggestionView {
         VStack(alignment: .leading) {
             Text(ResourceBundle.localisation(for: "Recommended_For_You"))
                 .foregroundColor(.white)
-                .font(.system(size: 15, weight: .regular, design: Settings.fontType))
+                .font(.system(size: 15, weight: .regular, design: PreferenceManager.shared.settings.fontType))
             Text(ResourceBundle.localisation(for: "Tap_To_Listen"))
                 .foregroundColor(Color(UIColor.lightText))
-                .font(.system(size: 13, weight: .regular, design: Settings.fontType))
+                .font(.system(size: 13, weight: .regular, design: PreferenceManager.shared.settings.fontType))
         }
     }
     
@@ -58,12 +58,12 @@ private extension SuggestionView {
         } label: {
             Text("\(Image(systemName: "airplayaudio")) \(ResourceBundle.localisation(for: "Bluetooth"))")
                 .foregroundColor(Color(bluetoothButtonColor.suitableForegroundColour()))
-                .font(.system(size: 13, weight: .regular, design: Settings.fontType))
+                .font(.system(size: 13, weight: .regular, design: PreferenceManager.shared.settings.fontType))
                 .padding(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
                 .background(Color(bluetoothButtonColor))
                 .clipShape(Capsule())
                 .onAppear {
-                    if Settings.playerStyle == .classic {
+                    if PreferenceManager.shared.settings.playerStyle == .classic {
                         bluetoothButtonColor = UIImage(withBundleIdentifier: appsManager.suggestedAppBundleIdentifier)
                             .dominantColour()
                             .withAlphaComponent(0.3)

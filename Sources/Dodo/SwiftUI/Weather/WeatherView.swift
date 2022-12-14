@@ -33,7 +33,7 @@ private extension WeatherView {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 35, height: 35)
             Text("\(viewModel.locationName) | \(viewModel.temperature)")
-                .font(.system(size: 15, weight: .regular, design: Settings.fontType))
+                .font(.system(size: 15, weight: .regular, design: PreferenceManager.shared.settings.fontType))
                 .lineLimit(1)
                 .foregroundColor(Color(Colors.weatherColor))
         }

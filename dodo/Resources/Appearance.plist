@@ -10,7 +10,11 @@
             <key>label</key>
             <string>Time and media player</string>
             <key>footerText</key>
-            <string>Choose an overall appearance for Dodo.</string>
+            <string>Choose an overall appearance for Dodo.
+            
+Time: Only shows Dodo's time.
+Media player: Only shows Dodo's media player.
+Both: Shows Dodo's time and media player.</string>
         </dict>
         <dict>
             <key>cell</key>
@@ -89,6 +93,28 @@
             <key>cell</key>
             <string>PSGroupCell</string>
             <key>label</key>
+            <string>Weather</string>
+            <key>footerText</key>
+            <string>Displays the current temperature, along with the city name and condition image. The weather will automatically refresh every 30 minutes, you can also tap it to force update whenever you want.</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>showWeather</string>
+			<key>label</key>
+			<string>Show weather</string>
+			<key>id</key>
+            <string>showWeatherStatus</string>
+		</dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
             <string>Colors</string>
             <key>footerText</key>
             <string>Specify custom colors for each of Dodo's components.</string>
@@ -146,6 +172,8 @@
             <string>#FFFFFFFF</string>
             <key>label</key>
             <string>Weather color</string>
+			<key>dynamicRule</key>
+            <string>showWeatherStatus,==,0</string>
         </dict>
         <dict>
             <key>cell</key>

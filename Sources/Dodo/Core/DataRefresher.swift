@@ -15,7 +15,7 @@ final class DataRefresher {
     
     public func toggleTimer(on enable: Bool) {
         // Disable the timer if requested.
-        guard Settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
             refreshOnce()
             return
         }
@@ -49,15 +49,16 @@ final class DataRefresher {
     @objc private func refresh() {
         // Refreshing time and date
         TimeDateView.ViewModel.shared.update(
-            timeTemplate: Settings.timeTemplate,
-            dateTemplate: Settings.dateTemplate
+            timeTemplate: PreferenceManager.shared.settings.timeTemplate,
+            dateTemplate: PreferenceManager.shared.settings.dateTemplate
         )
     }
     
     private func refreshOnce() {
         WeatherView.ViewModel.shared.updateWeather(forced: false)
         // Charging indication
-        if UIDevice.current.batteryState != .unplugged && Settings.hasChargingIndication {
+        if UIDevice.current.batteryState != .unplugged
+           && PreferenceManager.shared.settings.hasChargingIndication {
             chargingIndication()
         }
     }

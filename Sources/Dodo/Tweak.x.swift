@@ -29,14 +29,14 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
         dodoController.view.bottomAnchor.constraint(equalTo: target.view.bottomAnchor).isActive = true
         dodoController.view.leftAnchor.constraint(equalTo: target.view.leftAnchor).isActive = true
         dodoController.view.widthAnchor.constraint(equalTo: target.view.widthAnchor).isActive = true
-        dodoController.view.heightAnchor.constraint(equalToConstant: Settings.dodoHeight).isActive = true
+        dodoController.view.heightAnchor.constraint(equalToConstant: PreferenceManager.shared.settings.dodoHeight).isActive = true
     }
     
     func _listViewDefaultContentInsets() -> UIEdgeInsets {
         var insets = orig._listViewDefaultContentInsets()
-        insets.bottom = Settings.dodoHeight
+        insets.bottom = PreferenceManager.shared.settings.dodoHeight
         
-        guard Settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
             return insets
         }
         
@@ -45,7 +45,7 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     }
     
     func _minInsetsToPushDateOffScreen() -> Double {
-        guard Settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
             return orig._minInsetsToPushDateOffScreen()
         }
         
@@ -62,7 +62,7 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     //orion: new
     func dodoNotificationVerticalOffset() -> Double {
         guard UIScreen.main.bounds.width > UIScreen.main.bounds.height else {
-            return Settings.notificationVerticalOffset
+            return PreferenceManager.shared.settings.notificationVerticalOffset
         }
         return 0
     }
@@ -75,7 +75,7 @@ class SBLockScreenManager_Hook: ClassHook<SBLockScreenManager> {
     func lockUIFromSource(_ source: Int, withOptions options: AnyObject) {
         orig.lockUIFromSource(source, withOptions: options)
         
-        guard Settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
             return
         }
         
@@ -88,7 +88,7 @@ class SBLockScreenManager_Hook: ClassHook<SBLockScreenManager> {
             return
         }
         
-        guard Settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
             return
         }
         
@@ -135,7 +135,7 @@ class SBMediaController_Hook: ClassHook<SBMediaController> {
     func _mediaRemoteNowPlayingApplicationIsPlayingDidChange(_ arg1: AnyObject) {
         orig._mediaRemoteNowPlayingApplicationIsPlayingDidChange(arg1)
         
-        guard Settings.timeMediaPlayerStyle != .time else {
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
             return
         }
         
@@ -152,7 +152,7 @@ class SBMediaController_Hook: ClassHook<SBMediaController> {
     func setNowPlayingInfo(_ info: NSDictionary) {
         orig.setNowPlayingInfo(info)
         
-        guard Settings.timeMediaPlayerStyle != .time else {
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
             return
         }
         
@@ -168,7 +168,7 @@ class SpringBoard_Hook: ClassHook<SpringBoard> {
     func applicationDidFinishLaunching(_ application: AnyObject) {
         orig.applicationDidFinishLaunching(application)
         
-        guard Settings.timeMediaPlayerStyle != .time else {
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
             return
         }
         
@@ -185,7 +185,7 @@ class SBFLockScreenDateView_Hook: ClassHook<SBFLockScreenDateView> {
     func didMoveToWindow() {
         orig.didMoveToWindow()
         
-        guard Settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
             return
         }
         
@@ -215,7 +215,7 @@ class CSAdjunctItemView_Hook: ClassHook<CSAdjunctItemView> {
     typealias Group = Main
 
     func initWithFrame(_ frame: CGRect) -> Target? {
-        guard Settings.timeMediaPlayerStyle != .time else {
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
             return orig.initWithFrame(frame)
         }
         return nil
@@ -228,7 +228,7 @@ class SBUIProudLockIconView_Hook: ClassHook<SBUIProudLockIconView> {
     func didMoveToWindow() {
         orig.didMoveToWindow()
         
-        guard Settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
             return
         }
         
@@ -275,8 +275,17 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
         ? GSUtilities.sharedInstance().androBarHeight
         : 0
         
-        let startY = (screenHeight - (Settings.dodoHeight + androBarHeight + 30)) / screenHeight
-        let endY = (screenHeight - (Settings.dodoHeight + androBarHeight - 15)) / screenHeight
+        let startY: CGFloat = {
+            var value = screenHeight
+            value -= (PreferenceManager.shared.settings.dodoHeight + androBarHeight + 30)
+            return value / screenHeight
+        }()
+        
+        let endY: CGFloat = {
+            var value = screenHeight
+            value -= (PreferenceManager.shared.settings.dodoHeight + androBarHeight - 15)
+            return value / screenHeight
+        }()
         
         cropFrame.startPoint = CGPoint(
             x: 0.5,
@@ -321,169 +330,13 @@ fileprivate func prefsDict() -> [String : AnyObject]? {
 }
 
 fileprivate func readPrefs() {
-
-    let dict = prefsDict() ?? [String : Any]()
-
-    //Reading values
-    Settings.isEnabled = dict[
-        "isEnabled",
-        default: true
-    ] as! Bool
-    
-    Settings.timeMediaPlayerStyle = TimeMediaPlayerStyle(
-        rawValue: dict[
-            "timeMediaPlayerStyle",
-            default: 2
-        ] as! Int
-    )!
-    
-    Settings.playerStyle = MediaPlayerStyle(
-        rawValue: dict[
-            "playerStyle",
-            default: 0
-        ] as! Int
-    )!
-    
-    Settings.hasModularBounceEffect = dict[
-        "hasModularBounceEffect",
-        default: true
-    ] as! Bool
-    
-    Settings.hasChargingIndication = dict[
-        "hasChargingIndication",
-        default: true
-    ] as! Bool
-    
-    Settings.showDivider = dict[
-        "showDivider",
-        default: true
-    ] as! Bool
-    
-    Settings.themeName = dict[
-        "themeName",
-        default: "Rounded"
-    ] as! String
-
-    let fontType = dict["fontType"] as? Int ?? 2
-    switch fontType {
-    case 1:
-        Settings.fontType = .default
-        break
-    case 2:
-        Settings.fontType = .rounded
-        break
-    case 3:
-        Settings.fontType = .monospaced
-        break
-    case 4:
-        Settings.fontType = .serif
-        break
-    default:
-        Settings.fontType = .rounded
-        break
-    }
-    
-    //TimeDate
-    let timeTemplate = dict[
-        "timeTemplate",
-        default: 0
-    ] as! Int
-    
-    switch timeTemplate {
-    case 0:
-        Settings.timeTemplate = .time
-        break
-    case 1:
-        Settings.timeTemplate = .timeWithSeconds
-        break
-    case 2:
-        Settings.timeTemplate = .timeCustom(dict["timeTemplateCustom"] as? String ?? "h:mm")
-        break
-    default:
-        Settings.timeTemplate = .time
-        break
-    }
-    
-    let dateTemplate = dict[
-        "dateTemplate",
-        default: 0
-    ] as! Int
-    
-    switch dateTemplate {
-    case 0:
-        Settings.dateTemplate = .date
-        break
-    case 1:
-        Settings.dateTemplate = .dateCustom(dict["dateTemplateCustom"] as? String ?? "EEEE, MMMM d")
-        break
-    default:
-        Settings.dateTemplate = .date
-        break
-    }
-    
-    //Favourite apps
-    Settings.hasFavouriteApps = dict[
-        "hasFavouriteApps",
-        default: true
-    ] as! Bool
-    
-    AppsManager.favouriteAppBundleIdentifiers = dict[
-        "favouriteApps",
-        default: [
-            "com.apple.camera",
-            "com.apple.Preferences",
-            "com.apple.MobileSMS",
-            "com.apple.mobilemail"
-        ]
-    ] as! [String]
-    
-    //Dimensions
-    Settings.dodoHeight = dict[
-        "dodoHeight",
-        default: 250.0
-    ] as! Double
-
-    //Colors
-    Colors.timeColor = UIColor(
-        hexString: dict[
-            "timeColor",
-            default: "#FFFFFFFF"
-        ] as! String
-    )
-    
-    Colors.dateColor = UIColor(
-        hexString: dict[
-            "dateColor",
-            default: "#FFFFFFFF"
-        ] as! String
-    )
-    
-    Colors.dividerColor = UIColor(
-        hexString: dict[
-            "dividerColor",
-            default: "#FFFFFFFF"
-        ] as! String
-    )
-    
-    Colors.weatherColor = UIColor(
-        hexString: dict[
-            "weatherColor",
-            default: "#FFFFFFFF"
-        ] as! String
-    )
-    
-    Colors.lockIconColor = UIColor(
-        hexString: dict[
-            "lockIconColor",
-            default: "#FFFFFFFF"
-        ] as! String
-    )
+    PreferenceManager.shared.setDictionary(prefsDict() ?? [String : Any]())
 }
 
 struct Gradi: Tweak {
     init() {
         readPrefs()
-        if (Settings.isEnabled) {
+        if (PreferenceManager.shared.settings.isEnabled) {
             Main().activate()
         }
     }

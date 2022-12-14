@@ -22,24 +22,26 @@ private extension MainContent {
     var topSection: some View {
         HStack(spacing: 0.0) {
             LockIcon()
-            WeatherView()
+            if PreferenceManager.shared.settings.showWeather {
+                WeatherView()
+            }
         }
     }
     
     var midSection: some View {
         Group {
-            if Settings.timeMediaPlayerStyle != .mediaPlayer {
+            if PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer {
                 HStack {
                     TimeDateView()
                     Spacer()
-                    if Settings.hasFavouriteApps {
+                    if PreferenceManager.shared.settings.hasFavouriteApps {
                         AppView()
                             .frame(height: 40)
                     }
                 }
             } else {
                 Spacer()
-                if Settings.hasFavouriteApps {
+                if PreferenceManager.shared.settings.hasFavouriteApps {
                     AppView()
                         .frame(height: 40)
                 }

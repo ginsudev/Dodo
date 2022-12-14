@@ -170,6 +170,24 @@
 			<real>250.0</real>
 		</dict>
 		<dict>
+			<key>cell</key>
+			<string>PSTableCell</string>
+			<key>cellClass</key>
+			<string>GSSliderCell</string>
+			<key>title</key>
+			<string>Notifications y offset</string>
+			<key>default</key>
+			<real>190.0</real>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>notificationVerticalOffset</string>
+			<key>min</key>
+			<real>0.0</real>
+			<key>max</key>
+			<real>1000</real>
+		</dict>
+		<dict>
             <key>cell</key>
             <string>PSGroupCell</string>
             <key>label</key>

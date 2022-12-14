@@ -16,7 +16,7 @@ extension MediaPlayer {
         static let shared = ViewModel()
         
         static let themePath: String = GSUtilities.sharedInstance().correctedFilePathFromPath(
-            withRootPrefix: ":root:Library/Application Support/Dodo/Themes/\(Settings.themeName)/"
+            withRootPrefix: ":root:Library/Application Support/Dodo/Themes/\(PreferenceManager.shared.settings.themeName)/"
         )
         
         //MARK: - Properties
@@ -44,7 +44,7 @@ extension MediaPlayer {
 
         @Published var artworkColour: UIColor = .black {
             didSet {
-                guard Settings.playerStyle == .modular else {
+                guard PreferenceManager.shared.settings.playerStyle == .modular else {
                     return
                 }
                 DispatchQueue.main.async {

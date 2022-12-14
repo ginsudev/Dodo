@@ -15,7 +15,7 @@ struct ModularMediaPlayerContainer: View {
     @State private var scale = 1.0
 
     var body: some View {
-        if Settings.hasModularBounceEffect {
+        if PreferenceManager.shared.settings.hasModularBounceEffect {
             contentView
                 .scaleEffect(scale)
                 .animation(.spring(response: 0.6, dampingFraction: 0.7), value: scale)

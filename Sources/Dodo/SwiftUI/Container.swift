@@ -40,36 +40,36 @@ private extension Container {
             startPoint: .top,
             endPoint: .bottom
         )
-        .ignoresSafeArea()
         .colorMultiply(Color(mediaModel.artworkColour))
         .animation(.easeInOut, value: mediaModel.artworkColour)
+        .ignoresSafeArea()
     }
     
     @ViewBuilder
     var mediaPlayer: some View {
-        if Settings.showDivider {
+        if PreferenceManager.shared.settings.showDivider {
             Divider()
                 .overlay(Color(Colors.dividerColor).opacity(0.5))
         }
         
-        if Settings.playerStyle == .modular {
+        if PreferenceManager.shared.settings.playerStyle == .modular {
             ModularMediaPlayerContainer()
                 .environmentObject(mediaModel)
-        } else if Settings.playerStyle == .classic && mediaModel.hasActiveMediaApp {
+        } else if PreferenceManager.shared.settings.playerStyle == .classic && mediaModel.hasActiveMediaApp {
             MediaPlayer(artworkRadius: 5.0)
                 .environmentObject(mediaModel)
-        } else if Settings.playerStyle == .classic && !mediaModel.hasActiveMediaApp{
+        } else if PreferenceManager.shared.settings.playerStyle == .classic && !mediaModel.hasActiveMediaApp{
             SuggestionView()
         }
     }
     
     var mainContent: some View {
         VStack(spacing: 20.0) {
-            if Settings.timeMediaPlayerStyle == .both {
+            if PreferenceManager.shared.settings.timeMediaPlayerStyle == .both {
                 MainContent()
                 mediaPlayer
                     .frame(alignment: .bottom)
-            } else if Settings.timeMediaPlayerStyle == .time {
+            } else if PreferenceManager.shared.settings.timeMediaPlayerStyle == .time {
                 Spacer()
                 MainContent()
             } else {

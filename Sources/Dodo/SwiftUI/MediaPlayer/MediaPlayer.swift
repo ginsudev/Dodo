@@ -56,9 +56,9 @@ private extension MediaPlayer {
     var trackDetails: some View {
         VStack(alignment: .leading) {
             Text(mediaModel.trackName)
-                .font(.system(size: 15, weight: .regular, design: Settings.fontType))
+                .font(.system(size: 15, weight: .regular, design: PreferenceManager.shared.settings.fontType))
             Text(mediaModel.artistName)
-                .font(.system(size: 12, weight: .regular, design: Settings.fontType))
+                .font(.system(size: 12, weight: .regular, design: PreferenceManager.shared.settings.fontType))
         }
         .foregroundColor(Color(mediaModel.foregroundColour))
         .lineLimit(1)
