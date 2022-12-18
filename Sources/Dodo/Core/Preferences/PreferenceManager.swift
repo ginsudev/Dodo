@@ -10,7 +10,7 @@ import SwiftUI
 
 final class PreferenceManager {
     public static let shared: PreferenceManager = PreferenceManager()
-    private(set) var dictionary: Dictionary<String, Any>?
+    private var dictionary: Dictionary<String, Any>?
     private(set) var settings: Settings
     
     init(dictionary: Dictionary<String, Any>? = nil) {
@@ -55,6 +55,16 @@ final class PreferenceManager {
         settings.hasChargingIndication = dictionary[
             "hasChargingIndication",
             default: true
+        ] as! Bool
+        
+        settings.hasChargingIcon = dictionary[
+            "hasChargingIcon",
+            default: true
+        ] as! Bool
+        
+        settings.hasChargingFlash = dictionary[
+            "hasChargingFlash",
+            default: false
         ] as! Bool
         
         settings.showDivider = dictionary[
@@ -191,6 +201,21 @@ final class PreferenceManager {
                 default: "#FFFFFFFF"
             ] as! String
         )
+        
+        settings.timeFontSize = dictionary[
+            "timeFontSize",
+            default: 50.0
+        ] as! Double
+        
+        settings.dateFontSize = dictionary[
+            "dateFontSize",
+            default: 15.0
+        ] as! Double
+        
+        settings.weatherFontSize = dictionary[
+            "weatherFontSize",
+            default: 15.0
+        ] as! Double
     }
 }
 
@@ -203,9 +228,15 @@ extension PreferenceManager {
         var playerStyle: MediaPlayerStyle = .modular
         var showDivider = true
         var hasModularBounceEffect = true
+        // Charging
         var hasChargingIndication = true
+        var hasChargingIcon = true
+        var hasChargingFlash = false
         // Aesthetics
         var fontType: Font.Design = .rounded
+        var timeFontSize: Double = 50
+        var dateFontSize: Double = 15
+        var weatherFontSize: Double = 15
         var themeName = "Rounded"
         // Positioning & Dimensions
         var notificationVerticalOffset: Double = 190

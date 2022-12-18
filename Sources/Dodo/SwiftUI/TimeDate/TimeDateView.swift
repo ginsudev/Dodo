@@ -14,10 +14,22 @@ struct TimeDateView: View {
         VStack (alignment: .leading, spacing: 0.0) {
             Text(viewModel.time)
                 .foregroundColor(Color(Colors.timeColor))
-                .font(.system(size: 50, weight: .regular, design: PreferenceManager.shared.settings.fontType))
+                .font(
+                    .system(
+                        size: PreferenceManager.shared.settings.timeFontSize,
+                        weight: .regular,
+                        design: PreferenceManager.shared.settings.fontType
+                    )
+                )
             Text(viewModel.date)
                 .foregroundColor(Color(Colors.dateColor))
-                .font(.system(size: 15, weight: .regular, design: PreferenceManager.shared.settings.fontType))
+                .font(
+                    .system(
+                        size: PreferenceManager.shared.settings.dateFontSize,
+                        weight: .regular,
+                        design: PreferenceManager.shared.settings.fontType
+                    )
+                )
         }
         .minimumScaleFactor(0.3)
         .lineLimit(1)

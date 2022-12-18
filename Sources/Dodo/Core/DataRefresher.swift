@@ -59,8 +59,9 @@ final class DataRefresher {
             WeatherView.ViewModel.shared.updateWeather(forced: false)
         }
         // Charging indication
-        if UIDevice.current.batteryState != .unplugged
-           && PreferenceManager.shared.settings.hasChargingIndication {
+        if PreferenceManager.shared.settings.hasChargingIndication,
+           PreferenceManager.shared.settings.hasChargingFlash,
+           UIDevice.current.batteryState != .unplugged {
             chargingIndication()
         }
     }

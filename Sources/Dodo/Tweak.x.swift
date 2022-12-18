@@ -254,6 +254,16 @@ class CSPageControl_Hook: ClassHook<CSPageControl> {
     }
 }
 
+class CSCoverSheetViewController_Hook: ClassHook<CSCoverSheetViewController> {
+    func _transitionChargingViewToVisible(_ arg1: Bool, showBattery arg2: Bool, animated arg3: Bool) {
+        orig._transitionChargingViewToVisible(
+            false,
+            showBattery: false,
+            animated: false
+        )
+    }
+}
+
 class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationStructuredListViewController> {
     typealias Group = Main
     
@@ -304,10 +314,14 @@ fileprivate func prefsDict() -> [String : AnyObject]? {
     var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
 
     let path = "/var/mobile/Library/Preferences/com.ginsu.dodo.plist"
+    
+    let defaultsPath = GSUtilities.sharedInstance().correctedFilePathFromPath(
+        withRootPrefix: ":root:Library/PreferenceBundles/dodo.bundle/defaults.plist"
+    )!
 
     if !FileManager().fileExists(atPath: path) {
         try? FileManager().copyItem(
-            atPath: "Library/PreferenceBundles/dodo.bundle/defaults.plist",
+            atPath: defaultsPath,
             toPath: path
         )
     }
@@ -333,10 +347,10 @@ fileprivate func readPrefs() {
     PreferenceManager.shared.setDictionary(prefsDict() ?? [String : Any]())
 }
 
-struct Gradi: Tweak {
+struct Dodo: Tweak {
     init() {
         readPrefs()
-        if (PreferenceManager.shared.settings.isEnabled) {
+        if PreferenceManager.shared.settings.isEnabled {
             Main().activate()
         }
     }

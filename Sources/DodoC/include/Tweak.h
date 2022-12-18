@@ -70,6 +70,9 @@ struct SBIconImageInfo {
 @interface CSPageControl : UIView
 @end
 
+@interface CSCoverSheetViewController : UIViewController
+@end
+
 #pragma mark - Checking if LS is active
 @interface SBLockScreenManager : NSObject
 - (BOOL)isLockScreenActive;

@@ -10,6 +10,8 @@ import SwiftUI
 //MARK: - Public
 
 struct MainContent: View {
+    @StateObject private var chargingViewModel = ChargingIcon.ViewModel()
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0.0) {
             topSection
@@ -20,8 +22,10 @@ struct MainContent: View {
 
 private extension MainContent {
     var topSection: some View {
-        HStack(spacing: 0.0) {
+        HStack(spacing: 10.0) {
             LockIcon()
+            chargingIcon
+            
             if PreferenceManager.shared.settings.showWeather {
                 WeatherView()
             }
@@ -46,6 +50,16 @@ private extension MainContent {
                         .frame(height: 40)
                 }
             }
+        }
+    }
+    
+    @ViewBuilder
+    var chargingIcon: some View {
+        if PreferenceManager.shared.settings.hasChargingIndication,
+           PreferenceManager.shared.settings.hasChargingIcon,
+           chargingViewModel.isCharging {
+            ChargingIcon()
+                .environmentObject(chargingViewModel)
         }
     }
 }

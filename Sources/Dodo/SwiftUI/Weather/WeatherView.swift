@@ -31,9 +31,18 @@ private extension WeatherView {
             Image(uiImage: viewModel.conditionImage)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 35, height: 35)
+                .frame(
+                    width: 35,
+                    height: 35
+                )
             Text("\(viewModel.locationName) | \(viewModel.temperature)")
-                .font(.system(size: 15, weight: .regular, design: PreferenceManager.shared.settings.fontType))
+                .font(
+                    .system(
+                        size: PreferenceManager.shared.settings.weatherFontSize,
+                        weight: .regular,
+                        design: PreferenceManager.shared.settings.fontType
+                    )
+                )
                 .lineLimit(1)
                 .foregroundColor(Color(Colors.weatherColor))
         }

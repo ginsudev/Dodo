@@ -16,6 +16,10 @@
 	<false/>
 	<key>hasChargingIndication</key>
 	<true/>
+	<key>hasChargingIcon</key>
+	<true/>
+	<key>hasChargingFlash</key>
+	<false/>
 	<key>timeTemplate</key>
 	<integer>0</integer>
 	<key>timeTemplateCustom</key>
@@ -40,5 +44,11 @@
 	<real>250.0</real>
 	<key>notificationVerticalOffset</key>
 	<real>190.0</real>
+	<key>timeFontSize</key>
+	<real>50</real>
+	<key>dateFontSize</key>
+	<real>15</real>
+	<key>weatherFontSize</key>
+	<real>15</real>
 </dict>
 </plist>

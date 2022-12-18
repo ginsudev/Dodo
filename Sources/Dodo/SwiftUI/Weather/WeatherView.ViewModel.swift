@@ -15,18 +15,18 @@ extension WeatherView {
     }
     
     final class ViewModel: ObservableObject {
-        @Published var locationName = ""
-        @Published var temperature = ""
-        @Published var conditionImage = UIImage(systemName: "xmark.icloud")!
+        @Published private(set) var locationName = ""
+        @Published private(set) var temperature = ""
+        @Published private(set) var conditionImage = UIImage(systemName: "xmark.icloud")!
         
         static let shared = ViewModel()
         
         func updateWeather(forced: Bool) {
             GSWeather.sharedInstance().update(forced)
             DispatchQueue.main.async {
-                self.temperature = GSWeather.sharedInstance().temperature()
-                self.locationName = GSWeather.sharedInstance().locationName()
-                self.conditionImage = GSWeather.sharedInstance().conditionImage()
+                self.temperature = GSWeather.sharedInstance().temperature() ?? ""
+                self.locationName = GSWeather.sharedInstance().locationName() ?? ""
+                self.conditionImage = GSWeather.sharedInstance().conditionImage() ?? UIImage(systemName: "xmark.icloud")!
             }
         }
     }
