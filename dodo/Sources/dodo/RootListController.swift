@@ -23,7 +23,9 @@ class RootListController: PSListController {
         super.viewDidLoad()
         self.table.keyboardDismissMode = .onDrag
 
-        if let icon = UIImage(named: "/Library/PreferenceBundles/\(name).bundle/PrefIcon.png") {
+        if let iconPath = GSUtilities.sharedInstance().correctedFilePathFromPath(
+            withRootPrefix: ":root:Library/PreferenceBundles/\(name).bundle/PrefIcon.png"
+        ), let icon = UIImage(named: iconPath) {
             self.navigationItem.titleView = UIImageView(image: icon)
         }
         
@@ -34,7 +36,7 @@ class RootListController: PSListController {
     override func readPreferenceValue(_ specifier: PSSpecifier!) -> Any! {
         var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
         
-        let plistURL = URL(fileURLWithPath: "/User/Library/Preferences/com.ginsu.\(name).plist")
+        let plistURL = URL(fileURLWithPath: "/var/mobile/Library/Preferences/com.ginsu.\(name).plist")
 
         guard let plistXML = try? Data(contentsOf: plistURL) else {
             return specifier.properties["default"]
@@ -54,7 +56,7 @@ class RootListController: PSListController {
     override func setPreferenceValue(_ value: Any!, specifier: PSSpecifier!) {
         var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
         
-        let plistURL = URL(fileURLWithPath: "/User/Library/Preferences/com.ginsu.\(name).plist")
+        let plistURL = URL(fileURLWithPath: "/var/mobile/Library/Preferences/com.ginsu.\(name).plist")
 
         guard let plistXML = try? Data(contentsOf: plistURL) else {
             return

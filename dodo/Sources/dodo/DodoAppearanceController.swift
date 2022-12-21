@@ -163,7 +163,7 @@ class DodoAppearanceController: PSListController {
     override func readPreferenceValue(_ specifier: PSSpecifier!) -> Any! {
         var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
         
-        let plistURL = URL(fileURLWithPath: "/User/Library/Preferences/com.ginsu.\(name).plist")
+        let plistURL = URL(fileURLWithPath: "/var/mobile/Library/Preferences/com.ginsu.\(name).plist")
 
         guard let plistXML = try? Data(contentsOf: plistURL) else {
             return specifier.properties["default"]
@@ -187,7 +187,7 @@ class DodoAppearanceController: PSListController {
     override func setPreferenceValue(_ value: Any!, specifier: PSSpecifier!) {
         var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
         
-        let plistURL = URL(fileURLWithPath: "/User/Library/Preferences/com.ginsu.\(name).plist")
+        let plistURL = URL(fileURLWithPath: "/var/mobile/Library/Preferences/com.ginsu.\(name).plist")
 
         guard let plistXML = try? Data(contentsOf: plistURL) else {
             return
