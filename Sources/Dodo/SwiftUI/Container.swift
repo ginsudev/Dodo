@@ -11,19 +11,17 @@ import DodoC
 //MARK: - Public
 
 struct Container: View {
-    @StateObject var mediaModel = MediaPlayer.ViewModel.shared
-    @StateObject var dimensions = Dimensions.shared
+    @StateObject private var mediaModel = MediaPlayer.ViewModel.shared
+    @StateObject private var dimensions = Dimensions.shared
+    
+    @State var containerFrame: CGRect = .zero
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottom) {
             gradient
             mainContent
-                .padding(
-                    .bottom,
-                    GSUtilities.sharedInstance().isAndroBarInstalled()
-                    ? GSUtilities.sharedInstance().androBarHeight
-                    : 0
-                )
+                .padding(.bottom)
+                .padding(.bottom, dimensions.androBarHeight)
                 .environmentObject(dimensions)
         }
         .background(Color.clear)
@@ -84,8 +82,6 @@ private extension Container {
     
     var mainContent: some View {
         VStack(spacing: 20.0) {
-            Spacer()
-
             switch PreferenceManager.shared.settings.timeMediaPlayerStyle {
             case .time:
                 MainContent()
@@ -98,5 +94,10 @@ private extension Container {
             }
         }
         .padding(.horizontal)
+        .readFrame(in: .local, for: $containerFrame)
+        .onChange(of: containerFrame) { newValue in
+            dimensions.height = newValue.height
+            NSLog("[Dodo]: frame updated, height=\(newValue.height)")
+        }
     }
 }

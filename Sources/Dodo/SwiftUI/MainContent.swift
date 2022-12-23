@@ -37,18 +37,22 @@ private extension MainContent {
         if PreferenceManager.shared.settings.timeMediaPlayerStyle == .mediaPlayer {
             Spacer()
             if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
-                AppView()
-                    .frame(height: 40)
+                favouriteApps
             }
         } else {
             HStack {
                 TimeDateView()
                 Spacer()
-                if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
-                    AppView()
-                        .frame(height: 40)
-                }
+                favouriteApps
             }
+        }
+    }
+    
+    @ViewBuilder
+    var favouriteApps: some View {
+        if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
+            AppView()
+                .frame(height: 40)
         }
     }
     

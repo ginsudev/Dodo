@@ -40,8 +40,6 @@
 	<string>#FFFFFFFF</string>
 	<key>hasFavouriteApps</key>
 	<true/>
-	<key>dodoHeight</key>
-	<real>250.0</real>
 	<key>notificationVerticalOffset</key>
 	<real>190.0</real>
 	<key>timeFontSize</key>

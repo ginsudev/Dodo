@@ -9,9 +9,18 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     
     @Property (.nonatomic, .retain) var dodoController = DDBaseController()
     @Property (.nonatomic, .retain) var widthConstraint = NSLayoutConstraint()
+    @Property (.nonatomic, .retain) var heightConstraint = NSLayoutConstraint()
                
     func viewDidLoad() {
         orig.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(
+            target,
+            selector: #selector(didUpdateHeightDodo),
+            name: NSNotification.Name("Dodo.didUpdateHeight"),
+            object: nil
+        )
+        
         //Init Dodo base controller
         dodoController = DDBaseController()
         dodoController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -20,12 +29,13 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
         
         // Create a reference to the width anchor because it changes depending on device orientation.
         widthConstraint = dodoController.view.widthAnchor.constraint(equalTo: target.view.widthAnchor)
+        heightConstraint = dodoController.view.heightAnchor.constraint(equalToConstant: 250)
         
         // Activate these constraints once.
         NSLayoutConstraint.activate([
             dodoController.view.bottomAnchor.constraint(equalTo: target.view.bottomAnchor),
             dodoController.view.leftAnchor.constraint(equalTo: target.view.leftAnchor),
-            dodoController.view.heightAnchor.constraint(equalToConstant: PreferenceManager.shared.settings.dodoHeight)
+            heightConstraint
         ])
     }
     
@@ -43,7 +53,7 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
             return insets
         }
         
-        insets.bottom = PreferenceManager.shared.settings.dodoHeight
+        insets.bottom = Dimensions.shared.height + 50
         
         guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
             return insets
@@ -78,6 +88,11 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
             return 0
         }
         return PreferenceManager.shared.settings.notificationVerticalOffset
+    }
+    
+    //orion: new
+    func didUpdateHeightDodo() {
+        heightConstraint.constant = Dimensions.shared.height
     }
 }
 
@@ -185,8 +200,8 @@ class SpringBoard_Hook: ClassHook<SpringBoard> {
             return
         }
         
-        /** If media plays through a respring, we need this code to update the media info when SpringBoard
-         launches so that the play/pause button shows the correct image. **/
+        /* If media plays through a respring, we need this code to update the media info when SpringBoard
+         launches so that the play/pause button shows the correct image. */
         SBMediaController.sharedInstance().setNowPlayingInfo(0)
     }
 }
@@ -284,6 +299,14 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
 
     func viewDidLoad() {
         orig.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(
+            target,
+            selector: #selector(dodoSetupMask),
+            name: NSNotification.Name("Dodo.didUpdateHeight"),
+            object: nil
+        )
+        
         cropFrame = CAGradientLayer()
         cropFrame.frame = target.view.bounds
         cropFrame.colors = [UIColor.white.cgColor, UIColor.clear.cgColor]
@@ -304,19 +327,15 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
                 
         let screenHeight = UIScreen.main.bounds.height
         
-        let androBarHeight = GSUtilities.sharedInstance().isAndroBarInstalled()
-        ? GSUtilities.sharedInstance().androBarHeight
-        : 0
-        
         let startY: CGFloat = {
             var value = screenHeight
-            value -= (PreferenceManager.shared.settings.dodoHeight + androBarHeight + 30)
+            value -= (Dimensions.shared.height + Dimensions.shared.androBarHeight + 60)
             return value / screenHeight
         }()
         
         let endY: CGFloat = {
             var value = screenHeight
-            value -= (PreferenceManager.shared.settings.dodoHeight + androBarHeight - 15)
+            value -= (Dimensions.shared.height + Dimensions.shared.androBarHeight + 20)
             return value / screenHeight
         }()
         

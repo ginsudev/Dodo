@@ -157,24 +157,6 @@
 			<key>cellClass</key>
 			<string>GSSliderCell</string>
 			<key>title</key>
-			<string>Dodo height</string>
-			<key>default</key>
-			<real>250.0</real>
-			<key>defaults</key>
-			<string>com.ginsu.dodo</string>
-			<key>key</key>
-			<string>dodoHeight</string>
-			<key>min</key>
-			<real>70.0</real>
-			<key>max</key>
-			<real>250.0</real>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSTableCell</string>
-			<key>cellClass</key>
-			<string>GSSliderCell</string>
-			<key>title</key>
 			<string>Notifications y offset</string>
 			<key>default</key>
 			<real>190.0</real>

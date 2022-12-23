@@ -6,8 +6,24 @@
 //
 
 import UIKit
+import DodoC
 
 final class Dimensions: ObservableObject {
     static let shared = Dimensions()
     @Published var isLandscape: Bool = false
+    
+    var height: CGFloat = 0.0 {
+        didSet {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("Dodo.didUpdateHeight"),
+                object: nil
+            )
+        }
+    }
+    
+    let androBarHeight: CGFloat = {
+        GSUtilities.sharedInstance().isAndroBarInstalled()
+        ? GSUtilities.sharedInstance().androBarHeight
+        : 0
+    }()
 }

@@ -156,11 +156,6 @@ final class PreferenceManager {
         ] as! [String]
         
         // Dimensions
-        settings.dodoHeight = dictionary[
-            "dodoHeight",
-            default: 250.0
-        ] as! Double
-        
         settings.notificationVerticalOffset = dictionary[
             "notificationVerticalOffset",
             default: 190.0
@@ -240,7 +235,6 @@ extension PreferenceManager {
         var themeName = "Rounded"
         // Positioning & Dimensions
         var notificationVerticalOffset: Double = 190
-        var dodoHeight: Double = 250
         // TimeDate
         var timeTemplate: DateTemplate = .time
         var dateTemplate: DateTemplate = .date

@@ -8,9 +8,9 @@
 import Foundation
 
 enum DateTemplate {
-case timeWithSeconds,
-     time,
-     timeCustom(String),
-     date,
-     dateCustom(String)
+    case timeWithSeconds
+    case time
+    case timeCustom(String)
+    case date
+    case dateCustom(String)
 }

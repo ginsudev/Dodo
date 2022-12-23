@@ -9,7 +9,9 @@ import UIKit
 
 struct HapticManager {
     enum HapticIntensity {
-        case success, thud, custom(UIImpactFeedbackGenerator.FeedbackStyle)
+        case success
+        case thud
+        case custom(UIImpactFeedbackGenerator.FeedbackStyle)
     }
     
     static func playHaptic(withIntensity intensity: HapticIntensity) {

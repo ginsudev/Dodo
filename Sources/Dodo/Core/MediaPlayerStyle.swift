@@ -9,5 +9,6 @@ import Foundation
 import SwiftUI
 
 enum MediaPlayerStyle: Int {
-case modular = 0, classic = 1
+    case modular = 0
+    case classic = 1
 }

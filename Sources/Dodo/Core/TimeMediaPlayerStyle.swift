@@ -8,5 +8,7 @@
 import Foundation
 
 enum TimeMediaPlayerStyle: Int {
-    case time = 0, mediaPlayer = 1, both = 2
+    case time = 0
+    case mediaPlayer = 1
+    case both = 2
 }
