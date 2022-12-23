@@ -31,7 +31,8 @@ final class DDBaseController: UIViewController {
     func setupConstrains() {
         hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         hostingController.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        hostingController.view.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+        hostingController.view.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = !Dimensions.shared.isLandscape
         hostingController.view.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
+        hostingController.view.updateConstraints()
     }
 }

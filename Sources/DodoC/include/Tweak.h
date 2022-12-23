@@ -141,3 +141,7 @@ extern int SBSLaunchApplicationWithIdentifier(CFStringRef identifier, Boolean su
 @interface UIViewController (Private)
 - (BOOL)_canShowWhileLocked;
 @end
+
+@interface UIDevice (Private)
++ (BOOL)currentIsIPad;
+@end

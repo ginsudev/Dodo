@@ -7,54 +7,74 @@
 
 import UIKit
 
+// MARK: - Public
+
 final class DataRefresher {
     static let shared = DataRefresher()
     private var timer = Timer()
     var timerRunning = false
     var screenOn = false
     
+    private init() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refresh),
+            name: NSNotification.Name("Dodo.updateTimeAndDate"),
+            object: nil
+        )
+    }
+    
     public func toggleTimer(on enable: Bool) {
-        // Disable the timer if requested.
         guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
+            // Do not start a timer for time/date updates because the user disabled Dodo's clock.
             refreshOnce()
             return
         }
         
         guard enable else {
+            // If `false` was passed in, invalidate the timer and return, don't start another timer.
             if self.timer.isValid {
                 self.timer.invalidate()
                 timerRunning = false
             }
             return
         }
-        // One timer only
+        
         guard !self.timer.isValid else {
+            // Do not start a timer if one already exists.
             return
         }
-        // Start timer.
+        
+        // Safety checks passed, start timer.
         self.timer = Timer.scheduledTimer(
             timeInterval: 1,
             target: self,
-            selector: #selector(self.refresh),
+            selector: #selector(refresh),
             userInfo: nil,
             repeats: true
         )
+        // Fire the timer imediately (this happens once).
         self.timer.fire()
         // Update timer status.
         timerRunning = true
         // Update values that only need to be updated once.
         refreshOnce()
     }
-    
-    @objc private func refresh() {
-        // Refreshing time and date
+}
+
+// MARK: - Private
+
+private extension DataRefresher {
+    @objc func refresh() {
+        // Refresh time and date
         TimeDateView.ViewModel.shared.update(
             timeTemplate: PreferenceManager.shared.settings.timeTemplate,
             dateTemplate: PreferenceManager.shared.settings.dateTemplate
         )
     }
     
-    private func refreshOnce() {
+    func refreshOnce() {
+        // Update the weather
         if PreferenceManager.shared.settings.showWeather {
             WeatherView.ViewModel.shared.updateWeather(forced: false)
         }
@@ -66,7 +86,7 @@ final class DataRefresher {
         }
     }
     
-    private func chargingIndication() {
+    func chargingIndication() {
         let chargeColour = UIColor(red: 0.28, green: 0.57, blue: 0.18, alpha: 1.00)
         let prevColour = MediaPlayer.ViewModel.shared.artworkColour
         MediaPlayer.ViewModel.shared.artworkColour = chargeColour

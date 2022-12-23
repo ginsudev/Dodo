@@ -13,13 +13,16 @@ import DodoC
 struct SuggestionView: View {
     @State private var appsManager = AppsManager.self
     @State private var bluetoothButtonColor: UIColor = .white
-    
+    @EnvironmentObject var dimensions: Dimensions
+
     var body: some View {
         HStack {
             openAppButton
                 .layoutPriority(-1)
             Spacer()
-            bluetoothButton
+            if !dimensions.isLandscape {
+                bluetoothButton
+            }
         }
     }
 }
@@ -50,6 +53,7 @@ private extension SuggestionView {
                 .foregroundColor(Color(UIColor.lightText))
                 .font(.system(size: 13, weight: .regular, design: PreferenceManager.shared.settings.fontType))
         }
+        .multilineTextAlignment(.leading)
     }
     
     var bluetoothButton: some View {

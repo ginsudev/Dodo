@@ -11,6 +11,7 @@ import SwiftUI
 
 struct MainContent: View {
     @StateObject private var chargingViewModel = ChargingIcon.ViewModel()
+    @EnvironmentObject var dimensions: Dimensions
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0.0) {
@@ -25,27 +26,25 @@ private extension MainContent {
         HStack(spacing: 10.0) {
             LockIcon()
             chargingIcon
-            
             if PreferenceManager.shared.settings.showWeather {
                 WeatherView()
             }
         }
     }
     
+    @ViewBuilder
     var midSection: some View {
-        Group {
-            if PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer {
-                HStack {
-                    TimeDateView()
-                    Spacer()
-                    if PreferenceManager.shared.settings.hasFavouriteApps {
-                        AppView()
-                            .frame(height: 40)
-                    }
-                }
-            } else {
+        if PreferenceManager.shared.settings.timeMediaPlayerStyle == .mediaPlayer {
+            Spacer()
+            if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
+                AppView()
+                    .frame(height: 40)
+            }
+        } else {
+            HStack {
+                TimeDateView()
                 Spacer()
-                if PreferenceManager.shared.settings.hasFavouriteApps {
+                if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
                     AppView()
                         .frame(height: 40)
                 }

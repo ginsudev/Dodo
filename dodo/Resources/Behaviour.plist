@@ -239,28 +239,6 @@
 			<key>dynamicRule</key>
             <string>hasChargingIndicationStatus,==,0</string>
 		</dict>
-		<dict>
-            <key>cell</key>
-            <string>PSGroupCell</string>
-            <key>label</key>
-            <string>Misc</string>
-        </dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>cellClass</key>
-			<string>PSSubtitleSwitchTableCell</string>
-			<key>default</key>
-			<false/>
-			<key>defaults</key>
-			<string>com.ginsu.dodo</string>
-			<key>key</key>
-			<string>hasModularBounceEffect</string>
-			<key>label</key>
-			<string>Bounce effect</string>
-			<key>cellSubtitleText</key>
-			<string>Modular player only: Tap/Hold to bounce</string>
-		</dict>
 	</array>
 	<key>title</key>
 	<string>Behaviour</string>

@@ -12,6 +12,7 @@ import DodoC
 
 struct Container: View {
     @StateObject var mediaModel = MediaPlayer.ViewModel.shared
+    @StateObject var dimensions = Dimensions.shared
 
     var body: some View {
         ZStack {
@@ -23,6 +24,7 @@ struct Container: View {
                     ? GSUtilities.sharedInstance().androBarHeight
                     : 0
                 )
+                .environmentObject(dimensions)
         }
         .background(Color.clear)
     }
@@ -31,49 +33,67 @@ struct Container: View {
 //MARK: - Private
 
 private extension Container {
+    @ViewBuilder
     var gradient: some View {
-        LinearGradient(
-            colors: [
-                Color.white.opacity(0.0),
-                Color.white.opacity(0.5)
-            ],
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        .colorMultiply(Color(mediaModel.artworkColour))
-        .animation(.easeInOut, value: mediaModel.artworkColour)
-        .ignoresSafeArea()
+        if !dimensions.isLandscape {
+            LinearGradient(
+                colors: [
+                    Color.white.opacity(0.0),
+                    Color.white.opacity(0.5)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .colorMultiply(Color(mediaModel.artworkColour))
+            .animation(.easeInOut, value: mediaModel.artworkColour)
+            .ignoresSafeArea()
+        }
     }
     
     @ViewBuilder
     var mediaPlayer: some View {
-        if PreferenceManager.shared.settings.showDivider {
-            Divider()
-                .overlay(Color(Colors.dividerColor).opacity(0.5))
-        }
-        
-        if PreferenceManager.shared.settings.playerStyle == .modular {
+        switch (PreferenceManager.shared.settings.playerStyle,
+                mediaModel.hasActiveMediaApp,
+                PreferenceManager.shared.settings.showSuggestions
+        ) {
+        case (_, false, false):
+            EmptyView()
+                .frame(maxWidth: .zero, maxHeight: .zero)
+                .layoutPriority(-1)
+        case (.modular, _, _):
+            divider
             ModularMediaPlayerContainer()
                 .environmentObject(mediaModel)
-        } else if PreferenceManager.shared.settings.playerStyle == .classic && mediaModel.hasActiveMediaApp {
+        case (.classic, true, _):
+            divider
             MediaPlayer(artworkRadius: 5.0)
                 .environmentObject(mediaModel)
-        } else if PreferenceManager.shared.settings.playerStyle == .classic && !mediaModel.hasActiveMediaApp{
+        default:
+            divider
             SuggestionView()
+        }
+    }
+    
+    @ViewBuilder
+    var divider: some View {
+        if PreferenceManager.shared.settings.showDivider && !dimensions.isLandscape {
+            Divider()
+                .overlay(Color(Colors.dividerColor).opacity(0.5))
         }
     }
     
     var mainContent: some View {
         VStack(spacing: 20.0) {
-            if PreferenceManager.shared.settings.timeMediaPlayerStyle == .both {
+            Spacer()
+
+            switch PreferenceManager.shared.settings.timeMediaPlayerStyle {
+            case .time:
                 MainContent()
+            case .mediaPlayer:
+                Spacer()
                 mediaPlayer
-                    .frame(alignment: .bottom)
-            } else if PreferenceManager.shared.settings.timeMediaPlayerStyle == .time {
-                Spacer()
+            case .both:
                 MainContent()
-            } else {
-                Spacer()
                 mediaPlayer
             }
         }

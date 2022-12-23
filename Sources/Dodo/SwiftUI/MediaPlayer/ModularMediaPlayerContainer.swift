@@ -12,25 +12,9 @@ import DodoC
 
 struct ModularMediaPlayerContainer: View {
     @EnvironmentObject var mediaModel: MediaPlayer.ViewModel
-    @State private var scale = 1.0
 
     var body: some View {
-        if PreferenceManager.shared.settings.hasModularBounceEffect {
-            contentView
-                .scaleEffect(scale)
-                .animation(.spring(response: 0.6, dampingFraction: 0.7), value: scale)
-                .gesture(
-                    DragGesture(minimumDistance: 0.0)
-                        .onChanged { _ in
-                            scale = 0.8
-                        }
-                        .onEnded { _ in
-                            scale = 1.0
-                        }
-                )
-        } else {
-            contentView
-        }
+        contentView
     }
 }
 
@@ -53,7 +37,9 @@ private extension ModularMediaPlayerContainer {
             if mediaModel.hasActiveMediaApp {
                 MediaPlayer(artworkRadius: 5)
             } else {
-                SuggestionView()
+                if PreferenceManager.shared.settings.showSuggestions {
+                    SuggestionView()
+                }
             }
         }
         .padding()

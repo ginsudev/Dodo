@@ -47,8 +47,8 @@ final class PreferenceManager {
             ] as! Int
         )!
         
-        settings.hasModularBounceEffect = dictionary[
-            "hasModularBounceEffect",
+        settings.showSuggestions = dictionary[
+            "showSuggestions",
             default: true
         ] as! Bool
         
@@ -226,8 +226,8 @@ extension PreferenceManager {
         // Media player
         var timeMediaPlayerStyle: TimeMediaPlayerStyle = .both
         var playerStyle: MediaPlayerStyle = .modular
+        var showSuggestions: Bool = true
         var showDivider = true
-        var hasModularBounceEffect = true
         // Charging
         var hasChargingIndication = true
         var hasChargingIcon = true

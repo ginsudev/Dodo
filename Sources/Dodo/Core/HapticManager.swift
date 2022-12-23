@@ -7,11 +7,11 @@
 
 import UIKit
 
-enum HapticIntensity {
-    case success, thud, custom(UIImpactFeedbackGenerator.FeedbackStyle)
-}
-
 struct HapticManager {
+    enum HapticIntensity {
+        case success, thud, custom(UIImpactFeedbackGenerator.FeedbackStyle)
+    }
+    
     static func playHaptic(withIntensity intensity: HapticIntensity) {
         var generator: UIFeedbackGenerator
         

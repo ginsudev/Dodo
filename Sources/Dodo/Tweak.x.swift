@@ -1,6 +1,5 @@
 import Orion
 import DodoC
-import SwiftUI
 
 struct Main: HookGroup {}
 
@@ -9,7 +8,8 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     typealias Group = Main
     
     @Property (.nonatomic, .retain) var dodoController = DDBaseController()
-    
+    @Property (.nonatomic, .retain) var widthConstraint = NSLayoutConstraint()
+               
     func viewDidLoad() {
         orig.viewDidLoad()
         //Init Dodo base controller
@@ -17,23 +17,32 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
         dodoController.view.translatesAutoresizingMaskIntoConstraints = false
         target.addChild(dodoController)
         target.view.addSubview(dodoController.view)
+        
+        // Create a reference to the width anchor because it changes depending on device orientation.
+        widthConstraint = dodoController.view.widthAnchor.constraint(equalTo: target.view.widthAnchor)
+        
+        // Activate these constraints once.
+        NSLayoutConstraint.activate([
+            dodoController.view.bottomAnchor.constraint(equalTo: target.view.bottomAnchor),
+            dodoController.view.leftAnchor.constraint(equalTo: target.view.leftAnchor),
+            dodoController.view.heightAnchor.constraint(equalToConstant: PreferenceManager.shared.settings.dodoHeight)
+        ])
     }
     
     func viewWillAppear(_ animated: Bool) {
         orig.viewWillAppear(animated)
-        setupDodoConstrains()
-    }
-    
-    //orion: new
-    func setupDodoConstrains() {
-        dodoController.view.bottomAnchor.constraint(equalTo: target.view.bottomAnchor).isActive = true
-        dodoController.view.leftAnchor.constraint(equalTo: target.view.leftAnchor).isActive = true
-        dodoController.view.widthAnchor.constraint(equalTo: target.view.widthAnchor).isActive = true
-        dodoController.view.heightAnchor.constraint(equalToConstant: PreferenceManager.shared.settings.dodoHeight).isActive = true
+        let isLandscape = (UIScreen.main.bounds.width > UIScreen.main.bounds.height) && !UIDevice.currentIsIPad()
+        Dimensions.shared.isLandscape = isLandscape
+        widthConstraint.isActive = !Dimensions.shared.isLandscape
     }
     
     func _listViewDefaultContentInsets() -> UIEdgeInsets {
         var insets = orig._listViewDefaultContentInsets()
+        
+        guard !Dimensions.shared.isLandscape || UIDevice.currentIsIPad() else {
+            return insets
+        }
+        
         insets.bottom = PreferenceManager.shared.settings.dodoHeight
         
         guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
@@ -49,6 +58,10 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
             return orig._minInsetsToPushDateOffScreen()
         }
         
+        guard !Dimensions.shared.isLandscape || UIDevice.currentIsIPad() else {
+            return orig._minInsetsToPushDateOffScreen()
+        }
+        
         let offset = orig._minInsetsToPushDateOffScreen()
         let newOffset = offset - dodoNotificationVerticalOffset()
         return newOffset
@@ -61,10 +74,10 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     
     //orion: new
     func dodoNotificationVerticalOffset() -> Double {
-        guard UIScreen.main.bounds.width > UIScreen.main.bounds.height else {
-            return PreferenceManager.shared.settings.notificationVerticalOffset
+        guard !Dimensions.shared.isLandscape || UIDevice.currentIsIPad() else {
+            return 0
         }
-        return 0
+        return PreferenceManager.shared.settings.notificationVerticalOffset
     }
 }
 
@@ -274,11 +287,21 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
         cropFrame = CAGradientLayer()
         cropFrame.frame = target.view.bounds
         cropFrame.colors = [UIColor.white.cgColor, UIColor.clear.cgColor]
-        target.view.layer.mask = cropFrame
     }
     
-    func viewWillAppear(_ animated: Bool) {
-        orig.viewWillAppear(animated)
+    func viewDidAppear(_ animated: Bool) {
+        orig.viewDidAppear(animated)
+        guard !Dimensions.shared.isLandscape || UIDevice.currentIsIPad() else {
+            target.view.layer.mask = nil
+            return
+        }
+        dodoSetupMask()
+    }
+    
+    //orion: new
+    func dodoSetupMask() {
+        target.view.layer.mask = cropFrame
+                
         let screenHeight = UIScreen.main.bounds.height
         
         let androBarHeight = GSUtilities.sharedInstance().isAndroBarInstalled()

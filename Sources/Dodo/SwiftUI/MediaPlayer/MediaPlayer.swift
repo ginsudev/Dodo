@@ -11,6 +11,8 @@ import SwiftUI
 
 struct MediaPlayer: View {
     @EnvironmentObject var mediaModel: ViewModel
+    @EnvironmentObject var dimensions: Dimensions
+    
     private let artworkRadius: Double
     
     init(artworkRadius: Double) {
@@ -18,11 +20,10 @@ struct MediaPlayer: View {
     }
 
     var body: some View {
-        HStack {
-            songDetailsButton
-                .layoutPriority(-1)
-            Spacer()
-            MediaControls()
+        if dimensions.isLandscape {
+            landscapePlayer
+        } else {
+            portraitPlayer
         }
     }
 }
@@ -30,6 +31,23 @@ struct MediaPlayer: View {
 //MARK: - Private
 
 private extension MediaPlayer {
+    var landscapePlayer: some View {
+        HStack(spacing: 10.0) {
+            songDetailsButton
+            MediaControls()
+            Spacer()
+        }
+    }
+    
+    var portraitPlayer: some View {
+        HStack {
+            songDetailsButton
+            Spacer()
+            MediaControls()
+        }
+    }
+    
+    @ViewBuilder
     var songDetailsButton: some View {
         Button {
             guard let nowPlayingIdentifier = mediaModel.nowPlayingAppIdentifier() else {
@@ -39,9 +57,12 @@ private extension MediaPlayer {
         } label: {
             HStack {
                 albumArtwork
-                trackDetails
+                if !dimensions.isLandscape {
+                    trackDetails
+                }
             }
         }
+        .layoutPriority(-1)
     }
     
     var albumArtwork: some View {

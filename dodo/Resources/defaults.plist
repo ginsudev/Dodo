@@ -10,10 +10,10 @@
 	<integer>2</integer>
 	<key>playerStyle</key>
 	<integer>0</integer>
+	<key>showSuggestions</key>
+	<true/>
 	<key>showDivider</key>
 	<true/>
-	<key>hasModularBounceEffect</key>
-	<false/>
 	<key>hasChargingIndication</key>
 	<true/>
 	<key>hasChargingIcon</key>

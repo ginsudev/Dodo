@@ -8,7 +8,8 @@
 import SwiftUI
 
 enum PlaybackButtonType: CGFloat {
-    case playPause = 44, prevNext = 34
+    case playPause = 44
+    case prevNext = 34
 }
 
 struct MediaControlImage: View {
