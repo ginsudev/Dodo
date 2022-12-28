@@ -76,7 +76,7 @@ private extension DataRefresher {
     func refreshOnce() {
         // Update the weather
         if PreferenceManager.shared.settings.showWeather {
-            WeatherView.ViewModel.shared.updateWeather(forced: false)
+            WeatherView.ViewModel.shared.updateWeather()
         }
         // Charging indication
         if PreferenceManager.shared.settings.hasChargingIndication,
@@ -90,6 +90,7 @@ private extension DataRefresher {
         let chargeColour = UIColor(red: 0.28, green: 0.57, blue: 0.18, alpha: 1.00)
         let prevColour = MediaPlayer.ViewModel.shared.artworkColour
         MediaPlayer.ViewModel.shared.artworkColour = chargeColour
+       
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             guard MediaPlayer.ViewModel.shared.artworkColour == chargeColour else {
                 return

@@ -19,8 +19,8 @@ struct SuggestionView: View {
         HStack {
             openAppButton
                 .layoutPriority(-1)
-            Spacer()
             if !dimensions.isLandscape {
+                Spacer()
                 bluetoothButton
             }
         }

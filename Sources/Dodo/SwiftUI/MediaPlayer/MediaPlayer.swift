@@ -35,7 +35,6 @@ private extension MediaPlayer {
         HStack(spacing: 10.0) {
             songDetailsButton
             MediaControls()
-            Spacer()
         }
     }
     
@@ -50,10 +49,9 @@ private extension MediaPlayer {
     @ViewBuilder
     var songDetailsButton: some View {
         Button {
-            guard let nowPlayingIdentifier = mediaModel.nowPlayingAppIdentifier() else {
-                return
+            if let nowPlayingIdentifier = mediaModel.nowPlayingAppIdentifier() {
+                AppsManager.openApplication(withIdentifier: nowPlayingIdentifier)
             }
-            AppsManager.openApplication(withIdentifier: nowPlayingIdentifier)
         } label: {
             HStack {
                 albumArtwork

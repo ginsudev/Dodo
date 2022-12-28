@@ -10,17 +10,13 @@ import DodoC
 
 extension MediaPlayer {
     final class ViewModel: ObservableObject {
-        
-        //MARK: - Singleton and static
-        
+                
         static let shared = ViewModel()
         
         static let themePath: String = GSUtilities.sharedInstance().correctedFilePathFromPath(
             withRootPrefix: ":root:Library/Application Support/Dodo/Themes/\(PreferenceManager.shared.settings.themeName)/"
         )
-        
-        //MARK: - Properties
-        
+                
         @Published var hasActiveMediaApp = false {
             didSet {
                 guard !hasActiveMediaApp else {
@@ -55,7 +51,6 @@ extension MediaPlayer {
         
         @Published var foregroundColour: UIColor = .white
         
-        //MARK: - Media controlling
         func togglePlayPause(shouldPlay play: Bool) {
             let iconPath = MediaPlayer.ViewModel.themePath + (play ? "pause": "play") + ".png"
             DispatchQueue.main.async {
@@ -83,9 +78,7 @@ extension MediaPlayer {
                 self.togglePlayPause(shouldPlay: (contentItem.metadata.playbackRate > 0))
             })
         }
-        
-        //MARK: - Now playing identifier
-        
+                
         func nowPlayingAppIdentifier() -> String? {
             guard let app = SBMediaController.sharedInstance().nowPlayingApplication() else {
                 return nil

@@ -13,8 +13,7 @@ import DodoC
 struct Container: View {
     @StateObject private var mediaModel = MediaPlayer.ViewModel.shared
     @StateObject private var dimensions = Dimensions.shared
-    
-    @State var containerFrame: CGRect = .zero
+    @State private var containerFrame: CGRect = .zero
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -81,23 +80,22 @@ private extension Container {
     }
     
     var mainContent: some View {
-        VStack(spacing: 20.0) {
+        VStack(alignment: .leading, spacing: 20.0) {
             switch PreferenceManager.shared.settings.timeMediaPlayerStyle {
             case .time:
                 MainContent()
             case .mediaPlayer:
-                Spacer()
                 mediaPlayer
             case .both:
                 MainContent()
                 mediaPlayer
             }
         }
+        .frame(alignment: .bottom)
         .padding(.horizontal)
         .readFrame(in: .local, for: $containerFrame)
-        .onChange(of: containerFrame) { newValue in
-            dimensions.height = newValue.height
-            NSLog("[Dodo]: frame updated, height=\(newValue.height)")
+        .onChange(of: containerFrame) { newFrame in
+            dimensions.height = newFrame.height + 30
         }
     }
 }

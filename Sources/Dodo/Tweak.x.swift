@@ -329,13 +329,13 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
         
         let startY: CGFloat = {
             var value = screenHeight
-            value -= (Dimensions.shared.height + Dimensions.shared.androBarHeight + 60)
+            value -= (Dimensions.shared.height + Dimensions.shared.androBarHeight + 50)
             return value / screenHeight
         }()
         
         let endY: CGFloat = {
             var value = screenHeight
-            value -= (Dimensions.shared.height + Dimensions.shared.androBarHeight + 20)
+            value -= (Dimensions.shared.height + Dimensions.shared.androBarHeight)
             return value / screenHeight
         }()
         

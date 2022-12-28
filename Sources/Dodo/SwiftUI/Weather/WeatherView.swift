@@ -15,7 +15,7 @@ struct WeatherView: View {
     
     var body: some View {
         Button {
-            viewModel.updateWeather(forced: true)
+            viewModel.updateWeather()
             HapticManager.playHaptic(withIntensity: .success)
         } label: {
             weatherInfo

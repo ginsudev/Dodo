@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 #import <libgscommon/libgsutils.h>
-#import <libgsweather/GSWeather.h>
+#import <PeterDev/libpddokdo.h>
 #import <AVKit/AVKit.h>
 #include "MediaRemote.h"
 
