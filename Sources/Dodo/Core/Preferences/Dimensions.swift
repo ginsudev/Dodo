@@ -26,4 +26,6 @@ final class Dimensions: ObservableObject {
         ? GSUtilities.sharedInstance().androBarHeight
         : 0
     }()
+    
+    let statusItemHeight: CGFloat = 18.0
 }

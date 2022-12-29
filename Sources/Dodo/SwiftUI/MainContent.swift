@@ -10,41 +10,30 @@ import SwiftUI
 //MARK: - Public
 
 struct MainContent: View {
-    @StateObject private var chargingViewModel = ChargingIcon.ViewModel()
     @EnvironmentObject var dimensions: Dimensions
+    @State private var timeFrame: CGRect = .zero
+    @State private var appViewHeight: CGFloat = 0.0
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0.0) {
-            topSection
+        VStack(alignment: .leading, spacing: 5.0) {
+            StatusItemGroupView()
+                .frame(maxHeight: 18)
             midSection
         }
     }
 }
 
 private extension MainContent {
-    var topSection: some View {
-        HStack(spacing: 10.0) {
-            LockIcon()
-            chargingIcon
-            if PreferenceManager.shared.settings.showWeather {
-                WeatherView()
-            }
-        }
-    }
-    
     @ViewBuilder
     var midSection: some View {
-        if PreferenceManager.shared.settings.timeMediaPlayerStyle == .mediaPlayer {
+        HStack(spacing: 15) {
+            TimeDateView()
+                .readFrame(for: $timeFrame)
+                .onChange(of: timeFrame) { newFrame in
+                    appViewHeight = newFrame.height
+                }
             Spacer()
-            if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
-                favouriteApps
-            }
-        } else {
-            HStack {
-                TimeDateView()
-                Spacer()
-                favouriteApps
-            }
+            favouriteApps
         }
     }
     
@@ -52,17 +41,9 @@ private extension MainContent {
     var favouriteApps: some View {
         if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
             AppView()
-                .frame(height: 40)
-        }
-    }
-    
-    @ViewBuilder
-    var chargingIcon: some View {
-        if PreferenceManager.shared.settings.hasChargingIndication,
-           PreferenceManager.shared.settings.hasChargingIcon,
-           chargingViewModel.isCharging {
-            ChargingIcon()
-                .environmentObject(chargingViewModel)
+                .frame(maxHeight: appViewHeight)
+                .clipped()
+                .layoutPriority(-1)
         }
     }
 }

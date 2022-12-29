@@ -19,7 +19,6 @@ struct Container: View {
         ZStack(alignment: .bottom) {
             gradient
             mainContent
-                .padding(.bottom)
                 .padding(.bottom, dimensions.androBarHeight)
                 .environmentObject(dimensions)
         }
@@ -49,25 +48,25 @@ private extension Container {
     
     @ViewBuilder
     var mediaPlayer: some View {
-        switch (PreferenceManager.shared.settings.playerStyle,
-                mediaModel.hasActiveMediaApp,
-                PreferenceManager.shared.settings.showSuggestions
-        ) {
-        case (_, false, false):
-            EmptyView()
-                .frame(maxWidth: .zero, maxHeight: .zero)
-                .layoutPriority(-1)
-        case (.modular, _, _):
-            divider
-            ModularMediaPlayerContainer()
-                .environmentObject(mediaModel)
-        case (.classic, true, _):
-            divider
-            MediaPlayer(artworkRadius: 5.0)
-                .environmentObject(mediaModel)
-        default:
-            divider
-            SuggestionView()
+        VStack(spacing: 10) {
+            switch (PreferenceManager.shared.settings.playerStyle,
+                    mediaModel.hasActiveMediaApp,
+                    PreferenceManager.shared.settings.showSuggestions
+            ) {
+            case (_, false, false):
+                EmptyView()
+            case (.modular, _, _):
+                divider
+                ModularMediaPlayerContainer()
+                    .environmentObject(mediaModel)
+            case (.classic, true, _):
+                divider
+                MediaPlayer(artworkRadius: 5.0)
+                    .environmentObject(mediaModel)
+            default:
+                divider
+                SuggestionView()
+            }
         }
     }
     
@@ -79,12 +78,21 @@ private extension Container {
         }
     }
     
+    @ViewBuilder
+    var favouriteApps: some View {
+        if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
+            AppView()
+                .frame(height: 80, alignment: .bottom)
+        }
+    }
+    
     var mainContent: some View {
-        VStack(alignment: .leading, spacing: 20.0) {
+        VStack(alignment: .leading, spacing: 10.0) {
             switch PreferenceManager.shared.settings.timeMediaPlayerStyle {
             case .time:
                 MainContent()
             case .mediaPlayer:
+                favouriteApps
                 mediaPlayer
             case .both:
                 MainContent()

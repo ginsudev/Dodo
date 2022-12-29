@@ -8,12 +8,6 @@
 import DodoC
 
 extension WeatherView {
-    enum TemperatureUnit: Int {
-    case celsius = 0,
-         fahrenheit = 1,
-         kelvin = 2
-    }
-    
     final class ViewModel: ObservableObject {
         @Published private(set) var locationName = ""
         @Published private(set) var temperature = ""

@@ -10,27 +10,35 @@ import SwiftUI
 //MARK: - Public
 
 struct AppView: View {
-    var body: some View {
-        HStack {
-            appsView
-                .frame(alignment: .trailing)
-        }
+    private var columns: [GridItem] {
+        return [GridItem(
+            .adaptive(
+                minimum: 30,
+                maximum: 40
+            ),
+            spacing: 5,
+            alignment: .bottomTrailing
+        )]
     }
-}
-
-//MARK: - Private
-
-private extension AppView {
-    var appsView: some View {
-        ForEach(AppsManager.favouriteAppBundleIdentifiers, id: \.self) { identifier in
-            Button {
-                AppsManager.openApplication(withIdentifier: identifier)
-            } label: {
-                Image(uiImage: UIImage(withBundleIdentifier: identifier))
-                    .resizable()
-                    .frame(minWidth: 30, maxWidth: 40, minHeight: 30, maxHeight: 40)
-                    .aspectRatio(contentMode: .fit)
+    
+    var body: some View {
+        ScrollView(.vertical) {
+            VStack(spacing: 0.0) {
+                Spacer()
+                LazyVGrid(columns: columns) {
+                    ForEach(AppsManager.favouriteAppBundleIdentifiers, id: \.self) { identifier in
+                        Button {
+                            AppsManager.openApplication(withIdentifier: identifier)
+                        } label: {
+                            Image(uiImage: UIImage(withBundleIdentifier: identifier))
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        }
+                    }
+                }
+                Spacer()
             }
         }
+        .environment(\.layoutDirection, .rightToLeft)
     }
 }

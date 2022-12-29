@@ -20,12 +20,12 @@ extension TimeDateView {
                 return "h:mm:ss"
             case .time:
                 return "h:mm"
-            case .timeCustom(let custom):
-                return custom
+            case .timeCustom(let timeCustom):
+                return timeCustom
             case .date:
                 return "EEEE, MMMM d"
-            case .dateCustom(let custom):
-                return custom
+            case .dateCustom(let dateCustom):
+                return dateCustom
             }
         }
         

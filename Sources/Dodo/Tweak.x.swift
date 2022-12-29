@@ -107,7 +107,7 @@ class SBLockScreenManager_Hook: ClassHook<SBLockScreenManager> {
             return
         }
         
-        LockIcon.ViewModel.shared.lockImageName = "lock.fill"
+        LockIconViewModel.shared.lockImageName = "lock.fill"
     }
     
     func _runUnlockActionBlock(_ run: Bool) {
@@ -120,7 +120,7 @@ class SBLockScreenManager_Hook: ClassHook<SBLockScreenManager> {
             return
         }
         
-        LockIcon.ViewModel.shared.lockImageName = "lock.open.fill"
+        LockIconViewModel.shared.lockImageName = "lock.open.fill"
     }
 
     func lockScreenViewControllerDidDismiss() {
