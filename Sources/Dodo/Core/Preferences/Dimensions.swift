@@ -6,7 +6,13 @@
 //
 
 import UIKit
+import SwiftUI
 import DodoC
+
+enum GridSizeType: Int {
+    case flexible = 0
+    case fixed = 1
+}
 
 final class Dimensions: ObservableObject {
     static let shared = Dimensions()
@@ -28,4 +34,15 @@ final class Dimensions: ObservableObject {
     }()
     
     let statusItemHeight: CGFloat = 18.0
+    
+    var favouriteAppsGridSizeType: GridSizeType = .flexible
+    var favouriteAppsGridItemSize: Double = 40
+    var favouriteAppsGridColumnAmount: Int = 4
+}
+
+extension Dimensions {
+    struct Padding {
+        static let medium = 10.0
+        static let system = 12.0
+    }
 }

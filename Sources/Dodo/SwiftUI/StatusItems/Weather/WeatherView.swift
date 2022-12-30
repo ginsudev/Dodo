@@ -27,15 +27,19 @@ struct WeatherView: View {
 
 private extension WeatherView {
     var weatherInfo: some View {
-        Text("\(viewModel.locationName) | \(viewModel.temperature)")
-            .font(
-                .system(
-                    size: PreferenceManager.shared.settings.weatherFontSize,
-                    weight: .regular,
-                    design: PreferenceManager.shared.settings.fontType
+        HStack {
+            StatusImage(image: Image(uiImage: viewModel.conditionImage))
+                        
+            Text("\(viewModel.locationName) | \(viewModel.temperature)")
+                .font(
+                    .system(
+                        size: PreferenceManager.shared.settings.weatherFontSize,
+                        weight: .regular,
+                        design: PreferenceManager.shared.settings.fontType
+                    )
                 )
-            )
-            .lineLimit(1)
-            .foregroundColor(Color(Colors.weatherColor))
+                .lineLimit(1)
+                .foregroundColor(Color(Colors.weatherColor))
+        }
     }
 }

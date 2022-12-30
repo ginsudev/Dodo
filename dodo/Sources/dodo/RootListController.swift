@@ -90,7 +90,7 @@ class RootListController: PSListController {
                                 twitterHandle: "ginsudev",
                                 developerName: "Ginsu",
                                 tweakName: "Dodo",
-                                tweakVersion: "v3.2",
+                                tweakVersion: "v3.3",
                                 email: "njl02@outlook.com",
                                 discordURL: "https://discord.gg/BhdUyCbgkZ",
                                 donateURL: "https://paypal.me/xiaonuoya")

@@ -145,6 +145,26 @@ final class PreferenceManager {
             default: true
         ] as! Bool
         
+        settings.isVisibleFavouriteAppsFade = dictionary[
+            "isVisibleFavouriteAppsFade",
+            default: false
+        ] as! Bool
+        
+        Dimensions.shared.favouriteAppsGridSizeType = GridSizeType(rawValue: dictionary[
+            "favouriteAppsGridSizeType",
+            default: 1
+        ] as! Int)!
+        
+        Dimensions.shared.favouriteAppsGridItemSize = dictionary[
+            "favouriteAppsGridItemSize",
+            default: 40.0
+        ] as! Double
+        
+        Dimensions.shared.favouriteAppsGridColumnAmount = dictionary[
+            "favouriteAppsGridColumnAmount",
+            default: 4
+        ] as! Int
+        
         AppsManager.favouriteAppBundleIdentifiers = dictionary[
             "favouriteApps",
             default: [
@@ -240,6 +260,7 @@ extension PreferenceManager {
         var dateTemplate: DateTemplate = .date
         // Favourite apps
         var hasFavouriteApps = true
+        var isVisibleFavouriteAppsFade = false
         // Weather
         var showWeather = true
     }

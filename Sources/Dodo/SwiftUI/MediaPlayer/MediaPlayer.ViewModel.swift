@@ -10,7 +10,6 @@ import DodoC
 
 extension MediaPlayer {
     final class ViewModel: ObservableObject {
-                
         static let shared = ViewModel()
         
         static let themePath: String = GSUtilities.sharedInstance().correctedFilePathFromPath(

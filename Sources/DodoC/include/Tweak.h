@@ -143,5 +143,6 @@ extern int SBSLaunchApplicationWithIdentifier(CFStringRef identifier, Boolean su
 @end
 
 @interface UIDevice (Private)
++ (BOOL)_hasHomeButton;
 + (BOOL)currentIsIPad;
 @end

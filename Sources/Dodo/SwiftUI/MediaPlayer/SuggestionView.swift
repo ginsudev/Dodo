@@ -11,18 +11,14 @@ import DodoC
 //MARK: - Public
 
 struct SuggestionView: View {
-    @State private var appsManager = AppsManager.self
-    @State private var bluetoothButtonColor: UIColor = .white
     @EnvironmentObject var dimensions: Dimensions
+    private let viewModel = ViewModel()
 
     var body: some View {
         HStack {
             openAppButton
-                .layoutPriority(-1)
-            if !dimensions.isLandscape {
-                Spacer()
-                bluetoothButton
-            }
+            Spacer()
+            bluetoothButton
         }
     }
 }
@@ -32,13 +28,15 @@ struct SuggestionView: View {
 private extension SuggestionView {
     var openAppButton: some View {
         Button {
-            appsManager.openApplication(withIdentifier: appsManager.suggestedAppBundleIdentifier)
+            viewModel.appsManager.openApplication(
+                withIdentifier: viewModel.appsManager.suggestedAppBundleIdentifier
+            )
         } label: {
             HStack {
-                Image(uiImage: UIImage(withBundleIdentifier: appsManager.suggestedAppBundleIdentifier))
+                Image(uiImage: UIImage(withBundleIdentifier: viewModel.appsManager.suggestedAppBundleIdentifier))
                     .resizable()
-                    .frame(maxWidth: 45, maxHeight: 45)
                     .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 45, maxHeight: 45)
                 openAppButtonText
             }
         }
@@ -46,10 +44,10 @@ private extension SuggestionView {
     
     var openAppButtonText: some View {
         VStack(alignment: .leading) {
-            Text(ResourceBundle.localisation(for: "Recommended_For_You"))
+            Text(viewModel.text(for: .recommended))
                 .foregroundColor(.white)
                 .font(.system(size: 15, weight: .regular, design: PreferenceManager.shared.settings.fontType))
-            Text(ResourceBundle.localisation(for: "Tap_To_Listen"))
+            Text(viewModel.text(for: .tap))
                 .foregroundColor(Color(UIColor.lightText))
                 .font(.system(size: 13, weight: .regular, design: PreferenceManager.shared.settings.fontType))
         }
@@ -60,19 +58,21 @@ private extension SuggestionView {
         Button {
             AVRoutePickerView()._routePickerButtonTapped(nil)
         } label: {
-            Text("\(Image(systemName: "airplayaudio")) \(ResourceBundle.localisation(for: "Bluetooth"))")
-                .foregroundColor(Color(bluetoothButtonColor.suitableForegroundColour()))
-                .font(.system(size: 13, weight: .regular, design: PreferenceManager.shared.settings.fontType))
-                .padding(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
-                .background(Color(bluetoothButtonColor))
+            Text("\(Image(systemName: "airplayaudio")) \(viewModel.text(for: .bluetooth))")
+                .font(.system(
+                    size: 13,
+                    weight: .regular,
+                    design: PreferenceManager.shared.settings.fontType)
+                )
+                .padding(EdgeInsets(
+                    top: 10,
+                    leading: 15,
+                    bottom: 10,
+                    trailing: 15)
+                )
+                .foregroundColor(Color(viewModel.bluetoothColor.suitableForegroundColour()))
+                .background(Color(viewModel.bluetoothColor))
                 .clipShape(Capsule())
-                .onAppear {
-                    if PreferenceManager.shared.settings.playerStyle == .classic {
-                        bluetoothButtonColor = UIImage(withBundleIdentifier: appsManager.suggestedAppBundleIdentifier)
-                            .dominantColour()
-                            .withAlphaComponent(0.3)
-                    }
-                }
         }
     }
 }

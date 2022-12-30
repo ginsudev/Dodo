@@ -100,50 +100,15 @@
             <key>label</key>
             <string>Favourite apps</string>
         </dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<true/>
-			<key>defaults</key>
-			<string>com.ginsu.dodo</string>
-			<key>key</key>
-			<string>hasFavouriteApps</string>
-			<key>label</key>
-			<string>Show favourite apps</string>
-            <key>id</key>
-            <string>hasFavouriteAppsStatus</string>
-		</dict>
         <dict>
-            <key>bundle</key>
-            <string>AltList</string>
             <key>cell</key>
-            <string>PSLinkListCell</string>
+            <string>PSLinkCell</string>
             <key>detail</key>
-            <string>ATLApplicationListMultiSelectionController</string>
-            <key>key</key>
-            <string>favouriteApps</string>
-            <key>defaults</key>
-            <string>com.ginsu.dodo</string>
-            <key>sections</key>
-            <array>
-                <dict>
-                    <key>sectionType</key>
-                    <string>Visible</string>
-                </dict>
-            </array>
+            <string>dodo.DodoFavouriteAppsController</string>
             <key>isController</key>
-            <true/>
-            <key>overridePrincipalClass</key>
             <true/>
             <key>label</key>
             <string>Favourite apps</string>
-            <key>useSearchBar</key>
-            <true/>
-            <key>alphabeticIndexingEnabled</key>
-            <true/>
-			<key>dynamicRule</key>
-            <string>hasFavouriteAppsStatus,==,0</string>
         </dict>
 		<dict>
             <key>cell</key>

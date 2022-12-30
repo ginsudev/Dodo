@@ -19,6 +19,7 @@ struct Container: View {
         ZStack(alignment: .bottom) {
             gradient
             mainContent
+                .padding(.bottom, UIDevice._hasHomeButton() ? 12 : 0)
                 .padding(.bottom, dimensions.androBarHeight)
                 .environmentObject(dimensions)
         }
@@ -49,24 +50,9 @@ private extension Container {
     @ViewBuilder
     var mediaPlayer: some View {
         VStack(spacing: 10) {
-            switch (PreferenceManager.shared.settings.playerStyle,
-                    mediaModel.hasActiveMediaApp,
-                    PreferenceManager.shared.settings.showSuggestions
-            ) {
-            case (_, false, false):
-                EmptyView()
-            case (.modular, _, _):
-                divider
-                ModularMediaPlayerContainer()
-                    .environmentObject(mediaModel)
-            case (.classic, true, _):
-                divider
-                MediaPlayer(artworkRadius: 5.0)
-                    .environmentObject(mediaModel)
-            default:
-                divider
-                SuggestionView()
-            }
+            divider
+            MediaPlayer(style: PreferenceManager.shared.settings.playerStyle)
+                .environmentObject(mediaModel)
         }
     }
     
@@ -103,7 +89,7 @@ private extension Container {
         .padding(.horizontal)
         .readFrame(in: .local, for: $containerFrame)
         .onChange(of: containerFrame) { newFrame in
-            dimensions.height = newFrame.height + 30
+            dimensions.height = newFrame.height + 10
         }
     }
 }

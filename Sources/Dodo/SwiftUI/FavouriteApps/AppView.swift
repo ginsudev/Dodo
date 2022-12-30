@@ -10,35 +10,66 @@ import SwiftUI
 //MARK: - Public
 
 struct AppView: View {
+    
     private var columns: [GridItem] {
-        return [GridItem(
-            .adaptive(
-                minimum: 30,
-                maximum: 40
-            ),
-            spacing: 5,
-            alignment: .bottomTrailing
-        )]
+        var gridItem: GridItem
+        switch Dimensions.shared.favouriteAppsGridSizeType {
+        case .flexible:
+            gridItem = GridItem(
+                .flexible(
+                    minimum: 10,
+                    maximum: Dimensions.shared.favouriteAppsGridItemSize
+                ),
+                spacing: 5,
+                alignment: .trailing
+            )
+        case .fixed:
+            gridItem = GridItem(
+                .fixed(Dimensions.shared.favouriteAppsGridItemSize),
+                spacing: 5,
+                alignment: .trailing
+            )
+        }
+        return [GridItem](
+            repeating: gridItem,
+            count: Dimensions.shared.favouriteAppsGridColumnAmount
+        )
     }
     
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 0.0) {
-                Spacer()
-                LazyVGrid(columns: columns) {
-                    ForEach(AppsManager.favouriteAppBundleIdentifiers, id: \.self) { identifier in
-                        Button {
-                            AppsManager.openApplication(withIdentifier: identifier)
-                        } label: {
-                            Image(uiImage: UIImage(withBundleIdentifier: identifier))
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        }
+            LazyVGrid(columns: columns) {
+                ForEach(AppsManager.favouriteAppBundleIdentifiers, id: \.self) { identifier in
+                    Button {
+                        AppsManager.openApplication(withIdentifier: identifier)
+                    } label: {
+                        Image(uiImage: UIImage(withBundleIdentifier: identifier))
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
                     }
                 }
-                Spacer()
             }
         }
+        .mask(mask)
         .environment(\.layoutDirection, .rightToLeft)
+    }
+}
+
+// MARK: - Private
+
+private extension AppView {
+    @ViewBuilder
+    var mask: some View {
+        VStack(spacing: 0) {
+            Color.black
+            if PreferenceManager.shared.settings.isVisibleFavouriteAppsFade {
+                LinearGradient(gradient: Gradient(
+                    colors: [.black,.black.opacity(0)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 15)
+            }
+        }
     }
 }

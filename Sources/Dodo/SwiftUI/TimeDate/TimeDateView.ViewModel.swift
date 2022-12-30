@@ -31,14 +31,9 @@ extension TimeDateView {
         
         func getDate(fromTemplate template: DateTemplate) -> String {
             let formatter = DateFormatter()
-            let localisedDateFormat = DateFormatter.dateFormat(
-                fromTemplate: string(fromTemplate: template),
-                options: 0,
-                locale: Locale.current
-            )
             formatter.locale = Locale.current
             formatter.timeZone = TimeZone.current
-            formatter.dateFormat = localisedDateFormat
+            formatter.dateFormat = string(fromTemplate: template)
             return formatter.string(from: Date())
         }
         

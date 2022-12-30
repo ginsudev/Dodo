@@ -12,18 +12,20 @@ import SwiftUI
 struct MediaPlayer: View {
     @EnvironmentObject var mediaModel: ViewModel
     @EnvironmentObject var dimensions: Dimensions
+    private let style: MediaPlayerStyle
     
-    private let artworkRadius: Double
-    
-    init(artworkRadius: Double) {
-        self.artworkRadius = artworkRadius
+    init(style: MediaPlayerStyle) {
+        self.style = style
     }
 
     var body: some View {
-        if dimensions.isLandscape {
-            landscapePlayer
-        } else {
-            portraitPlayer
+        switch style {
+        case .modular:
+            playerView
+                .padding(Dimensions.Padding.medium)
+                .background(modularBackground)
+        case .classic:
+            playerView
         }
     }
 }
@@ -31,19 +33,36 @@ struct MediaPlayer: View {
 //MARK: - Private
 
 private extension MediaPlayer {
-    var landscapePlayer: some View {
-        HStack(spacing: 10.0) {
-            songDetailsButton
-            MediaControls()
+    var playerView: some View {
+        Group {
+            switch (mediaModel.hasActiveMediaApp,
+                    PreferenceManager.shared.settings.showSuggestions
+            ) {
+            case (false, false):
+                EmptyView()
+            case (true, _):
+                HStack {
+                    songDetailsButton
+                    Spacer()
+                    MediaControls()
+                }
+            default:
+                SuggestionView()
+            }
         }
+        // Take up all the space we need in portrait, only take up what we need in landscape.
+        .fixedSize(horizontal: dimensions.isLandscape, vertical: true)
     }
     
-    var portraitPlayer: some View {
-        HStack {
-            songDetailsButton
-            Spacer()
-            MediaControls()
-        }
+    var modularBackground: some View {
+        RoundedRectangle(cornerRadius: style.cornerRadius())
+            .foregroundColor(.white)
+            .colorMultiply(
+                mediaModel.hasActiveMediaApp
+                ? Color(mediaModel.artworkColour)
+                : Color(UIImage(withBundleIdentifier: AppsManager.suggestedAppBundleIdentifier).dominantColour())
+            )
+            .animation(.easeInOut, value: mediaModel.artworkColour)
     }
     
     @ViewBuilder
@@ -66,18 +85,32 @@ private extension MediaPlayer {
     var albumArtwork: some View {
         Image(uiImage: mediaModel.albumArtwork)
             .resizable()
-            .frame(maxWidth: 45, maxHeight: 45)
             .aspectRatio(contentMode: .fit)
-            .cornerRadius(artworkRadius)
-            .shadow(color: .black.opacity(0.4), radius: artworkRadius)
+            .frame(
+                maxWidth: 45,
+                maxHeight: 45
+            )
+            .cornerRadius(style.artworkRadius())
+            .shadow(
+                color: .black.opacity(0.4),
+                radius: style.artworkRadius()
+            )
     }
     
     var trackDetails: some View {
         VStack(alignment: .leading) {
             Text(mediaModel.trackName)
-                .font(.system(size: 15, weight: .regular, design: PreferenceManager.shared.settings.fontType))
+                .font(.system(
+                    size: 15,
+                    weight: .regular,
+                    design: PreferenceManager.shared.settings.fontType)
+                )
             Text(mediaModel.artistName)
-                .font(.system(size: 12, weight: .regular, design: PreferenceManager.shared.settings.fontType))
+                .font(.system(
+                    size: 12,
+                    weight: .regular,
+                    design: PreferenceManager.shared.settings.fontType)
+                )
         }
         .foregroundColor(Color(mediaModel.foregroundColour))
         .lineLimit(1)

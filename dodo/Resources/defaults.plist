@@ -40,6 +40,14 @@
 	<string>#FFFFFFFF</string>
 	<key>hasFavouriteApps</key>
 	<true/>
+	<key>favouriteAppsGridSizeType</key>
+	<integer>1</integer>
+	<key>favouriteAppsGridItemSize</key>
+	<real>40.0</real>
+	<key>favouriteAppsGridColumnAmount</key>
+	<integer>4</integer>
+	<key>isVisibleFavouriteAppsFade</key>
+	<false/>
 	<key>notificationVerticalOffset</key>
 	<real>190.0</real>
 	<key>timeFontSize</key>
