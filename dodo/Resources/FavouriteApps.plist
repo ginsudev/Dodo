@@ -84,6 +84,8 @@
                 <integer>0</integer>
                 <integer>1</integer>
             </array>
+            <key>id</key>
+            <string>favouriteAppsGridSizeTypeStatus</string>
         </dict>
 		<dict>
 			<key>cell</key>
@@ -97,11 +99,33 @@
 			<key>defaults</key>
 			<string>com.ginsu.dodo</string>
 			<key>key</key>
-			<string>favouriteAppsGridItemSize</string>
+			<string>favouriteAppsFlexibleGridItemSize</string>
 			<key>min</key>
 			<real>10.0</real>
 			<key>max</key>
 			<real>100.0</real>
+			<key>dynamicRule</key>
+            <string>favouriteAppsGridSizeTypeStatus,==,1</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSTableCell</string>
+			<key>cellClass</key>
+			<string>GSStepperCell</string>
+			<key>title</key>
+			<string>Size</string>
+			<key>default</key>
+			<real>40.0</real>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>favouriteAppsFixedGridItemSize</string>
+			<key>min</key>
+			<real>10.0</real>
+			<key>max</key>
+			<real>60.0</real>
+			<key>dynamicRule</key>
+            <string>favouriteAppsGridSizeTypeStatus,==,0</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -111,15 +135,37 @@
 			<key>title</key>
 			<string>Columns</string>
 			<key>default</key>
-			<integer>4</integer>
+			<integer>3</integer>
 			<key>defaults</key>
 			<string>com.ginsu.dodo</string>
 			<key>key</key>
-			<string>favouriteAppsGridColumnAmount</string>
+			<string>favouriteAppsFlexibleGridColumnAmount</string>
 			<key>min</key>
 			<integer>1</integer>
 			<key>max</key>
 			<integer>8</integer>
+			<key>dynamicRule</key>
+            <string>favouriteAppsGridSizeTypeStatus,==,1</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSTableCell</string>
+			<key>cellClass</key>
+			<string>GSStepperCell</string>
+			<key>title</key>
+			<string>Columns</string>
+			<key>default</key>
+			<integer>3</integer>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>favouriteAppsFixedGridColumnAmount</string>
+			<key>min</key>
+			<integer>1</integer>
+			<key>max</key>
+			<integer>3</integer>
+			<key>dynamicRule</key>
+            <string>favouriteAppsGridSizeTypeStatus,==,0</string>
 		</dict>
 		<dict>
             <key>cell</key>

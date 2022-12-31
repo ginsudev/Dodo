@@ -34,15 +34,18 @@ final class Dimensions: ObservableObject {
     }()
     
     let statusItemHeight: CGFloat = 18.0
-    
     var favouriteAppsGridSizeType: GridSizeType = .flexible
-    var favouriteAppsGridItemSize: Double = 40
-    var favouriteAppsGridColumnAmount: Int = 4
+    var favouriteAppsFlexibleGridItemSize: Double = 40.0
+    var favouriteAppsFlexibleGridColumnAmount: Int = 3
+    var favouriteAppsFixedGridItemSize: Double = 40.0
+    var favouriteAppsFixedGridColumnAmount: Int = 3
 }
 
 extension Dimensions {
     struct Padding {
+        /// 10px
         static let medium = 10.0
+        /// 12px
         static let system = 12.0
     }
 }

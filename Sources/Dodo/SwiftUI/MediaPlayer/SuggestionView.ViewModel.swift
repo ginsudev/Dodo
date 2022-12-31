@@ -15,6 +15,11 @@ extension SuggestionView {
         case tap
     }
     
+    enum BluetoothButtonType {
+        case icon
+        case iconWithText
+    }
+    
     struct ViewModel {
         var appsManager = AppsManager.self
         

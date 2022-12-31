@@ -42,10 +42,14 @@
 	<true/>
 	<key>favouriteAppsGridSizeType</key>
 	<integer>1</integer>
-	<key>favouriteAppsGridItemSize</key>
+	<key>favouriteAppsFlexibleGridItemSize</key>
 	<real>40.0</real>
-	<key>favouriteAppsGridColumnAmount</key>
-	<integer>4</integer>
+	<key>favouriteAppsFlexibleGridColumnAmount</key>
+	<integer>3</integer>
+	<key>favouriteAppsFixedGridItemSize</key>
+	<real>40.0</real>
+	<key>favouriteAppsFixedGridColumnAmount</key>
+	<integer>3</integer>
 	<key>isVisibleFavouriteAppsFade</key>
 	<false/>
 	<key>notificationVerticalOffset</key>

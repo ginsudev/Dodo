@@ -19,6 +19,7 @@ struct StatusItemGroupView: View {
             chargingIcon
             weatherView
         }
+        .frame(maxHeight: 18)
     }
 }
 

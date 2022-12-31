@@ -12,52 +12,59 @@ import SwiftUI
 struct AppView: View {
     
     private var columns: [GridItem] {
-        var gridItem: GridItem
         switch Dimensions.shared.favouriteAppsGridSizeType {
         case .flexible:
-            gridItem = GridItem(
-                .flexible(
-                    minimum: 10,
-                    maximum: Dimensions.shared.favouriteAppsGridItemSize
+            return [GridItem](
+                repeating: GridItem(
+                    .flexible(
+                        minimum: 10,
+                        maximum: Dimensions.shared.favouriteAppsFlexibleGridItemSize
+                    ),
+                    alignment: .trailing
                 ),
-                spacing: 5,
-                alignment: .trailing
+                count: Dimensions.shared.favouriteAppsFlexibleGridColumnAmount
             )
         case .fixed:
-            gridItem = GridItem(
-                .fixed(Dimensions.shared.favouriteAppsGridItemSize),
-                spacing: 5,
-                alignment: .trailing
+            return [GridItem](
+                repeating: GridItem(
+                    .fixed(Dimensions.shared.favouriteAppsFixedGridItemSize),
+                    alignment: .trailing
+                ),
+                count: Dimensions.shared.favouriteAppsFixedGridColumnAmount
             )
         }
-        return [GridItem](
-            repeating: gridItem,
-            count: Dimensions.shared.favouriteAppsGridColumnAmount
-        )
     }
     
     var body: some View {
         ScrollView(.vertical) {
-            LazyVGrid(columns: columns) {
-                ForEach(AppsManager.favouriteAppBundleIdentifiers, id: \.self) { identifier in
-                    Button {
-                        AppsManager.openApplication(withIdentifier: identifier)
-                    } label: {
-                        Image(uiImage: UIImage(withBundleIdentifier: identifier))
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                    }
-                }
+            if gridAlignment == .trailing {
+                gridView
+                    .environment(\.layoutDirection, .rightToLeft)
+            } else {
+                gridView
             }
         }
         .mask(mask)
-        .environment(\.layoutDirection, .rightToLeft)
     }
 }
 
 // MARK: - Private
 
 private extension AppView {
+    var gridView: some View {
+        LazyVGrid(columns: columns, alignment: gridAlignment) {
+            ForEach(AppsManager.favouriteAppBundleIdentifiers, id: \.self) { identifier in
+                Button {
+                    AppsManager.openApplication(withIdentifier: identifier)
+                } label: {
+                    Image(uiImage: UIImage(withBundleIdentifier: identifier))
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                }
+            }
+        }
+    }
+    
     @ViewBuilder
     var mask: some View {
         VStack(spacing: 0) {
@@ -71,5 +78,12 @@ private extension AppView {
                 .frame(height: 15)
             }
         }
+    }
+    
+    var gridAlignment: HorizontalAlignment {
+        if PreferenceManager.shared.settings.timeMediaPlayerStyle == .mediaPlayer {
+            return .center
+        }
+        return .trailing
     }
 }

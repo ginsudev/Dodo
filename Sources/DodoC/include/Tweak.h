@@ -117,7 +117,7 @@ struct SBIconImageInfo {
 @end
 
 @interface AVRoutePickerView (Private)
--(void)_routePickerButtonTapped:(id)arg1;
+- (void)_routePickerButtonTapped:(id)arg1;
 @end
 
 #ifndef SPRINGBOARDSERVICES_H_

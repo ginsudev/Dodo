@@ -15,7 +15,7 @@ enum MediaPlayerStyle: Int {
     func cornerRadius() -> CGFloat {
         switch self {
         case .modular:
-            return 15.0
+            return UIDevice._hasHomeButton() ? 8 : 15.0
         case .classic:
             return 0.0
         }

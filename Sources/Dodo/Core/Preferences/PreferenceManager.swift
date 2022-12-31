@@ -155,14 +155,24 @@ final class PreferenceManager {
             default: 1
         ] as! Int)!
         
-        Dimensions.shared.favouriteAppsGridItemSize = dictionary[
-            "favouriteAppsGridItemSize",
+        Dimensions.shared.favouriteAppsFlexibleGridItemSize = dictionary[
+            "favouriteAppsFlexibleGridItemSize",
             default: 40.0
         ] as! Double
         
-        Dimensions.shared.favouriteAppsGridColumnAmount = dictionary[
-            "favouriteAppsGridColumnAmount",
-            default: 4
+        Dimensions.shared.favouriteAppsFlexibleGridColumnAmount = dictionary[
+            "favouriteAppsFlexibleGridColumnAmount",
+            default: 3
+        ] as! Int
+        
+        Dimensions.shared.favouriteAppsFixedGridItemSize = dictionary[
+            "favouriteAppsFixedGridItemSize",
+            default: 40.0
+        ] as! Double
+        
+        Dimensions.shared.favouriteAppsFixedGridColumnAmount = dictionary[
+            "favouriteAppsFixedGridColumnAmount",
+            default: 3
         ] as! Int
         
         AppsManager.favouriteAppBundleIdentifiers = dictionary[

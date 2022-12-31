@@ -58,21 +58,36 @@ private extension SuggestionView {
         Button {
             AVRoutePickerView()._routePickerButtonTapped(nil)
         } label: {
-            Text("\(Image(systemName: "airplayaudio")) \(viewModel.text(for: .bluetooth))")
-                .font(.system(
-                    size: 13,
-                    weight: .regular,
-                    design: PreferenceManager.shared.settings.fontType)
-                )
-                .padding(EdgeInsets(
-                    top: 10,
-                    leading: 15,
-                    bottom: 10,
-                    trailing: 15)
-                )
-                .foregroundColor(Color(viewModel.bluetoothColor.suitableForegroundColour()))
-                .background(Color(viewModel.bluetoothColor))
-                .clipShape(Capsule())
+            if bluetoothButtonType == .icon {
+                Image(systemName: "airplayaudio")
+                    .foregroundColor(Color(viewModel.bluetoothColor.suitableForegroundColour()))
+                    .padding(Dimensions.Padding.medium)
+                    .background(Color(viewModel.bluetoothColor))
+                    .clipShape(Circle())
+            } else {
+                Text("\(Image(systemName: "airplayaudio")) \(viewModel.text(for: .bluetooth))")
+                    .font(.system(
+                        size: 13,
+                        weight: .regular,
+                        design: PreferenceManager.shared.settings.fontType)
+                    )
+                    .padding(EdgeInsets(
+                        top: 10,
+                        leading: 15,
+                        bottom: 10,
+                        trailing: 15)
+                    )
+                    .foregroundColor(Color(viewModel.bluetoothColor.suitableForegroundColour()))
+                    .background(Color(viewModel.bluetoothColor))
+                    .clipShape(Capsule())
+            }
         }
+    }
+    
+    var bluetoothButtonType: BluetoothButtonType  {
+        if (UIDevice._hasHomeButton() || dimensions.isLandscape) && !UIDevice.currentIsIPad() {
+            return .icon
+        }
+        return .iconWithText
     }
 }

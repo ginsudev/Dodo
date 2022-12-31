@@ -16,7 +16,9 @@ struct MainContent: View {
     var body: some View {
         HStack(spacing: 0) {
             infoView
+                .layoutPriority(1)
             favouriteApps
+                .layoutPriority(-1)
         }
     }
 }
@@ -26,10 +28,8 @@ private extension MainContent {
     var infoView: some View {
         VStack(alignment: .leading, spacing: 5.0) {
             StatusItemGroupView()
-                .frame(maxHeight: 18)
             TimeDateView()
         }
-        .layoutPriority(1)
         .readFrame(for: $infoViewFrame)
     }
     
@@ -38,8 +38,7 @@ private extension MainContent {
         if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
             Spacer()
             AppView()
-                .layoutPriority(-1)
-                .frame(minWidth: 130, maxHeight: infoViewFrame.height, alignment: .trailing)
+                .frame(maxHeight: infoViewFrame.height)
                 .fixedSize(horizontal: true, vertical: true)
         }
     }

@@ -16,11 +16,9 @@ struct Container: View {
     @State private var containerFrame: CGRect = .zero
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack(alignment: .bottomLeading) {
             gradient
             mainContent
-                .padding(.bottom, UIDevice._hasHomeButton() ? 12 : 0)
-                .padding(.bottom, dimensions.androBarHeight)
                 .environmentObject(dimensions)
         }
         .background(Color.clear)
@@ -58,7 +56,9 @@ private extension Container {
     
     @ViewBuilder
     var divider: some View {
-        if PreferenceManager.shared.settings.showDivider && !dimensions.isLandscape {
+        if PreferenceManager.shared.settings.showDivider
+        && !dimensions.isLandscape
+        && (PreferenceManager.shared.settings.showSuggestions || mediaModel.hasActiveMediaApp) {
             Divider()
                 .overlay(Color(Colors.dividerColor).opacity(0.5))
         }
@@ -85,8 +85,10 @@ private extension Container {
                 mediaPlayer
             }
         }
+        .padding(.horizontal, Dimensions.Padding.system)
+        .padding(.bottom, UIDevice._hasHomeButton() ? Dimensions.Padding.system : 0)
+        .padding(.bottom, dimensions.androBarHeight)
         .frame(alignment: .bottom)
-        .padding(.horizontal)
         .readFrame(in: .local, for: $containerFrame)
         .onChange(of: containerFrame) { newFrame in
             dimensions.height = newFrame.height + 10
