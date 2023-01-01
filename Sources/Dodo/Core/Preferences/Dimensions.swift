@@ -12,6 +12,7 @@ import DodoC
 enum GridSizeType: Int {
     case flexible = 0
     case fixed = 1
+    case adaptive = 2
 }
 
 final class Dimensions: ObservableObject {
@@ -43,6 +44,8 @@ final class Dimensions: ObservableObject {
 
 extension Dimensions {
     struct Padding {
+        /// 8px
+        static let small = 8.0
         /// 10px
         static let medium = 10.0
         /// 12px

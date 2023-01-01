@@ -86,7 +86,7 @@ private extension Container {
             }
         }
         .padding(.horizontal, Dimensions.Padding.system)
-        .padding(.bottom, UIDevice._hasHomeButton() ? Dimensions.Padding.system : 0)
+        .padding(.bottom, UIDevice._hasHomeButton() ? Dimensions.Padding.system : Dimensions.Padding.small)
         .padding(.bottom, dimensions.androBarHeight)
         .frame(alignment: .bottom)
         .readFrame(in: .local, for: $containerFrame)

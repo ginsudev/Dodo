@@ -152,7 +152,7 @@ final class PreferenceManager {
         
         Dimensions.shared.favouriteAppsGridSizeType = GridSizeType(rawValue: dictionary[
             "favouriteAppsGridSizeType",
-            default: 1
+            default: 2
         ] as! Int)!
         
         Dimensions.shared.favouriteAppsFlexibleGridItemSize = dictionary[

@@ -28,6 +28,8 @@
 	<integer>0</integer>
 	<key>dateTemplateCustom</key>
 	<string>EEEE, MMMM d</string>
+	<key>is24HourModeEnabled</key>
+	<false/>
 	<key>timeColor</key>
 	<string>#FFFFFFFF</string>
 	<key>dateColor</key>
@@ -41,7 +43,7 @@
 	<key>hasFavouriteApps</key>
 	<true/>
 	<key>favouriteAppsGridSizeType</key>
-	<integer>1</integer>
+	<integer>2</integer>
 	<key>favouriteAppsFlexibleGridItemSize</key>
 	<real>40.0</real>
 	<key>favouriteAppsFlexibleGridColumnAmount</key>

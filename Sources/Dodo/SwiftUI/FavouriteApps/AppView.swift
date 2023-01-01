@@ -10,14 +10,13 @@ import SwiftUI
 //MARK: - Public
 
 struct AppView: View {
-    
     private var columns: [GridItem] {
         switch Dimensions.shared.favouriteAppsGridSizeType {
         case .flexible:
             return [GridItem](
                 repeating: GridItem(
                     .flexible(
-                        minimum: 10,
+                        minimum: 0,
                         maximum: Dimensions.shared.favouriteAppsFlexibleGridItemSize
                     ),
                     alignment: .trailing
@@ -32,18 +31,22 @@ struct AppView: View {
                 ),
                 count: Dimensions.shared.favouriteAppsFixedGridColumnAmount
             )
+        case .adaptive:
+            return [GridItem(
+                .adaptive(
+                    minimum: 25,
+                    maximum: 50
+                ),
+                alignment: .trailing)
+            ]
         }
     }
     
     var body: some View {
         ScrollView(.vertical) {
-            if gridAlignment == .trailing {
-                gridView
-                    .environment(\.layoutDirection, .rightToLeft)
-            } else {
-                gridView
-            }
+            gridView
         }
+        .fixedSize(horizontal: true, vertical: false)
         .mask(mask)
     }
 }
@@ -52,7 +55,7 @@ struct AppView: View {
 
 private extension AppView {
     var gridView: some View {
-        LazyVGrid(columns: columns, alignment: gridAlignment) {
+        LazyVGrid(columns: columns, alignment: .trailing) {
             ForEach(AppsManager.favouriteAppBundleIdentifiers, id: \.self) { identifier in
                 Button {
                     AppsManager.openApplication(withIdentifier: identifier)
@@ -78,12 +81,5 @@ private extension AppView {
                 .frame(height: 15)
             }
         }
-    }
-    
-    var gridAlignment: HorizontalAlignment {
-        if PreferenceManager.shared.settings.timeMediaPlayerStyle == .mediaPlayer {
-            return .center
-        }
-        return .trailing
     }
 }

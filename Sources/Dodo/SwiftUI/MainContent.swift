@@ -16,7 +16,6 @@ struct MainContent: View {
     var body: some View {
         HStack(spacing: 0) {
             infoView
-                .layoutPriority(1)
             favouriteApps
                 .layoutPriority(-1)
         }

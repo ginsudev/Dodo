@@ -62,8 +62,12 @@
             <string>Layout</string>
             <key>footerText</key>
             <string>Customise the grid layout for your favourited apps. 
-'Fixed' will size applications at a specified size. 
-'Flexible' will size your applications at the specified size if there is enough space, else they will shrink until there is enough room.</string>
+
+- 'Fixed' will size applications at a specified size.
+
+- 'Flexible' will size your applications at the specified size if there is enough space, else they will shrink until there is enough room.
+
+- 'Adaptive' is recommended to use if you're facing strange glitches.</string>
         </dict>
         <dict>
             <key>cell</key>
@@ -71,18 +75,20 @@
             <key>defaults</key>
             <string>com.ginsu.dodo</string>
             <key>default</key>
-            <integer>1</integer>
+            <integer>2</integer>
             <key>key</key>
             <string>favouriteAppsGridSizeType</string>
             <key>validTitles</key>
             <array>
                 <string>Flexible</string>
                 <string>Fixed</string>
+                <string>Adaptive</string>
             </array>
             <key>validValues</key>
             <array>
                 <integer>0</integer>
                 <integer>1</integer>
+				<integer>2</integer>
             </array>
             <key>id</key>
             <string>favouriteAppsGridSizeTypeStatus</string>
@@ -105,7 +111,7 @@
 			<key>max</key>
 			<real>100.0</real>
 			<key>dynamicRule</key>
-            <string>favouriteAppsGridSizeTypeStatus,==,1</string>
+            <string>favouriteAppsGridSizeTypeStatus,!=,0</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -125,7 +131,7 @@
 			<key>max</key>
 			<real>60.0</real>
 			<key>dynamicRule</key>
-            <string>favouriteAppsGridSizeTypeStatus,==,0</string>
+            <string>favouriteAppsGridSizeTypeStatus,!=,1</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -145,7 +151,7 @@
 			<key>max</key>
 			<integer>8</integer>
 			<key>dynamicRule</key>
-            <string>favouriteAppsGridSizeTypeStatus,==,1</string>
+            <string>favouriteAppsGridSizeTypeStatus,!=,0</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -165,7 +171,7 @@
 			<key>max</key>
 			<integer>3</integer>
 			<key>dynamicRule</key>
-            <string>favouriteAppsGridSizeTypeStatus,==,0</string>
+            <string>favouriteAppsGridSizeTypeStatus,!=,1</string>
 		</dict>
 		<dict>
             <key>cell</key>
