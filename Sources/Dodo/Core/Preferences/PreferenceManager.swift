@@ -139,6 +139,11 @@ final class PreferenceManager {
             break
         }
         
+        settings.is24HourModeEnabled = dictionary[
+            "is24HourModeEnabled",
+            default: false
+        ] as! Bool
+        
         // Favourite apps
         settings.hasFavouriteApps = dictionary[
             "hasFavouriteApps",
@@ -268,6 +273,7 @@ extension PreferenceManager {
         // TimeDate
         var timeTemplate: DateTemplate = .time
         var dateTemplate: DateTemplate = .date
+        var is24HourModeEnabled: Bool = false
         // Favourite apps
         var hasFavouriteApps = true
         var isVisibleFavouriteAppsFade = false
