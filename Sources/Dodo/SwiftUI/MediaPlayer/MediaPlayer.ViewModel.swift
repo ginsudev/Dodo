@@ -27,10 +27,10 @@ extension MediaPlayer {
 
         @Published var trackName = ""
         @Published var artistName = ""
-        @Published var albumArtwork = UIImage(systemName: "music.note")! {
+        @Published var albumArtwork: UIImage? = UIImage(systemName: "music.note") {
             didSet {
-                DispatchQueue.main.async {
-                    self.artworkColour = self.albumArtwork.dominantColour()
+                DispatchQueue.main.async { [weak self] in
+                    self?.artworkColour = self?.albumArtwork?.dominantColour() ?? .black
                 }
             }
         }
@@ -42,8 +42,8 @@ extension MediaPlayer {
                 guard PreferenceManager.shared.settings.playerStyle == .modular else {
                     return
                 }
-                DispatchQueue.main.async {
-                    self.foregroundColour = self.artworkColour.suitableForegroundColour()
+                DispatchQueue.main.async { [weak self] in
+                    self?.foregroundColour = self?.artworkColour.suitableForegroundColour() ?? .white
                 }
             }
         }
@@ -52,29 +52,29 @@ extension MediaPlayer {
         
         func togglePlayPause(shouldPlay play: Bool) {
             let iconPath = MediaPlayer.ViewModel.themePath + (play ? "pause": "play") + ".png"
-            DispatchQueue.main.async {
-                self.playPauseIcon = UIImage(named: iconPath)
+            DispatchQueue.main.async { [weak self] in
+                self?.playPauseIcon = UIImage(named: iconPath)
             }
         }
         
         func updateInfo() {
             //Update track info (Artwork, title, artist, etc..).
-            MRMediaRemoteGetNowPlayingInfo(.main, { information in
+            MRMediaRemoteGetNowPlayingInfo(.main, { [weak self] information in
                 guard let dict = information as? [String: AnyObject] else {
                     return
                 }
-                guard let contentItem = MRContentItem(nowPlayingInfo: dict) else {
-                    return
+                if let contentItem = MRContentItem(nowPlayingInfo: dict),
+                   let metadata = contentItem.metadata {
+                    //Track name & artist
+                    self?.trackName = metadata.title ?? ""
+                    self?.artistName = metadata.trackArtistName ?? ""
+                    //Album artwork
+                    if let data = dict["kMRMediaRemoteNowPlayingInfoArtworkData"] as? Data {
+                        self?.albumArtwork = UIImage(data: data)
+                    }
+                    //Playing status
+                    self?.togglePlayPause(shouldPlay: (metadata.playbackRate > 0))
                 }
-                //Track name & artist
-                self.trackName = contentItem.metadata.title ?? ""
-                self.artistName = contentItem.metadata.trackArtistName ?? ""
-                //Album artwork
-                if let data = dict["kMRMediaRemoteNowPlayingInfoArtworkData"] as? Data {
-                    self.albumArtwork = UIImage(data: data)!
-                }
-                //Playing status
-                self.togglePlayPause(shouldPlay: (contentItem.metadata.playbackRate > 0))
             })
         }
                 

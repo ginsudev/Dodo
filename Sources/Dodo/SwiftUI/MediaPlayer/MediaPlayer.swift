@@ -82,19 +82,22 @@ private extension MediaPlayer {
         .layoutPriority(-1)
     }
     
+    @ViewBuilder
     var albumArtwork: some View {
-        Image(uiImage: mediaModel.albumArtwork)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(
-                maxWidth: 45,
-                maxHeight: 45
-            )
-            .cornerRadius(style.artworkRadius())
-            .shadow(
-                color: .black.opacity(0.4),
-                radius: style.artworkRadius()
-            )
+        if let image = mediaModel.albumArtwork {
+            Image(uiImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(
+                    maxWidth: 45,
+                    maxHeight: 45
+                )
+                .cornerRadius(style.artworkRadius())
+                .shadow(
+                    color: .black.opacity(0.4),
+                    radius: style.artworkRadius()
+                )
+        }
     }
     
     var trackDetails: some View {
