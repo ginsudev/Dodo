@@ -44,9 +44,14 @@ struct AppView: View {
     
     var body: some View {
         ScrollView(.vertical) {
-            gridView
+            if case .adaptive = Dimensions.shared.favouriteAppsGridSizeType {
+                gridView
+                    // For some reason we need this in adaptive mode. Otherwise the apps will be on the leading edge.
+                    .environment(\.layoutDirection, .rightToLeft)
+            } else {
+                gridView
+            }
         }
-        .fixedSize(horizontal: true, vertical: false)
         .mask(mask)
     }
 }

@@ -75,7 +75,7 @@
             <key>defaults</key>
             <string>com.ginsu.dodo</string>
             <key>default</key>
-            <integer>2</integer>
+            <integer>0</integer>
             <key>key</key>
             <string>favouriteAppsGridSizeType</string>
             <key>validTitles</key>

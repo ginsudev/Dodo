@@ -43,7 +43,7 @@
 	<key>hasFavouriteApps</key>
 	<true/>
 	<key>favouriteAppsGridSizeType</key>
-	<integer>2</integer>
+	<integer>0</integer>
 	<key>favouriteAppsFlexibleGridItemSize</key>
 	<real>40.0</real>
 	<key>favouriteAppsFlexibleGridColumnAmount</key>
