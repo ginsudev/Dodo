@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import DodoC
+import Orion
 
 // MARK: - Public
 
@@ -84,6 +86,8 @@ private extension DataRefresher {
            UIDevice.current.batteryState != .unplugged {
             chargingIndication()
         }
+        // Alarms
+        updateAlarms()
     }
     
     func chargingIndication() {
@@ -97,5 +101,30 @@ private extension DataRefresher {
             }
             MediaPlayer.ViewModel.shared.artworkColour = prevColour
         }
+    }
+    
+    func updateAlarms() {
+        if let observer = SBScheduledAlarmObserver.sharedInstance() {
+            let manager = Ivars<MTAlarmManager>(observer)._alarmManager
+            if let cache = manager.cache {
+                var array = [Alarm]()
+                for case let alarm as MTAlarm in Array(cache.orderedAlarms) {
+                    array.append(convertMobileTimer(alarm))
+                }
+                DispatchQueue.main.async {
+                    AlarmDataSource.shared.alarms = array
+                }
+            }
+        }
+    }
+    
+    func convertMobileTimer(_ alarm: MTAlarm) -> Alarm {
+        return Alarm(
+            id: alarm.alarmID,
+            url: alarm.alarmURL,
+            nextFireDate: alarm.nextFireDate,
+            displayTitle: alarm.displayTitle,
+            isEnabled: alarm.isEnabled
+        )
     }
 }

@@ -120,6 +120,29 @@ struct SBIconImageInfo {
 - (void)_routePickerButtonTapped:(id)arg1;
 @end
 
+// MARK: - Alarm
+@interface MTAlarm : NSObject
+@property (nonatomic,readonly) NSUUID * alarmID;
+@property (nonatomic,readonly) NSURL * alarmURL;
+@property (nonatomic,readonly) NSDate * nextFireDate;
+@property (nonatomic,readonly) NSString * displayTitle;
+@property (assign,getter=isEnabled,nonatomic) BOOL enabled;
+@end
+
+@interface MTAlarmCache : NSObject
+@property (nonatomic,retain) NSMutableArray * orderedAlarms;
+@property (nonatomic,retain) NSMutableArray * sleepAlarms;
+@property (nonatomic,retain) MTAlarm * nextAlarm;
+@end
+
+@interface MTAlarmManager : NSObject
+@property (nonatomic,retain) MTAlarmCache * cache;
+@end
+
+@interface SBScheduledAlarmObserver : NSObject
++ (instancetype)sharedInstance;
+@end
+
 #ifndef SPRINGBOARDSERVICES_H_
 extern int SBSLaunchApplicationWithIdentifier(CFStringRef identifier, Boolean suspended);
 #endif

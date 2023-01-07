@@ -2,12 +2,12 @@ import Preferences
 import Foundation
 import dodoC
 
-class DodoBehaviourController: DynamicPrefsController {
+class DodoStatusItemsController: DynamicPrefsController {
     override func name() -> String? {
         "dodo"
     }
     
     override func plistName() -> String? {
-        "Behaviour"
+        "StatusItems"
     }
 }

@@ -32,7 +32,7 @@ private extension MainContent {
     @ViewBuilder
     var infoView: some View {
         VStack(alignment: .leading, spacing: 5.0) {
-            StatusItemGroupView()
+            weatherView
             TimeDateView()
         }
         .fixedSize()
@@ -43,6 +43,14 @@ private extension MainContent {
     var favouriteApps: some View {
         if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
             AppView()
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+    
+    @ViewBuilder
+    var weatherView: some View {
+        if PreferenceManager.shared.settings.showWeather {
+            WeatherView()
         }
     }
 }

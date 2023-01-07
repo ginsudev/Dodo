@@ -12,14 +12,17 @@ import SwiftUI
 struct StatusItemGroupView: View {
     @StateObject private var chargingViewModel = ChargingIconViewModel()
     @StateObject private var lockIconViewModel = LockIconViewModel.shared
+    @StateObject private var alarmDataSource = AlarmDataSource.shared
     
     var body: some View {
         HStack(spacing: 10.0) {
             lockIcon
             chargingIcon
-            weatherView
+            alarms
         }
         .frame(maxHeight: 18)
+        .onAppear {
+        }
     }
 }
 
@@ -46,9 +49,9 @@ private extension StatusItemGroupView {
     }
     
     @ViewBuilder
-    var weatherView: some View {
-        if PreferenceManager.shared.settings.showWeather {
-            WeatherView()
+    var alarms: some View {
+        if let alarm = alarmDataSource.nextEnabledAlarm {
+            AlarmView(alarm: alarm)
         }
     }
 }

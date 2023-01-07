@@ -246,6 +246,11 @@ final class PreferenceManager {
             "weatherFontSize",
             default: 15.0
         ] as! Double
+        
+        settings.hasStatusItems = dictionary[
+            "hasStatusItems",
+            default: true
+        ] as! Bool
     }
 }
 
@@ -279,5 +284,7 @@ extension PreferenceManager {
         var isVisibleFavouriteAppsFade = false
         // Weather
         var showWeather = true
+        // Status items
+        var hasStatusItems = true
     }
 }

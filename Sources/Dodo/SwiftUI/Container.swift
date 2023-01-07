@@ -74,6 +74,9 @@ private extension Container {
     
     var mainContent: some View {
         VStack(alignment: .leading, spacing: 10.0) {
+            if PreferenceManager.shared.settings.hasStatusItems {
+                StatusItemGroupView()
+            }
             switch PreferenceManager.shared.settings.timeMediaPlayerStyle {
             case .time:
                 MainContent()
@@ -91,7 +94,7 @@ private extension Container {
         .frame(alignment: .bottom)
         .readFrame(in: .local, for: $containerFrame)
         .onChange(of: containerFrame) { newFrame in
-            dimensions.height = newFrame.height + 10
+            dimensions.height = newFrame.height + 40
         }
     }
 }

@@ -62,5 +62,7 @@
 	<real>15</real>
 	<key>weatherFontSize</key>
 	<real>15</real>
+	<key>hasStatusItems</key>
+	<true/>
 </dict>
 </plist>
