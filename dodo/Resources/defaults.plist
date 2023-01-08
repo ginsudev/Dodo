@@ -10,8 +10,6 @@
 	<true/>
 	<key>showDivider</key>
 	<true/>
-	<key>hasChargingIcon</key>
-	<true/>
 	<key>hasChargingFlash</key>
 	<false/>
 	<key>is24HourModeEnabled</key>
@@ -33,6 +31,10 @@
 	<key>hasVibrationIcon</key>
 	<false/>
 	<key>hasMutedIcon</key>
+	<true/>
+	<key>hasLockIcon</key>
+	<true/>
+	<key>hasChargingIcon</key>
 	<true/>
 
 	<key>favouriteAppsGridSizeType</key>
@@ -90,5 +92,7 @@
 	<string>#FFFFFFFF</string>
 	<key>mutedIconColor</key>
 	<string>#FFFFFFFF</string>
+	<key>themeName</key>
+	<string>Rounded</string>
 </dict>
 </plist>

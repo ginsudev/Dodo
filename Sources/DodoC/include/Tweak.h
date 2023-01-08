@@ -157,6 +157,10 @@ struct SBIconImageInfo {
 @end
 
 // MARK: - Flashlight
+@interface AVFlashlight : NSObject
++ (BOOL)hasFlashlight;
+@end
+
 @interface SBUIFlashlightController : NSObject
 + (instancetype)sharedInstance;
 - (void)turnFlashlightOnForReason:(id)arg1 ;

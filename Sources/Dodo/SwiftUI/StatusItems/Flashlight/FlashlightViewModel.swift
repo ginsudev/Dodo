@@ -24,6 +24,11 @@ final class FlashlightViewModel: ObservableObject {
     }
     
     func toggleFlashlight(enabled: Bool) {
+        // Only continue if device has a flashlight
+        guard AVFlashlight.hasFlashlight() else {
+            return
+        }
+        
         if enabled {
             SBUIFlashlightController.sharedInstance().turnFlashlightOn(forReason: nil)
             imageName = "flashlight.on.fill"

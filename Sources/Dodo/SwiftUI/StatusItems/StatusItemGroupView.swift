@@ -99,7 +99,7 @@ private extension StatusItemGroupView {
     
     @ViewBuilder
     var flashlight: some View {
-         if PreferenceManager.shared.settings.hasFlashlightIcon {
+         if PreferenceManager.shared.settings.hasFlashlightIcon, AVFlashlight.hasFlashlight() {
             Divider()
                 .overlay(Color.white)
             StatusItemView(

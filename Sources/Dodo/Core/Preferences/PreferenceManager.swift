@@ -62,7 +62,7 @@ struct Settings {
         showWeather = dict["showWeather", default: true] as! Bool
         showSuggestions = dict["showSuggestions", default: true] as! Bool
         showDivider = dict["showDivider", default: true] as! Bool
-        hasChargingFlash = dict["hasChargingFlash"] as! Bool
+        hasChargingFlash = dict["hasChargingFlash", default: false] as! Bool
         themeName = dict["themeName", default: "Rounded"] as! String
         is24HourModeEnabled = dict["is24HourModeEnabled", default: false] as! Bool
         hasFavouriteApps = dict["hasFavouriteApps", default: true] as! Bool

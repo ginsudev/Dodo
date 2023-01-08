@@ -365,6 +365,21 @@ class SBRingerControl_Hook: ClassHook<SBRingerControl> {
     }
 }
 
+//class CFNotificationCenterPostNotificationHook: FunctionHook {
+//    static let target = Function.symbol("CFNotificationCenterPostNotification", image: nil)
+//
+//    func function(
+//        _ center: CFNotificationCenter,
+//        _ name: CFNotificationName,
+//        _ object: UnsafeRawPointer,
+//        _ userInfo: CFDictionary,
+//        _ deliverImmediately: Bool
+//    ) {
+//        NSLog("[Dodo]: name=\(name)")
+//        orig.function(center, name, object, userInfo, deliverImmediately)
+//    }
+//}
+
 //MARK: - Preferences
 fileprivate func prefsDict() -> [String : Any]? {
     var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
