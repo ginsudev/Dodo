@@ -173,34 +173,6 @@
 		<dict>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
-			<key>default</key>
-			<true/>
-			<key>defaults</key>
-			<string>com.ginsu.dodo</string>
-			<key>key</key>
-			<string>hasChargingIndication</string>
-			<key>label</key>
-			<string>Charging indication</string>
-			<key>id</key>
-            <string>hasChargingIndicationStatus</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<true/>
-			<key>defaults</key>
-			<string>com.ginsu.dodo</string>
-			<key>key</key>
-			<string>hasChargingIcon</string>
-			<key>label</key>
-			<string>Show charging icon</string>
-			<key>dynamicRule</key>
-            <string>hasChargingIndicationStatus,==,0</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
 			<key>cellClass</key>
 			<string>PSSubtitleSwitchTableCell</string>
 			<key>default</key>
@@ -213,8 +185,6 @@
 			<string>Charging flash</string>
 			<key>cellSubtitleText</key>
 			<string>Flash screen green while charging.</string>
-			<key>dynamicRule</key>
-            <string>hasChargingIndicationStatus,==,0</string>
 		</dict>
 	</array>
 	<key>title</key>

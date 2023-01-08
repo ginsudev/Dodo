@@ -4,44 +4,25 @@
 <dict>
 	<key>isEnabled</key>
 	<true/>
-	<key>fontType</key>
-	<integer>2</integer>
-	<key>timeMediaPlayerStyle</key>
-	<integer>2</integer>
-	<key>playerStyle</key>
-	<integer>0</integer>
+	<key>showWeather</key>
+	<true/>
 	<key>showSuggestions</key>
 	<true/>
 	<key>showDivider</key>
-	<true/>
-	<key>hasChargingIndication</key>
 	<true/>
 	<key>hasChargingIcon</key>
 	<true/>
 	<key>hasChargingFlash</key>
 	<false/>
-	<key>timeTemplate</key>
-	<integer>0</integer>
-	<key>timeTemplateCustom</key>
-	<string>h:mm</string>
-	<key>dateTemplate</key>
-	<integer>0</integer>
-	<key>dateTemplateCustom</key>
-	<string>EEEE, MMMM d</string>
 	<key>is24HourModeEnabled</key>
 	<false/>
-	<key>timeColor</key>
-	<string>#FFFFFFFF</string>
-	<key>dateColor</key>
-	<string>#FFFFFFFF</string>
-	<key>weatherColor</key>
-	<string>#FFFFFFFF</string>
-	<key>lockIconColor</key>
-	<string>#FFFFFFFF</string>
-	<key>dividerColor</key>
-	<string>#FFFFFFFF</string>
 	<key>hasFavouriteApps</key>
 	<true/>
+	<key>isVisibleFavouriteAppsFade</key>
+	<false/>
+	<key>hasStatusItems</key>
+	<true/>
+
 	<key>favouriteAppsGridSizeType</key>
 	<integer>0</integer>
 	<key>favouriteAppsFlexibleGridItemSize</key>
@@ -52,8 +33,16 @@
 	<real>40.0</real>
 	<key>favouriteAppsFixedGridColumnAmount</key>
 	<integer>3</integer>
-	<key>isVisibleFavouriteAppsFade</key>
-	<false/>
+	<key>fontType</key>
+	<integer>2</integer>
+	<key>timeMediaPlayerStyle</key>
+	<integer>2</integer>
+	<key>playerStyle</key>
+	<integer>0</integer>
+	<key>timeTemplate</key>
+	<integer>0</integer>
+	<key>dateTemplate</key>
+	<integer>0</integer>
 	<key>notificationVerticalOffset</key>
 	<real>190.0</real>
 	<key>timeFontSize</key>
@@ -62,7 +51,20 @@
 	<real>15</real>
 	<key>weatherFontSize</key>
 	<real>15</real>
-	<key>hasStatusItems</key>
-	<true/>
+
+	<key>timeTemplateCustom</key>
+	<string>h:mm</string>
+	<key>dateTemplateCustom</key>
+	<string>EEEE, MMMM d</string>
+	<key>timeColor</key>
+	<string>#FFFFFFFF</string>
+	<key>dateColor</key>
+	<string>#FFFFFFFF</string>
+	<key>weatherColor</key>
+	<string>#FFFFFFFF</string>
+	<key>lockIconColor</key>
+	<string>#FFFFFFFF</string>
+	<key>dividerColor</key>
+	<string>#FFFFFFFF</string>
 </dict>
 </plist>

@@ -81,9 +81,7 @@ private extension DataRefresher {
             WeatherView.ViewModel.shared.updateWeather()
         }
         // Charging indication
-        if PreferenceManager.shared.settings.hasChargingIndication,
-           PreferenceManager.shared.settings.hasChargingFlash,
-           UIDevice.current.batteryState != .unplugged {
+        if PreferenceManager.shared.settings.hasChargingFlash && UIDevice.current.batteryState != .unplugged {
             chargingIndication()
         }
         // Alarms

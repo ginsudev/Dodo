@@ -352,7 +352,7 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
 }
 
 //MARK: - Preferences
-fileprivate func prefsDict() -> [String : AnyObject]? {
+fileprivate func prefsDict() -> [String : Any]? {
     var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
 
     let path = "/var/mobile/Library/Preferences/com.ginsu.dodo.plist"
@@ -386,7 +386,10 @@ fileprivate func prefsDict() -> [String : AnyObject]? {
 }
 
 fileprivate func readPrefs() {
-    PreferenceManager.shared.setDictionary(prefsDict() ?? [String : Any]())
+    guard let dict = prefsDict() else {
+        return
+    }
+    PreferenceManager.shared.loadSettings(withDictionary: dict)
 }
 
 struct Dodo: Tweak {

@@ -24,6 +24,40 @@
             <key>id</key>
             <string>hasStatusItemsStatus</string>
 		</dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Items</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>hasLockIcon</string>
+			<key>label</key>
+			<string>Lock indicator</string>
+			<key>dynamicRule</key>
+            <string>hasStatusItemsStatus,==,0</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>hasChargingIcon</string>
+			<key>label</key>
+			<string>Charging indicator</string>
+			<key>dynamicRule</key>
+            <string>hasStatusItemsStatus,==,0</string>
+		</dict>
 	</array>
 	<key>title</key>
 	<string>Status items</string>

@@ -29,17 +29,19 @@ struct StatusItemGroupView: View {
 // MARK: - Private
 
 private extension StatusItemGroupView {
+    @ViewBuilder
     var lockIcon: some View {
-        StatusImage(
-            image: Image(systemName: lockIconViewModel.lockImageName),
-            color: Color(Colors.lockIconColor)
-        )
+        if PreferenceManager.shared.settings.hasLockIcon {
+            StatusImage(
+                image: Image(systemName: lockIconViewModel.lockImageName),
+                color: Color(Colors.lockIconColor)
+            )
+        }
     }
     
     @ViewBuilder
     var chargingIcon: some View {
-        if PreferenceManager.shared.settings.hasChargingIndication,
-           PreferenceManager.shared.settings.hasChargingIcon,
+        if PreferenceManager.shared.settings.hasChargingIcon,
            chargingViewModel.isCharging {
             StatusImage(
                 image: Image(systemName: chargingViewModel.imageName),

@@ -9,178 +9,115 @@ import Foundation
 import SwiftUI
 
 final class PreferenceManager {
-    public static let shared: PreferenceManager = PreferenceManager()
-    private var dictionary: Dictionary<String, Any>?
-    private(set) var settings: Settings
+    static let shared = PreferenceManager()
+    private(set) var settings: Settings!
     
-    init(dictionary: Dictionary<String, Any>? = nil) {
-        settings = .init()
-        if let dictionary {
-            setDictionary(dictionary)
-        }
+    func loadSettings(withDictionary dict: [String: Any]) {
+        self.settings = Settings(withDictionary: dict)
     }
-    
-    func setDictionary(_ dict: Dictionary<String, Any>) {
-        self.dictionary = dict
-        readDictionary()
-    }
-    
-    private func readDictionary() {
-        guard let dictionary else { return }
-            
-        settings.isEnabled = dictionary[
-            "isEnabled",
-            default: true
-        ] as! Bool
-        
-        settings.timeMediaPlayerStyle = TimeMediaPlayerStyle(
-            rawValue: dictionary[
-                "timeMediaPlayerStyle",
-                default: 2
-            ] as! Int
-        )!
-        
-        settings.playerStyle = MediaPlayerStyle(
-            rawValue: dictionary[
-                "playerStyle",
-                default: 0
-            ] as! Int
-        )!
-        
-        settings.showSuggestions = dictionary[
-            "showSuggestions",
-            default: true
-        ] as! Bool
-        
-        settings.hasChargingIndication = dictionary[
-            "hasChargingIndication",
-            default: true
-        ] as! Bool
-        
-        settings.hasChargingIcon = dictionary[
-            "hasChargingIcon",
-            default: true
-        ] as! Bool
-        
-        settings.hasChargingFlash = dictionary[
-            "hasChargingFlash",
-            default: false
-        ] as! Bool
-        
-        settings.showDivider = dictionary[
-            "showDivider",
-            default: true
-        ] as! Bool
-        
-        settings.showWeather = dictionary[
-            "showWeather",
-            default: true
-        ] as! Bool
-        
-        settings.themeName = dictionary[
-            "themeName",
-            default: "Rounded"
-        ] as! String
+}
 
-        let fontType = dictionary["fontType"] as? Int ?? 2
+struct Settings {
+    // Global on/off
+    var isEnabled: Bool
+    // Media player
+    var timeMediaPlayerStyle: TimeMediaPlayerStyle
+    var playerStyle: MediaPlayerStyle
+    var showSuggestions: Bool
+    var showDivider: Bool
+    // Charging
+    var hasChargingFlash: Bool
+    // Aesthetics
+    var fontType: Font.Design
+    var timeFontSize: Double
+    var dateFontSize: Double
+    var weatherFontSize: Double
+    var themeName: String
+    // Positioning & Dimensions
+    var notificationVerticalOffset: Double
+    // TimeDate
+    var timeTemplate: DateTemplate
+    var dateTemplate: DateTemplate
+    var is24HourModeEnabled: Bool
+    // Favourite apps
+    var hasFavouriteApps: Bool
+    var isVisibleFavouriteAppsFade: Bool
+    // Weather
+    var showWeather: Bool
+    // Status items
+    var hasStatusItems: Bool
+    var hasLockIcon: Bool
+    var hasChargingIcon: Bool
+    
+    init(withDictionary dict: [String: Any]) {
+        isEnabled = dict["isEnabled", default: true] as! Bool
+        timeMediaPlayerStyle = TimeMediaPlayerStyle(rawValue: dict["timeMediaPlayerStyle", default: 2] as! Int)!
+        playerStyle = MediaPlayerStyle(rawValue: dict["playerStyle", default: 0] as! Int)!
+        showWeather = dict["showWeather", default: true] as! Bool
+        showSuggestions = dict["showSuggestions", default: true] as! Bool
+        showDivider = dict["showDivider", default: true] as! Bool
+        hasChargingFlash = dict["hasChargingFlash"] as! Bool
+        themeName = dict["themeName", default: "Rounded"] as! String
+        is24HourModeEnabled = dict["is24HourModeEnabled", default: false] as! Bool
+        hasFavouriteApps = dict["hasFavouriteApps", default: true] as! Bool
+        isVisibleFavouriteAppsFade = dict["isVisibleFavouriteAppsFade", default: false] as! Bool
+        notificationVerticalOffset = dict["notificationVerticalOffset", default: 190.0] as! Double
+        timeFontSize = dict["timeFontSize", default: 50.0] as! Double
+        dateFontSize = dict["dateFontSize", default: 15.0] as! Double
+        weatherFontSize = dict["weatherFontSize", default: 15.0] as! Double
+        hasStatusItems = dict["hasStatusItems", default: true] as! Bool
+        hasLockIcon = dict["hasLockIcon", default: true] as! Bool
+        hasChargingIcon = dict["hasChargingIcon", default: true] as! Bool
+        
+        let fontType = dict["fontType", default: 2] as! Int
         switch fontType {
         case 1:
-            settings.fontType = .default
+            self.fontType = .default
             break
         case 2:
-            settings.fontType = .rounded
+            self.fontType = .rounded
             break
         case 3:
-            settings.fontType = .monospaced
+            self.fontType = .monospaced
             break
         case 4:
-            settings.fontType = .serif
+            self.fontType = .serif
             break
         default:
-            settings.fontType = .rounded
+            self.fontType = .rounded
             break
         }
         
-        // TimeDate
-        let timeTemplate = dictionary[
-            "timeTemplate",
-            default: 0
-        ] as! Int
-        
+        let timeTemplate = dict["timeTemplate", default: 0] as! Int
         switch timeTemplate {
         case 0:
-            settings.timeTemplate = .time
+            self.timeTemplate = .time
             break
         case 1:
-            settings.timeTemplate = .timeWithSeconds
+            self.timeTemplate = .timeWithSeconds
             break
         case 2:
-            settings.timeTemplate = .timeCustom(dictionary["timeTemplateCustom"] as? String ?? "h:mm")
+            self.timeTemplate = .timeCustom(dict["timeTemplateCustom", default: "h:mm"] as! String)
             break
         default:
-            settings.timeTemplate = .time
+            self.timeTemplate = .time
             break
         }
         
-        let dateTemplate = dictionary[
-            "dateTemplate",
-            default: 0
-        ] as! Int
-        
+        let dateTemplate = dict["dateTemplate", default: 0] as! Int
         switch dateTemplate {
         case 0:
-            settings.dateTemplate = .date
+            self.dateTemplate = .date
             break
         case 1:
-            settings.dateTemplate = .dateCustom(dictionary["dateTemplateCustom"] as? String ?? "EEEE, MMMM d")
+            self.dateTemplate = .dateCustom(dict["dateTemplateCustom", default: "EEEE, MMMM d"] as! String)
             break
         default:
-            settings.dateTemplate = .date
+            self.dateTemplate = .date
             break
         }
         
-        settings.is24HourModeEnabled = dictionary[
-            "is24HourModeEnabled",
-            default: false
-        ] as! Bool
-        
-        // Favourite apps
-        settings.hasFavouriteApps = dictionary[
-            "hasFavouriteApps",
-            default: true
-        ] as! Bool
-        
-        settings.isVisibleFavouriteAppsFade = dictionary[
-            "isVisibleFavouriteAppsFade",
-            default: false
-        ] as! Bool
-        
-        Dimensions.shared.favouriteAppsGridSizeType = GridSizeType(rawValue: dictionary[
-            "favouriteAppsGridSizeType",
-            default: 0
-        ] as! Int)!
-        
-        Dimensions.shared.favouriteAppsFlexibleGridItemSize = dictionary[
-            "favouriteAppsFlexibleGridItemSize",
-            default: 40.0
-        ] as! Double
-        
-        Dimensions.shared.favouriteAppsFlexibleGridColumnAmount = dictionary[
-            "favouriteAppsFlexibleGridColumnAmount",
-            default: 3
-        ] as! Int
-        
-        Dimensions.shared.favouriteAppsFixedGridItemSize = dictionary[
-            "favouriteAppsFixedGridItemSize",
-            default: 40.0
-        ] as! Double
-        
-        Dimensions.shared.favouriteAppsFixedGridColumnAmount = dictionary[
-            "favouriteAppsFixedGridColumnAmount",
-            default: 3
-        ] as! Int
-        
-        AppsManager.favouriteAppBundleIdentifiers = dictionary[
+        AppsManager.favouriteAppBundleIdentifiers = dict[
             "favouriteApps",
             default: [
                 "com.apple.camera",
@@ -190,101 +127,16 @@ final class PreferenceManager {
             ]
         ] as! [String]
         
-        // Dimensions
-        settings.notificationVerticalOffset = dictionary[
-            "notificationVerticalOffset",
-            default: 190.0
-        ] as! Double
-
-        // Colors
-        Colors.timeColor = UIColor(
-            hexString: dictionary[
-                "timeColor",
-                default: "#FFFFFFFF"
-            ] as! String
-        )
+        Colors.timeColor = UIColor(hexString: dict["timeColor", default: "#FFFFFFFF"] as! String)
+        Colors.dateColor = UIColor(hexString: dict["dateColor", default: "#FFFFFFFF"] as! String)
+        Colors.dividerColor = UIColor(hexString: dict["dividerColor", default: "#FFFFFFFF"] as! String)
+        Colors.weatherColor = UIColor(hexString: dict["weatherColor", default: "#FFFFFFFF"] as! String)
+        Colors.lockIconColor = UIColor(hexString: dict["lockIconColor", default: "#FFFFFFFF"] as! String)
         
-        Colors.dateColor = UIColor(
-            hexString: dictionary[
-                "dateColor",
-                default: "#FFFFFFFF"
-            ] as! String
-        )
-        
-        Colors.dividerColor = UIColor(
-            hexString: dictionary[
-                "dividerColor",
-                default: "#FFFFFFFF"
-            ] as! String
-        )
-        
-        Colors.weatherColor = UIColor(
-            hexString: dictionary[
-                "weatherColor",
-                default: "#FFFFFFFF"
-            ] as! String
-        )
-        
-        Colors.lockIconColor = UIColor(
-            hexString: dictionary[
-                "lockIconColor",
-                default: "#FFFFFFFF"
-            ] as! String
-        )
-        
-        settings.timeFontSize = dictionary[
-            "timeFontSize",
-            default: 50.0
-        ] as! Double
-        
-        settings.dateFontSize = dictionary[
-            "dateFontSize",
-            default: 15.0
-        ] as! Double
-        
-        settings.weatherFontSize = dictionary[
-            "weatherFontSize",
-            default: 15.0
-        ] as! Double
-        
-        settings.hasStatusItems = dictionary[
-            "hasStatusItems",
-            default: true
-        ] as! Bool
-    }
-}
-
-extension PreferenceManager {
-    struct Settings {
-        // Global on/off
-        var isEnabled = true
-        // Media player
-        var timeMediaPlayerStyle: TimeMediaPlayerStyle = .both
-        var playerStyle: MediaPlayerStyle = .modular
-        var showSuggestions: Bool = true
-        var showDivider = true
-        // Charging
-        var hasChargingIndication = true
-        var hasChargingIcon = true
-        var hasChargingFlash = false
-        // Aesthetics
-        var fontType: Font.Design = .rounded
-        var timeFontSize: Double = 50
-        var dateFontSize: Double = 15
-        var weatherFontSize: Double = 15
-        var themeName = "Rounded"
-        // Positioning & Dimensions
-        var notificationVerticalOffset: Double = 190
-        // TimeDate
-        var timeTemplate: DateTemplate = .time
-        var dateTemplate: DateTemplate = .date
-        var is24HourModeEnabled: Bool = false
-        // Favourite apps
-        var hasFavouriteApps = true
-        var isVisibleFavouriteAppsFade = false
-        // Weather
-        var showWeather = true
-        // Status items
-        var hasStatusItems = true
+        Dimensions.shared.favouriteAppsGridSizeType = GridSizeType(rawValue: dict["favouriteAppsGridSizeType", default: 0] as! Int)!
+        Dimensions.shared.favouriteAppsFlexibleGridItemSize = dict["favouriteAppsFlexibleGridItemSize", default: 40.0] as! Double
+        Dimensions.shared.favouriteAppsFlexibleGridColumnAmount = dict["favouriteAppsFlexibleGridColumnAmount", default: 3] as! Int
+        Dimensions.shared.favouriteAppsFixedGridItemSize = dict["favouriteAppsFixedGridItemSize", default: 40.0] as! Double
+        Dimensions.shared.favouriteAppsFixedGridColumnAmount = dict["favouriteAppsFixedGridColumnAmount", default: 3] as! Int
     }
 }

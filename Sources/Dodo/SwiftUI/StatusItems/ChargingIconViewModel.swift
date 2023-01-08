@@ -15,7 +15,7 @@ final class ChargingIconViewModel: ObservableObject {
     @Published private(set) var imageName: String = "bolt.slash.circle.fill"
     
     init() {
-        guard PreferenceManager.shared.settings.hasChargingIndication else {
+        guard PreferenceManager.shared.settings.hasChargingIcon || PreferenceManager.shared.settings.hasChargingFlash else {
             return
         }
         addObservers()
