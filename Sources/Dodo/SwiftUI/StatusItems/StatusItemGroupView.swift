@@ -10,19 +10,20 @@ import SwiftUI
 // MARK: - Public
 
 struct StatusItemGroupView: View {
+    @EnvironmentObject var dimensions: Dimensions
     @StateObject private var chargingViewModel = ChargingIconViewModel()
     @StateObject private var lockIconViewModel = LockIconViewModel.shared
     @StateObject private var alarmDataSource = AlarmDataSource.shared
+    @StateObject private var dndViewModel = DNDViewModel.shared
     
     var body: some View {
         HStack(spacing: 10.0) {
             lockIcon
             chargingIcon
             alarms
+            dnd
         }
-        .frame(maxHeight: 18)
-        .onAppear {
-        }
+        .frame(maxHeight: dimensions.statusItemSize.height)
     }
 }
 
@@ -32,9 +33,9 @@ private extension StatusItemGroupView {
     @ViewBuilder
     var lockIcon: some View {
         if PreferenceManager.shared.settings.hasLockIcon {
-            StatusImage(
+            StatusItemView(
                 image: Image(systemName: lockIconViewModel.lockImageName),
-                color: Color(Colors.lockIconColor)
+                tint: Colors.lockIconColor
             )
         }
     }
@@ -43,17 +44,28 @@ private extension StatusItemGroupView {
     var chargingIcon: some View {
         if PreferenceManager.shared.settings.hasChargingIcon,
            chargingViewModel.isCharging {
-            StatusImage(
+            StatusItemView(
                 image: Image(systemName: chargingViewModel.imageName),
-                color: chargingViewModel.indicationColor
+                tint: chargingViewModel.indicationColor,
+                text: chargingViewModel.batteryPercentage
             )
         }
     }
     
     @ViewBuilder
     var alarms: some View {
-        if let alarm = alarmDataSource.nextEnabledAlarm {
+        if PreferenceManager.shared.settings.hasAlarmIcon, let alarm = alarmDataSource.nextEnabledAlarm {
             AlarmView(alarm: alarm)
+        }
+    }
+    
+    @ViewBuilder
+    var dnd: some View {
+        if PreferenceManager.shared.settings.hasDNDIcon, dndViewModel.isEnabled {
+            StatusItemView(
+                image: Image(systemName: "moon.fill"),
+                tint: Colors.dndIconColor
+            )
         }
     }
 }

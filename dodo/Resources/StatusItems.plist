@@ -43,7 +43,33 @@
 			<string>Lock indicator</string>
 			<key>dynamicRule</key>
             <string>hasStatusItemsStatus,==,0</string>
+            <key>id</key>
+            <string>hasLockIconStatus</string>
 		</dict>
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>cellClass</key>
+            <string>GSColorPickerCell</string>
+            <key>fallbackHex</key>
+            <string>#FFFFFFFF</string>
+            <key>supportsAlpha</key> 
+            <true/>
+            <key>defaults</key>
+            <string>com.ginsu.dodo</string>
+            <key>key</key>
+            <string>lockIconColor</string>
+            <key>default</key>
+            <string>#FFFFFFFF</string>
+            <key>label</key>
+            <string>Lock icon color</string>
+			<key>dynamicRule</key>
+            <string>hasLockIconStatus,==,0</string>
+        </dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+        </dict>
 		<dict>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
@@ -58,6 +84,86 @@
 			<key>dynamicRule</key>
             <string>hasStatusItemsStatus,==,0</string>
 		</dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>hasAlarmIcon</string>
+			<key>label</key>
+			<string>Alarm indicator</string>
+			<key>dynamicRule</key>
+            <string>hasStatusItemsStatus,==,0</string>
+			<key>id</key>
+            <string>hasAlarmIconStatus</string>
+		</dict>
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>cellClass</key>
+            <string>GSColorPickerCell</string>
+            <key>fallbackHex</key>
+            <string>#FFFFFFFF</string>
+            <key>supportsAlpha</key> 
+            <true/>
+            <key>defaults</key>
+            <string>com.ginsu.dodo</string>
+            <key>key</key>
+            <string>alarmIconColor</string>
+            <key>default</key>
+            <string>#FFFFFFFF</string>
+            <key>label</key>
+            <string>Alarm icon color</string>
+			<key>dynamicRule</key>
+            <string>hasAlarmIconStatus,==,0</string>
+        </dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>hasDNDIcon</string>
+			<key>label</key>
+			<string>DND indicator</string>
+			<key>dynamicRule</key>
+            <string>hasStatusItemsStatus,==,0</string>
+			<key>id</key>
+            <string>hasDNDIconStatus</string>
+		</dict>
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>cellClass</key>
+            <string>GSColorPickerCell</string>
+            <key>fallbackHex</key>
+            <string>#FFFFFFFF</string>
+            <key>supportsAlpha</key> 
+            <true/>
+            <key>defaults</key>
+            <string>com.ginsu.dodo</string>
+            <key>key</key>
+            <string>dndIconColor</string>
+            <key>default</key>
+            <string>#FFFFFFFF</string>
+            <key>label</key>
+            <string>DND icon color</string>
+			<key>dynamicRule</key>
+            <string>hasDNDIconStatus,==,0</string>
+        </dict>
 	</array>
 	<key>title</key>
 	<string>Status items</string>

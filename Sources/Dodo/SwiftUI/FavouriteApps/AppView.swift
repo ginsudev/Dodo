@@ -10,7 +10,56 @@ import SwiftUI
 //MARK: - Public
 
 struct AppView: View {
-    private var columns: [GridItem] {
+    var body: some View {
+        ScrollView(.vertical) {
+            if case .adaptive = Dimensions.shared.favouriteAppsGridSizeType {
+                gridView
+                    // For some reason we need this in adaptive mode. Otherwise the apps will be on the leading edge.
+                    .environment(\.layoutDirection, .rightToLeft)
+            } else {
+                gridView
+            }
+        }
+        .mask(mask)
+    }
+}
+
+// MARK: - Private
+
+private extension AppView {
+    @ViewBuilder
+    var gridView: some View {
+        if let appIdentifiers = AppsManager.favouriteAppBundleIdentifiers {
+            LazyVGrid(columns: columns, alignment: .trailing) {
+                ForEach(appIdentifiers, id: \.self) { identifier in
+                    Button {
+                        AppsManager.openApplication(withIdentifier: identifier)
+                    } label: {
+                        Image(uiImage: UIImage(withBundleIdentifier: identifier))
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    var mask: some View {
+        VStack(spacing: 0) {
+            Color.black
+            if PreferenceManager.shared.settings.isVisibleFavouriteAppsFade {
+                LinearGradient(gradient: Gradient(
+                    colors: [.black,.black.opacity(0)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 15)
+            }
+        }
+    }
+    
+    var columns: [GridItem] {
         switch Dimensions.shared.favouriteAppsGridSizeType {
         case .flexible:
             return [GridItem](
@@ -39,52 +88,6 @@ struct AppView: View {
                 ),
                 alignment: .trailing)
             ]
-        }
-    }
-    
-    var body: some View {
-        ScrollView(.vertical) {
-            if case .adaptive = Dimensions.shared.favouriteAppsGridSizeType {
-                gridView
-                    // For some reason we need this in adaptive mode. Otherwise the apps will be on the leading edge.
-                    .environment(\.layoutDirection, .rightToLeft)
-            } else {
-                gridView
-            }
-        }
-        .mask(mask)
-    }
-}
-
-// MARK: - Private
-
-private extension AppView {
-    var gridView: some View {
-        LazyVGrid(columns: columns, alignment: .trailing) {
-            ForEach(AppsManager.favouriteAppBundleIdentifiers, id: \.self) { identifier in
-                Button {
-                    AppsManager.openApplication(withIdentifier: identifier)
-                } label: {
-                    Image(uiImage: UIImage(withBundleIdentifier: identifier))
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                }
-            }
-        }
-    }
-    
-    @ViewBuilder
-    var mask: some View {
-        VStack(spacing: 0) {
-            Color.black
-            if PreferenceManager.shared.settings.isVisibleFavouriteAppsFade {
-                LinearGradient(gradient: Gradient(
-                    colors: [.black,.black.opacity(0)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 15)
-            }
         }
     }
 }

@@ -94,7 +94,7 @@ private extension Container {
         .frame(alignment: .bottom)
         .readFrame(in: .local, for: $containerFrame)
         .onChange(of: containerFrame) { newFrame in
-            dimensions.height = newFrame.height + 40
+            dimensions.height = newFrame.height + 50
         }
     }
 }

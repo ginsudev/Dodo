@@ -44,10 +44,5 @@ struct AppsManager {
         }
     }
     
-    static var favouriteAppBundleIdentifiers = [
-        "com.apple.camera",
-        "com.apple.Preferences",
-        "com.apple.MobileSMS",
-        "com.apple.mobilemail"
-    ]
+    static var favouriteAppBundleIdentifiers: [String]?
 }

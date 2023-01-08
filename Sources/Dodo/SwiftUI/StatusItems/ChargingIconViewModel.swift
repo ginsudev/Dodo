@@ -6,13 +6,13 @@
 //
 
 import UIKit
-import SwiftUI
 
 @MainActor
 final class ChargingIconViewModel: ObservableObject {
     @Published private(set) var isCharging: Bool = false
-    @Published private(set) var indicationColor: Color = .white
+    @Published private(set) var indicationColor: UIColor = .white
     @Published private(set) var imageName: String = "bolt.slash.circle.fill"
+    @Published private(set) var batteryPercentage: String = ""
     
     init() {
         guard PreferenceManager.shared.settings.hasChargingIcon || PreferenceManager.shared.settings.hasChargingFlash else {
@@ -20,7 +20,7 @@ final class ChargingIconViewModel: ObservableObject {
         }
         addObservers()
         updateChargingStatus()
-        updateChargingColor()
+        updateChargingVisuals()
     }
     
     private func addObservers() {
@@ -36,7 +36,7 @@ final class ChargingIconViewModel: ObservableObject {
         
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(updateChargingColor),
+            selector: #selector(updateChargingVisuals),
             name: UIDevice.batteryLevelDidChangeNotification,
             object: nil
         )
@@ -46,8 +46,9 @@ final class ChargingIconViewModel: ObservableObject {
         isCharging = UIDevice.current.batteryState != .unplugged
     }
     
-    @objc private func updateChargingColor() {
+    @objc private func updateChargingVisuals() {
         let batteryLevel = UIDevice.current.batteryLevel * 100
+        batteryPercentage = "\(Int(batteryLevel))%"
         
         switch batteryLevel {
         case 0..<20:

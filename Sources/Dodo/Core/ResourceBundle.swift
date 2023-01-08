@@ -7,6 +7,23 @@
 
 import DodoC
 
+enum LocalisedText {
+    case recommended
+    case bluetooth
+    case tap
+    
+    func text() -> String {
+        switch self {
+        case .recommended:
+            return ResourceBundle.localisation(for: "Recommended_For_You")
+        case .bluetooth:
+            return ResourceBundle.localisation(for: "Bluetooth")
+        case .tap:
+            return ResourceBundle.localisation(for: "Tap_To_Listen")
+        }
+    }
+}
+
 struct ResourceBundle {
     private static let bundle = Bundle(
         path: GSUtilities.sharedInstance().correctedFilePathFromPath(

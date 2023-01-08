@@ -44,10 +44,13 @@ struct Settings {
     var isVisibleFavouriteAppsFade: Bool
     // Weather
     var showWeather: Bool
+    var isActiveWeatherAutomaticRefresh: Bool
     // Status items
     var hasStatusItems: Bool
     var hasLockIcon: Bool
     var hasChargingIcon: Bool
+    var hasDNDIcon: Bool
+    var hasAlarmIcon: Bool
     
     init(withDictionary dict: [String: Any]) {
         isEnabled = dict["isEnabled", default: true] as! Bool
@@ -68,6 +71,9 @@ struct Settings {
         hasStatusItems = dict["hasStatusItems", default: true] as! Bool
         hasLockIcon = dict["hasLockIcon", default: true] as! Bool
         hasChargingIcon = dict["hasChargingIcon", default: true] as! Bool
+        isActiveWeatherAutomaticRefresh = dict["isActiveWeatherAutomaticRefresh", default: true] as! Bool
+        hasDNDIcon = dict["hasDNDIcon", default: true] as! Bool
+        hasAlarmIcon = dict["hasAlarmIcon", default: true] as! Bool
         
         let fontType = dict["fontType", default: 2] as! Int
         switch fontType {
@@ -125,14 +131,16 @@ struct Settings {
                 "com.apple.MobileSMS",
                 "com.apple.mobilemail"
             ]
-        ] as! [String]
+        ] as? [String]
         
         Colors.timeColor = UIColor(hexString: dict["timeColor", default: "#FFFFFFFF"] as! String)
         Colors.dateColor = UIColor(hexString: dict["dateColor", default: "#FFFFFFFF"] as! String)
         Colors.dividerColor = UIColor(hexString: dict["dividerColor", default: "#FFFFFFFF"] as! String)
         Colors.weatherColor = UIColor(hexString: dict["weatherColor", default: "#FFFFFFFF"] as! String)
         Colors.lockIconColor = UIColor(hexString: dict["lockIconColor", default: "#FFFFFFFF"] as! String)
-        
+        Colors.alarmIconColor = UIColor(hexString: dict["alarmIconColor", default: "#FFFFFFFF"] as! String)
+        Colors.dndIconColor = UIColor(hexString: dict["dndIconColor", default: "#FFFFFFFF"] as! String)
+
         Dimensions.shared.favouriteAppsGridSizeType = GridSizeType(rawValue: dict["favouriteAppsGridSizeType", default: 0] as! Int)!
         Dimensions.shared.favouriteAppsFlexibleGridItemSize = dict["favouriteAppsFlexibleGridItemSize", default: 40.0] as! Double
         Dimensions.shared.favouriteAppsFlexibleGridColumnAmount = dict["favouriteAppsFlexibleGridColumnAmount", default: 3] as! Int

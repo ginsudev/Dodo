@@ -143,6 +143,18 @@ struct SBIconImageInfo {
 + (instancetype)sharedInstance;
 @end
 
+// MARK: - DND
+@interface DNDState : NSObject
+@property (getter=isActive,nonatomic,readonly) BOOL active;
+@end
+
+@interface DNDStateUpdate : NSObject
+@property (nonatomic,copy,readonly) DNDState * state;
+@end
+
+@interface DNDNotificationsService : NSObject
+@end
+
 #ifndef SPRINGBOARDSERVICES_H_
 extern int SBSLaunchApplicationWithIdentifier(CFStringRef identifier, Boolean suspended);
 #endif

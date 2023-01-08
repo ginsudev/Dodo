@@ -13,4 +13,6 @@ struct Colors {
     static var dateColor: UIColor = .white
     static var weatherColor: UIColor = .white
     static var lockIconColor: UIColor = .white
+    static var alarmIconColor: UIColor = .white
+    static var dndIconColor: UIColor = .white
 }

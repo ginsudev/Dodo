@@ -17,6 +17,15 @@ final class DataRefresher {
     var timerRunning = false
     var screenOn = false
     
+    private lazy var alarmCache: MTAlarmCache? = {
+        if let observer = SBScheduledAlarmObserver.sharedInstance() {
+            let manager = Ivars<MTAlarmManager>(observer)._alarmManager
+            return manager.cache
+        } else {
+            return nil
+        }
+    }()
+    
     private init() {
         NotificationCenter.default.addObserver(
             self,
@@ -77,7 +86,7 @@ private extension DataRefresher {
     
     func refreshOnce() {
         // Update the weather
-        if PreferenceManager.shared.settings.showWeather {
+        if PreferenceManager.shared.settings.showWeather && PreferenceManager.shared.settings.isActiveWeatherAutomaticRefresh {
             WeatherView.ViewModel.shared.updateWeather()
         }
         // Charging indication
@@ -102,16 +111,13 @@ private extension DataRefresher {
     }
     
     func updateAlarms() {
-        if let observer = SBScheduledAlarmObserver.sharedInstance() {
-            let manager = Ivars<MTAlarmManager>(observer)._alarmManager
-            if let cache = manager.cache {
-                var array = [Alarm]()
-                for case let alarm as MTAlarm in Array(cache.orderedAlarms) {
-                    array.append(convertMobileTimer(alarm))
-                }
-                DispatchQueue.main.async {
-                    AlarmDataSource.shared.alarms = array
-                }
+        if let cache = alarmCache {
+            var array = [Alarm]()
+            for case let alarm as MTAlarm in Array(cache.orderedAlarms) {
+                array.append(convertMobileTimer(alarm))
+            }
+            DispatchQueue.main.async {
+                AlarmDataSource.shared.alarms = array
             }
         }
     }

@@ -335,7 +335,7 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
         
         let endY: CGFloat = {
             var value = screenHeight
-            value -= (Dimensions.shared.height + Dimensions.shared.androBarHeight)
+            value -= (Dimensions.shared.height + Dimensions.shared.androBarHeight - 30)
             return value / screenHeight
         }()
         
@@ -348,6 +348,13 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
             x: 0.5,
             y: endY
         )
+    }
+}
+
+class DNDNotificationsService_Hook: ClassHook<DNDNotificationsService> {
+    func stateService(_ arg1: AnyObject, didReceiveDoNotDisturbStateUpdate update: DNDStateUpdate) {
+        orig.stateService(arg1, didReceiveDoNotDisturbStateUpdate: update)
+        DNDViewModel.shared.isEnabled = update.state.isActive
     }
 }
 

@@ -31,7 +31,7 @@ struct MainContent: View {
 private extension MainContent {
     @ViewBuilder
     var infoView: some View {
-        VStack(alignment: .leading, spacing: 5.0) {
+        VStack(alignment: .leading, spacing: 0.0) {
             weatherView
             TimeDateView()
         }
