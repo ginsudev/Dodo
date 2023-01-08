@@ -15,4 +15,7 @@ struct Colors {
     static var lockIconColor: UIColor = .white
     static var alarmIconColor: UIColor = .white
     static var dndIconColor: UIColor = .white
+    static var flashlightIconColor: UIColor = .white
+    static var vibrationIconColor: UIColor = .white
+    static var mutedIconColor: UIColor = .white
 }

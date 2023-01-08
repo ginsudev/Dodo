@@ -3,6 +3,7 @@
 #import <PeterDev/libpddokdo.h>
 #import <AVKit/AVKit.h>
 #include "MediaRemote.h"
+#include "DarwinNotificationsManager.h"
 
 #pragma mark - Icon stuff
 FOUNDATION_EXPORT NSString *const FBSOpenApplicationOptionKeyUnlockDevice;
@@ -153,6 +154,27 @@ struct SBIconImageInfo {
 @end
 
 @interface DNDNotificationsService : NSObject
+@end
+
+// MARK: - Flashlight
+@interface SBUIFlashlightController : NSObject
++ (instancetype)sharedInstance;
+- (void)turnFlashlightOnForReason:(id)arg1 ;
+- (void)turnFlashlightOffForReason:(id)arg1 ;
+@end
+
+// MARK: - Ringer and vibration
+@interface TLVibrationManager : NSObject
+@property (nonatomic,readonly) BOOL shouldVibrateOnRing;
+@property (nonatomic,readonly) BOOL shouldVibrateOnSilent;
++ (instancetype)sharedVibrationManager;
+@end
+
+@interface SBRingerControl : NSObject
+@property (assign,getter=isRingerMuted,nonatomic) BOOL ringerMuted;
+@end
+
+@interface SBVolumeControl : NSObject
 @end
 
 #ifndef SPRINGBOARDSERVICES_H_

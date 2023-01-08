@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DodoC
 
 // MARK: - Public
 
@@ -15,13 +16,20 @@ struct StatusItemGroupView: View {
     @StateObject private var lockIconViewModel = LockIconViewModel.shared
     @StateObject private var alarmDataSource = AlarmDataSource.shared
     @StateObject private var dndViewModel = DNDViewModel.shared
+    @StateObject private var flashlightViewModel = FlashlightViewModel()
+    @StateObject private var ringerVibrationViewModel = RingerVibrationViewModel.shared
     
     var body: some View {
         HStack(spacing: 10.0) {
+            // Indication
             lockIcon
             chargingIcon
             alarms
             dnd
+            vibration
+            muted
+            // Action
+            flashlight
         }
         .frame(maxHeight: dimensions.statusItemSize.height)
     }
@@ -67,6 +75,40 @@ private extension StatusItemGroupView {
                 tint: Colors.dndIconColor
             )
         }
+    }
+    
+    @ViewBuilder
+    var vibration: some View {
+        if PreferenceManager.shared.settings.hasVibrationIcon, ringerVibrationViewModel.isEnabledVibration {
+            StatusItemView(
+                image: Image(systemName: ringerVibrationViewModel.vibrationImageName),
+                tint: Colors.vibrationIconColor
+            )
+        }
+    }
+    
+    @ViewBuilder
+    var muted: some View {
+        if PreferenceManager.shared.settings.hasMutedIcon, ringerVibrationViewModel.isEnabledMute {
+            StatusItemView(
+                image: Image(systemName: ringerVibrationViewModel.mutedImageName),
+                tint: Colors.mutedIconColor
+            )
+        }
+    }
+    
+    @ViewBuilder
+    var flashlight: some View {
+         if PreferenceManager.shared.settings.hasFlashlightIcon {
+            Divider()
+                .overlay(Color.white)
+            StatusItemView(
+                image: Image(systemName: flashlightViewModel.imageName),
+                tint: Colors.flashlightIconColor, onTapAction: {
+                    flashlightViewModel.isActiveFlashlight.toggle()
+                    HapticManager.playHaptic(withIntensity: .custom(.medium))
+                })
+         }
     }
 }
 

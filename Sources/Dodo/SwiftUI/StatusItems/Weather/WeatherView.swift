@@ -15,9 +15,13 @@ struct WeatherView: View {
     
     var body: some View {
         weatherInfo
-            .onLongPressGesture {
+            .onTapGesture {
                 viewModel.updateWeather()
                 HapticManager.playHaptic(withIntensity: .success)
+            }
+            .onLongPressGesture {
+                AppsManager.openApplication(withIdentifier: "com.apple.weather")
+                HapticManager.playHaptic(withIntensity: .custom(.medium))
             }
     }
 }

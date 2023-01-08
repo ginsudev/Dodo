@@ -25,6 +25,26 @@
             <string>hasStatusItemsStatus</string>
 		</dict>
 		<dict>
+			<key>cell</key>
+			<string>PSTableCell</string>
+			<key>cellClass</key>
+			<string>GSStepperCell</string>
+			<key>title</key>
+			<string>Indicator size</string>
+			<key>default</key>
+			<real>18</real>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>indicatorSize</string>
+			<key>min</key>
+			<real>13</real>
+			<key>max</key>
+			<real>30</real>
+			<key>dynamicRule</key>
+            <string>hasStatusItemsStatus,==,0</string>
+		</dict>
+		<dict>
             <key>cell</key>
             <string>PSGroupCell</string>
             <key>label</key>
@@ -163,6 +183,126 @@
             <string>DND icon color</string>
 			<key>dynamicRule</key>
             <string>hasDNDIconStatus,==,0</string>
+        </dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>hasFlashlightIcon</string>
+			<key>label</key>
+			<string>Flashlight indicator</string>
+			<key>dynamicRule</key>
+            <string>hasStatusItemsStatus,==,0</string>
+			<key>id</key>
+            <string>hasFlashlightIconStatus</string>
+		</dict>
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>cellClass</key>
+            <string>GSColorPickerCell</string>
+            <key>fallbackHex</key>
+            <string>#FFFFFFFF</string>
+            <key>supportsAlpha</key> 
+            <true/>
+            <key>defaults</key>
+            <string>com.ginsu.dodo</string>
+            <key>key</key>
+            <string>flashlightIconColor</string>
+            <key>default</key>
+            <string>#FFFFFFFF</string>
+            <key>label</key>
+            <string>Flashlight icon color</string>
+			<key>dynamicRule</key>
+            <string>hasFlashlightIconStatus,==,0</string>
+        </dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>hasVibrationIcon</string>
+			<key>label</key>
+			<string>Vibration indicator</string>
+			<key>dynamicRule</key>
+            <string>hasStatusItemsStatus,==,0</string>
+			<key>id</key>
+            <string>hasVibrationIconStatus</string>
+		</dict>
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>cellClass</key>
+            <string>GSColorPickerCell</string>
+            <key>fallbackHex</key>
+            <string>#FFFFFFFF</string>
+            <key>supportsAlpha</key> 
+            <false/>
+            <key>defaults</key>
+            <string>com.ginsu.dodo</string>
+            <key>key</key>
+            <string>vibrationIconColor</string>
+            <key>default</key>
+            <string>#FFFFFFFF</string>
+            <key>label</key>
+            <string>Vibration icon color</string>
+			<key>dynamicRule</key>
+            <string>hasVibrationIconStatus,==,0</string>
+        </dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>hasMutedIcon</string>
+			<key>label</key>
+			<string>Muted indicator</string>
+			<key>dynamicRule</key>
+            <string>hasStatusItemsStatus,==,0</string>
+			<key>id</key>
+            <string>hasMutedIconStatus</string>
+		</dict>
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>cellClass</key>
+            <string>GSColorPickerCell</string>
+            <key>fallbackHex</key>
+            <string>#FFFFFFFF</string>
+            <key>supportsAlpha</key> 
+            <true/>
+            <key>defaults</key>
+            <string>com.ginsu.dodo</string>
+            <key>key</key>
+            <string>mutedIconColor</string>
+            <key>default</key>
+            <string>#FFFFFFFF</string>
+            <key>label</key>
+            <string>Muted icon color</string>
+			<key>dynamicRule</key>
+            <string>hasMutedIconStatus,==,0</string>
         </dict>
 	</array>
 	<key>title</key>

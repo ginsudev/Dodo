@@ -51,6 +51,9 @@ struct Settings {
     var hasChargingIcon: Bool
     var hasDNDIcon: Bool
     var hasAlarmIcon: Bool
+    var hasFlashlightIcon: Bool
+    var hasVibrationIcon: Bool
+    var hasMutedIcon: Bool
     
     init(withDictionary dict: [String: Any]) {
         isEnabled = dict["isEnabled", default: true] as! Bool
@@ -74,6 +77,9 @@ struct Settings {
         isActiveWeatherAutomaticRefresh = dict["isActiveWeatherAutomaticRefresh", default: true] as! Bool
         hasDNDIcon = dict["hasDNDIcon", default: true] as! Bool
         hasAlarmIcon = dict["hasAlarmIcon", default: true] as! Bool
+        hasFlashlightIcon = dict["hasFlashlightIcon", default: true] as! Bool
+        hasVibrationIcon = dict["hasVibrationIcon", default: false] as! Bool
+        hasMutedIcon = dict["hasMutedIcon", default: true] as! Bool
         
         let fontType = dict["fontType", default: 2] as! Int
         switch fontType {
@@ -140,11 +146,17 @@ struct Settings {
         Colors.lockIconColor = UIColor(hexString: dict["lockIconColor", default: "#FFFFFFFF"] as! String)
         Colors.alarmIconColor = UIColor(hexString: dict["alarmIconColor", default: "#FFFFFFFF"] as! String)
         Colors.dndIconColor = UIColor(hexString: dict["dndIconColor", default: "#FFFFFFFF"] as! String)
-
+        Colors.flashlightIconColor = UIColor(hexString: dict["flashlightIconColor", default: "#FFFFFFFF"] as! String)
+        Colors.vibrationIconColor = UIColor(hexString: dict["vibrationIconColor", default: "#FFFFFFFF"] as! String)
+        Colors.mutedIconColor = UIColor(hexString: dict["mutedIconColor", default: "#FFFFFFFF"] as! String)
+        
         Dimensions.shared.favouriteAppsGridSizeType = GridSizeType(rawValue: dict["favouriteAppsGridSizeType", default: 0] as! Int)!
         Dimensions.shared.favouriteAppsFlexibleGridItemSize = dict["favouriteAppsFlexibleGridItemSize", default: 40.0] as! Double
         Dimensions.shared.favouriteAppsFlexibleGridColumnAmount = dict["favouriteAppsFlexibleGridColumnAmount", default: 3] as! Int
         Dimensions.shared.favouriteAppsFixedGridItemSize = dict["favouriteAppsFixedGridItemSize", default: 40.0] as! Double
         Dimensions.shared.favouriteAppsFixedGridColumnAmount = dict["favouriteAppsFixedGridColumnAmount", default: 3] as! Int
+        
+        let indicatorSize = dict["indicatorSize", default: 18] as! Int
+        Dimensions.shared.statusItemSize = CGSize(width: indicatorSize, height: indicatorSize)
     }
 }

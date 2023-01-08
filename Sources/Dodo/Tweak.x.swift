@@ -358,6 +358,13 @@ class DNDNotificationsService_Hook: ClassHook<DNDNotificationsService> {
     }
 }
 
+class SBRingerControl_Hook: ClassHook<SBRingerControl> {
+    func setRingerMuted(_ muted: Bool) {
+        orig.setRingerMuted(muted)
+        RingerVibrationViewModel.shared.isEnabledMute = muted
+    }
+}
+
 //MARK: - Preferences
 fileprivate func prefsDict() -> [String : Any]? {
     var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml

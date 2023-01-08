@@ -28,6 +28,12 @@
 	<true/>
 	<key>hasDNDIcon</key>
 	<true/>
+	<key>hasFlashlightIcon</key>
+	<true/>
+	<key>hasVibrationIcon</key>
+	<false/>
+	<key>hasMutedIcon</key>
+	<true/>
 
 	<key>favouriteAppsGridSizeType</key>
 	<integer>0</integer>
@@ -57,6 +63,8 @@
 	<real>15</real>
 	<key>weatherFontSize</key>
 	<real>15</real>
+	<key>indicatorSize</key>
+	<real>18</real>
 
 	<key>timeTemplateCustom</key>
 	<string>h:mm</string>
@@ -75,6 +83,12 @@
 	<key>alarmIconColor</key>
 	<string>#FFFFFFFF</string>
 	<key>dndIconColor</key>
+	<string>#FFFFFFFF</string>
+	<key>flashlightIconColor</key>
+	<string>#FFFFFFFF</string>
+	<key>vibrationIconColor</key>
+	<string>#FFFFFFFF</string>
+	<key>mutedIconColor</key>
 	<string>#FFFFFFFF</string>
 </dict>
 </plist>
