@@ -75,26 +75,23 @@ struct SBIconImageInfo {
 @end
 
 #pragma mark - Checking if LS is active
-@interface SBLockScreenManager : NSObject
-- (BOOL)isLockScreenActive;
-@end
-
-@interface SBFLockScreenWakeAnimator : NSObject
-@end
-
-@interface SBWakeLogger : NSObject
+@interface SBLockStateAggregator : NSObject
++ (instancetype)sharedInstance;
+- (NSUInteger)lockState;
 @end
 
 #pragma mark - Fetching media data
+@interface MRArtwork : NSObject
+@property (copy, nonatomic) NSData *imageData;
+@end
+
 @interface MRContentItemMetadata : NSObject
 @property (nonatomic,copy) NSString * title;
 @property (nonatomic,copy) NSString * trackArtistName;
-@property CGFloat calculatedPlaybackPosition;
-@property (assign,nonatomic) double duration;
-@property (assign,nonatomic) float playbackRate;
 @end
 
 @interface MRContentItem : NSObject
+@property (retain, nonatomic) MRArtwork *artwork;
 @property (nonatomic,copy) MRContentItemMetadata * metadata;
 - (instancetype)initWithNowPlayingInfo:(NSDictionary *)nowPlayingInfo;
 @end
@@ -110,7 +107,6 @@ struct SBIconImageInfo {
 @interface SBMediaController : NSObject
 + (instancetype)sharedInstance;
 - (SBApplication *)nowPlayingApplication;
-- (BOOL)isPaused;
 - (NSString *)nameOfPickedRoute;
 - (BOOL)changeTrack:(int)arg1 eventSource:(long long)arg2;
 - (BOOL)togglePlayPauseForEventSource:(long long)arg1;
@@ -179,6 +175,7 @@ struct SBIconImageInfo {
 @end
 
 @interface SBVolumeControl : NSObject
++ (instancetype)sharedInstance;
 @end
 
 #ifndef SPRINGBOARDSERVICES_H_

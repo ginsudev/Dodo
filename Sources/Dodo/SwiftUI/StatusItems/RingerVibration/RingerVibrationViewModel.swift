@@ -10,7 +10,6 @@ import DodoC
 import Orion
 
 final class RingerVibrationViewModel: ObservableObject {
-    static let shared = RingerVibrationViewModel()
     let darwinManager = DarwinNotificationsManager.sharedInstance()
     
     @Published var isEnabledVibration = UserDefaults.standard.bool(forKey: "Dodo.isActiveVibration") {
@@ -37,6 +36,15 @@ final class RingerVibrationViewModel: ObservableObject {
         return "speaker.slash.fill"
     }()
     
+    lazy var ringerControl: SBRingerControl? = {
+        if let volumeControl = SBVolumeControl.sharedInstance() {
+            let ringerControl = Ivars<SBRingerControl>(volumeControl)._ringerControl
+            return ringerControl
+        } else {
+            return nil
+        }
+    }()
+    
     init() {
         darwinManager?.register(forNotificationName: "com.apple.springboard.ring-vibrate.changed", callback: { [weak self] in
             self?.updateVibrationState()
@@ -44,10 +52,24 @@ final class RingerVibrationViewModel: ObservableObject {
         darwinManager?.register(forNotificationName: "com.apple.springboard.silent-vibrate.changed", callback: { [weak self] in
             self?.updateVibrationState()
         })
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateRingerState),
+            name: NSNotification.Name("SBRingerChangedNotification"),
+            object: nil
+        )
     }
-    
-    private func updateVibrationState() {
+}
+
+private extension RingerVibrationViewModel {
+    func updateVibrationState() {
         let isActiveVibration = TLVibrationManager.shared().shouldVibrateOnRing && TLVibrationManager.shared().shouldVibrateOnSilent
         self.isEnabledVibration = isActiveVibration
+    }
+    
+    @objc func updateRingerState() {
+        if let ringerControl {
+            self.isEnabledMute = ringerControl.isRingerMuted
+        }
     }
 }

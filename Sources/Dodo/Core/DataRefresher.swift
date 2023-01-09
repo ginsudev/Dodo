@@ -13,9 +13,9 @@ import Orion
 
 final class DataRefresher {
     static let shared = DataRefresher()
+    private let darwinManager = DarwinNotificationsManager.sharedInstance()
     private var timer = Timer()
     var timerRunning = false
-    var screenOn = false
     
     private lazy var alarmCache: MTAlarmCache? = {
         if let observer = SBScheduledAlarmObserver.sharedInstance() {
@@ -27,6 +27,15 @@ final class DataRefresher {
     }()
     
     private init() {
+        // Screen turned on / lock screen became active.
+        darwinManager?.register(forNotificationName: "com.apple.springboardservices.eventobserver.internalSBSEventObserverEventContinuityUIWasObscured", callback: { [weak self] in
+            self?.toggleTimer(on: false)
+        })
+        // Screen turned off / lock screen was dismissed.
+        darwinManager?.register(forNotificationName: "com.apple.springboardservices.eventobserver.internalSBSEventObserverEventContinuityUIBecameVisible", callback: { [weak self] in
+            self?.toggleTimer(on: true)
+        })
+        // Dear AOD tweak devs, post this notification to update Dodo's time.
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(refresh),
@@ -35,27 +44,24 @@ final class DataRefresher {
         )
     }
     
-    public func toggleTimer(on enable: Bool) {
+    func toggleTimer(on enable: Bool) {
+        // Do not start a timer for time/date updates because the user disabled Dodo's clock.
         guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
-            // Do not start a timer for time/date updates because the user disabled Dodo's clock.
             refreshOnce()
             return
         }
-        
+        // If `false` was passed in, invalidate the timer and return, don't start another timer.
         guard enable else {
-            // If `false` was passed in, invalidate the timer and return, don't start another timer.
             if self.timer.isValid {
                 self.timer.invalidate()
                 timerRunning = false
             }
             return
         }
-        
+        // Do not start a timer if one already exists.
         guard !self.timer.isValid else {
-            // Do not start a timer if one already exists.
             return
         }
-        
         // Safety checks passed, start timer.
         self.timer = Timer.scheduledTimer(
             timeInterval: 1,
@@ -123,7 +129,7 @@ private extension DataRefresher {
     }
     
     func convertMobileTimer(_ alarm: MTAlarm) -> Alarm {
-        return Alarm(
+        Alarm(
             id: alarm.alarmID,
             url: alarm.alarmURL,
             nextFireDate: alarm.nextFireDate,

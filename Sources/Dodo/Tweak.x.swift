@@ -96,99 +96,6 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     }
 }
 
-//MARK: - Updating time
-class SBLockScreenManager_Hook: ClassHook<SBLockScreenManager> {
-    typealias Group = Main
-
-    func lockUIFromSource(_ source: Int, withOptions options: AnyObject) {
-        orig.lockUIFromSource(source, withOptions: options)
-        
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
-            return
-        }
-        
-        LockIconViewModel.shared.lockImageName = "lock.fill"
-    }
-    
-    func _runUnlockActionBlock(_ run: Bool) {
-        orig._runUnlockActionBlock(run)
-        guard run else {
-            return
-        }
-        
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
-            return
-        }
-        
-        LockIconViewModel.shared.lockImageName = "lock.open.fill"
-    }
-
-    func lockScreenViewControllerDidDismiss() {
-        orig.lockScreenViewControllerDidDismiss()
-        //Lock screen dismissed
-        DataRefresher.shared.toggleTimer(on: false)
-    }
-
-    func lockScreenViewControllerDidPresent() {
-        orig.lockScreenViewControllerDidPresent()
-
-        guard DataRefresher.shared.screenOn else {
-            return
-        }
-        //Lock screen presented
-        DataRefresher.shared.toggleTimer(on: true)
-    }
-
-    func _handleBacklightLevelWillChange(_ arg1: NSNotification) {
-        orig._handleBacklightLevelWillChange(arg1)
-
-        guard let userInfo = arg1.userInfo else {
-            return
-        }
-
-        guard let updatedBacklightLevel = userInfo["SBBacklightNewFactorKey"] as? Int else {
-            return
-        }
-
-        DataRefresher.shared.screenOn = updatedBacklightLevel != 0
-        //Screen turned on/off.
-        DataRefresher.shared.toggleTimer(on: DataRefresher.shared.screenOn)
-    }
-}
-
-//MARK: - Now playing app and currently playing track info.
-class SBMediaController_Hook: ClassHook<SBMediaController> {
-    typealias Group = Main
-
-    func _mediaRemoteNowPlayingApplicationIsPlayingDidChange(_ arg1: AnyObject) {
-        orig._mediaRemoteNowPlayingApplicationIsPlayingDidChange(arg1)
-        
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
-            return
-        }
-        
-        if let nowPlayingApp = target.nowPlayingApplication() {
-            AppsManager.suggestedAppBundleIdentifier = nowPlayingApp.bundleIdentifier
-            MediaPlayer.ViewModel.shared.hasActiveMediaApp = true
-        } else {
-            MediaPlayer.ViewModel.shared.hasActiveMediaApp = false
-        }
-        //Update play/pause button status.
-        MediaPlayer.ViewModel.shared.togglePlayPause(shouldPlay: !target.isPaused())
-    }
-    
-    func setNowPlayingInfo(_ info: NSDictionary) {
-        orig.setNowPlayingInfo(info)
-        
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
-            return
-        }
-        
-        //Update current track info.
-        MediaPlayer.ViewModel.shared.updateInfo()
-    }
-}
-
 //MARK: - Refresh media info on SpringBoard launch.
 class SpringBoard_Hook: ClassHook<SpringBoard> {
     typealias Group = Main
@@ -358,25 +265,10 @@ class DNDNotificationsService_Hook: ClassHook<DNDNotificationsService> {
     }
 }
 
-class SBRingerControl_Hook: ClassHook<SBRingerControl> {
-    func setRingerMuted(_ muted: Bool) {
-        orig.setRingerMuted(muted)
-        RingerVibrationViewModel.shared.isEnabledMute = muted
-    }
-}
-
-//class CFNotificationCenterPostNotificationHook: FunctionHook {
-//    static let target = Function.symbol("CFNotificationCenterPostNotification", image: nil)
-//
-//    func function(
-//        _ center: CFNotificationCenter,
-//        _ name: CFNotificationName,
-//        _ object: UnsafeRawPointer,
-//        _ userInfo: CFDictionary,
-//        _ deliverImmediately: Bool
-//    ) {
-//        NSLog("[Dodo]: name=\(name)")
-//        orig.function(center, name, object, userInfo, deliverImmediately)
+//class SBRingerControl_Hook: ClassHook<SBRingerControl> {
+//    func setRingerMuted(_ muted: Bool) {
+//        orig.setRingerMuted(muted)
+//        RingerVibrationViewModel.shared.isEnabledMute = muted
 //    }
 //}
 
@@ -425,6 +317,7 @@ struct Dodo: Tweak {
     init() {
         readPrefs()
         if PreferenceManager.shared.settings.isEnabled {
+            DataRefresher.shared
             Main().activate()
         }
     }

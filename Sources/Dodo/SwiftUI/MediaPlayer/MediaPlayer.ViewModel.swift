@@ -15,7 +15,7 @@ extension MediaPlayer {
         static let themePath: String = GSUtilities.sharedInstance().correctedFilePathFromPath(
             withRootPrefix: ":root:Library/Application Support/Dodo/Themes/\(PreferenceManager.shared.settings.themeName)/"
         )
-                
+        
         @Published var hasActiveMediaApp = false {
             didSet {
                 guard !hasActiveMediaApp else {
@@ -50,32 +50,65 @@ extension MediaPlayer {
         
         @Published var foregroundColour: UIColor = .white
         
+        init() {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(didChangePlaybackState(notification:)),
+                name: NSNotification.Name("kMRMediaRemoteOriginNowPlayingApplicationIsPlayingDidChangeNotification"),
+                object: nil
+            )
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(didChangeNowPlayingInfo),
+                name: NSNotification.Name("kMRMediaRemotePlayerNowPlayingInfoDidChangeNotification"),
+                object: nil
+            )
+        }
+        
+        @objc func didChangePlaybackState(notification: Notification) {
+            hasActiveMediaApp = nowPlayingAppIdentifier() != nil
+            guard hasActiveMediaApp else {
+                return
+            }
+            if let userInfo = notification.userInfo,
+               let isPlaying = userInfo["kMRMediaRemoteNowPlayingApplicationIsPlayingUserInfoKey"] as? Bool {
+                togglePlayPause(shouldPlay: isPlaying)
+            }
+        }
+        
+        @objc func didChangeNowPlayingInfo() {
+            //Update track info (Artwork, title, artist, etc..).
+            MRMediaRemoteGetNowPlayingInfo(
+                .main,
+                { [weak self] information in
+                    guard let dict = information as? [String: AnyObject] else {
+                        return
+                    }
+                    if let contentItem = MRContentItem(nowPlayingInfo: dict),
+                       let metadata = contentItem.metadata {
+                        //Track name & artist
+                        if let title = metadata.title {
+                            self?.trackName = title
+                        }
+                        if let trackArtistName = metadata.trackArtistName {
+                            self?.artistName = trackArtistName
+                        }
+                        //Album artwork
+                        if let artwork = contentItem.artwork,
+                           let imageData = artwork.imageData,
+                           let image = UIImage(data: imageData) {
+                            self?.albumArtwork = image
+                        }
+                    }
+                }
+            )
+        }
+        
         func togglePlayPause(shouldPlay play: Bool) {
             let iconPath = MediaPlayer.ViewModel.themePath + (play ? "pause": "play") + ".png"
             DispatchQueue.main.async { [weak self] in
                 self?.playPauseIcon = UIImage(named: iconPath)
             }
-        }
-        
-        func updateInfo() {
-            //Update track info (Artwork, title, artist, etc..).
-            MRMediaRemoteGetNowPlayingInfo(.main, { [weak self] information in
-                guard let dict = information as? [String: AnyObject] else {
-                    return
-                }
-                if let contentItem = MRContentItem(nowPlayingInfo: dict),
-                   let metadata = contentItem.metadata {
-                    //Track name & artist
-                    self?.trackName = metadata.title ?? ""
-                    self?.artistName = metadata.trackArtistName ?? ""
-                    //Album artwork
-                    if let data = dict["kMRMediaRemoteNowPlayingInfoArtworkData"] as? Data {
-                        self?.albumArtwork = UIImage(data: data)
-                    }
-                    //Playing status
-                    self?.togglePlayPause(shouldPlay: (metadata.playbackRate > 0))
-                }
-            })
         }
                 
         func nowPlayingAppIdentifier() -> String? {

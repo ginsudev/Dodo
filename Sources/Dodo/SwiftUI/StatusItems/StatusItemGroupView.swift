@@ -13,11 +13,11 @@ import DodoC
 struct StatusItemGroupView: View {
     @EnvironmentObject var dimensions: Dimensions
     @StateObject private var chargingViewModel = ChargingIconViewModel()
-    @StateObject private var lockIconViewModel = LockIconViewModel.shared
+    @StateObject private var lockIconViewModel = LockIconViewModel()
     @StateObject private var alarmDataSource = AlarmDataSource.shared
     @StateObject private var dndViewModel = DNDViewModel.shared
     @StateObject private var flashlightViewModel = FlashlightViewModel()
-    @StateObject private var ringerVibrationViewModel = RingerVibrationViewModel.shared
+    @StateObject private var ringerVibrationViewModel = RingerVibrationViewModel()
     
     var body: some View {
         HStack(spacing: 10.0) {

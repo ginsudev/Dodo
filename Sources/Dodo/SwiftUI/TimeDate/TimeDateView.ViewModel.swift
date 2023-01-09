@@ -18,10 +18,10 @@ enum DateTemplate {
 extension TimeDateView {
     final class ViewModel: ObservableObject {
         static let shared = ViewModel()
-        
+
         @Published var time = ""
         @Published var date = ""
-        
+
         private func string(fromTemplate template: DateTemplate) -> String {
             switch template {
             case .timeWithSeconds:
