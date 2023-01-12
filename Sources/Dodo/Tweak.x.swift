@@ -10,7 +10,7 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     @Property (.nonatomic, .retain) var dodoController = DDBaseController()
     @Property (.nonatomic, .retain) var widthConstraint = NSLayoutConstraint()
     @Property (.nonatomic, .retain) var heightConstraint = NSLayoutConstraint()
-               
+    
     func viewDidLoad() {
         orig.viewDidLoad()
         
@@ -75,11 +75,6 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
         let offset = orig._minInsetsToPushDateOffScreen()
         let newOffset = offset - dodoNotificationVerticalOffset()
         return newOffset
-    }
-    
-    func _layoutListView() {
-        orig._layoutListView()
-        target._updateListViewContentInset()
     }
     
     //orion: new
@@ -261,7 +256,9 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
 class DNDNotificationsService_Hook: ClassHook<DNDNotificationsService> {
     func stateService(_ arg1: AnyObject, didReceiveDoNotDisturbStateUpdate update: DNDStateUpdate) {
         orig.stateService(arg1, didReceiveDoNotDisturbStateUpdate: update)
-        DNDViewModel.shared.isEnabled = update.state.isActive
+        DispatchQueue.main.async {
+            DNDViewModel.shared.isEnabled = update.state.isActive
+        }
     }
 }
 
@@ -317,7 +314,6 @@ struct Dodo: Tweak {
     init() {
         readPrefs()
         if PreferenceManager.shared.settings.isEnabled {
-            DataRefresher.shared
             Main().activate()
         }
     }

@@ -16,11 +16,11 @@ extension WeatherView {
         static let shared = ViewModel()
         
         func updateWeather() {
-            DispatchQueue.main.async {
-                PDDokdo.sharedInstance().refreshWeatherData()
-                self.temperature = PDDokdo.sharedInstance().currentTemperature ?? ""
-                self.locationName = PDDokdo.sharedInstance().currentLocation ?? ""
-                self.conditionImage = PDDokdo.sharedInstance().currentConditionsImage ?? UIImage(systemName: "xmark.icloud")!
+            PDDokdo.sharedInstance().refreshWeatherData()
+            DispatchQueue.main.async { [weak self] in
+                self?.temperature = PDDokdo.sharedInstance().currentTemperature ?? ""
+                self?.locationName = PDDokdo.sharedInstance().currentLocation ?? ""
+                self?.conditionImage = PDDokdo.sharedInstance().currentConditionsImage ?? UIImage(systemName: "xmark.icloud")!
             }
         }
     }

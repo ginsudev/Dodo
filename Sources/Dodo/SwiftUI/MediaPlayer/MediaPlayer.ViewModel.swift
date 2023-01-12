@@ -29,9 +29,7 @@ extension MediaPlayer {
         @Published var artistName = ""
         @Published var albumArtwork: UIImage? = UIImage(systemName: "music.note") {
             didSet {
-                DispatchQueue.main.async { [weak self] in
-                    self?.artworkColour = self?.albumArtwork?.dominantColour() ?? .black
-                }
+                self.artworkColour = self.albumArtwork?.dominantColour() ?? .black
             }
         }
 
@@ -42,9 +40,7 @@ extension MediaPlayer {
                 guard PreferenceManager.shared.settings.playerStyle == .modular else {
                     return
                 }
-                DispatchQueue.main.async { [weak self] in
-                    self?.foregroundColour = self?.artworkColour.suitableForegroundColour() ?? .white
-                }
+                self.foregroundColour = self.artworkColour.suitableForegroundColour()
             }
         }
         
@@ -106,9 +102,7 @@ extension MediaPlayer {
         
         func togglePlayPause(shouldPlay play: Bool) {
             let iconPath = MediaPlayer.ViewModel.themePath + (play ? "pause": "play") + ".png"
-            DispatchQueue.main.async { [weak self] in
-                self?.playPauseIcon = UIImage(named: iconPath)
-            }
+            self.playPauseIcon = UIImage(named: iconPath)
         }
                 
         func nowPlayingAppIdentifier() -> String? {
@@ -116,6 +110,16 @@ extension MediaPlayer {
                 return nil
             }
             return app.bundleIdentifier
+        }
+    }
+}
+
+extension MediaPlayer.ViewModel {
+    func temporarilySwapColor(_ newColor: UIColor) {
+        let previousColor = artworkColour
+        artworkColour = newColor
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) { [weak self] in
+            self?.artworkColour = previousColor
         }
     }
 }

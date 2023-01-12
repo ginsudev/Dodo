@@ -12,10 +12,9 @@ import Orion
 // MARK: - Public
 
 final class DataRefresher {
-    static let shared = DataRefresher()
     private let darwinManager = DarwinNotificationsManager.sharedInstance()
     private var timer = Timer()
-    var timerRunning = false
+    private var timerRunning = false
     
     private lazy var alarmCache: MTAlarmCache? = {
         if let observer = SBScheduledAlarmObserver.sharedInstance() {
@@ -26,7 +25,7 @@ final class DataRefresher {
         }
     }()
     
-    private init() {
+    init() {
         // Screen turned on / lock screen became active.
         darwinManager?.register(forNotificationName: "com.apple.springboardservices.eventobserver.internalSBSEventObserverEventContinuityUIWasObscured", callback: { [weak self] in
             self?.toggleTimer(on: false)
@@ -42,6 +41,10 @@ final class DataRefresher {
             name: NSNotification.Name("Dodo.updateTimeAndDate"),
             object: nil
         )
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     func toggleTimer(on enable: Bool) {
@@ -104,26 +107,23 @@ private extension DataRefresher {
     }
     
     func chargingIndication() {
-        let chargeColour = UIColor(red: 0.28, green: 0.57, blue: 0.18, alpha: 1.00)
-        let prevColour = MediaPlayer.ViewModel.shared.artworkColour
-        MediaPlayer.ViewModel.shared.artworkColour = chargeColour
-       
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-            guard MediaPlayer.ViewModel.shared.artworkColour == chargeColour else {
-                return
-            }
-            MediaPlayer.ViewModel.shared.artworkColour = prevColour
-        }
+        let chargeColor = UIDevice.current.batteryLevelColorRepresentation()
+        MediaPlayer.ViewModel.shared.temporarilySwapColor(chargeColor)
     }
     
     func updateAlarms() {
-        if let cache = alarmCache {
-            var array = [Alarm]()
-            for case let alarm as MTAlarm in Array(cache.orderedAlarms) {
-                array.append(convertMobileTimer(alarm))
-            }
-            DispatchQueue.main.async {
-                AlarmDataSource.shared.alarms = array
+        DispatchQueue.global().async { [weak self] in
+            if let cache = self?.alarmCache {
+                var array = [Alarm]()
+                for case let alarm as MTAlarm in Array(cache.orderedAlarms) {
+                    if let convertedAlarm = self?.convertMobileTimer(alarm) {
+                        array.append(convertedAlarm)
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    AlarmDataSource.shared.alarms = array
+                }
             }
         }
     }

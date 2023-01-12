@@ -159,8 +159,9 @@ struct SBIconImageInfo {
 
 @interface SBUIFlashlightController : NSObject
 + (instancetype)sharedInstance;
-- (void)turnFlashlightOnForReason:(id)arg1 ;
-- (void)turnFlashlightOffForReason:(id)arg1 ;
+- (void)turnFlashlightOnForReason:(id)arg1;
+- (void)turnFlashlightOffForReason:(id)arg1;
+- (void)warmUp;
 @end
 
 // MARK: - Ringer and vibration

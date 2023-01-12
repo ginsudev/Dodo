@@ -29,7 +29,7 @@ struct AppsManager {
     
     static var suggestedAppBundleIdentifier: String {
         get {
-            guard let identifier = UserDefaults.standard.string(
+            guard let identifier = PreferenceManager.shared.defaults.string(
                 forKey: "Dodo.SuggestedMediaApp"
             ) else {
                 return "com.apple.camera"
@@ -37,7 +37,7 @@ struct AppsManager {
             return identifier
         }
         set {
-            UserDefaults.standard.set(
+            PreferenceManager.shared.defaults.set(
                 newValue,
                 forKey: "Dodo.SuggestedMediaApp"
             )

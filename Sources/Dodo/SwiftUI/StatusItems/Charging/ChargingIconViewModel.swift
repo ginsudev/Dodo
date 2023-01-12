@@ -7,7 +7,6 @@
 
 import UIKit
 
-@MainActor
 final class ChargingIconViewModel: ObservableObject {
     @Published private(set) var isCharging: Bool = false
     @Published private(set) var indicationColor: UIColor = .white
@@ -23,7 +22,15 @@ final class ChargingIconViewModel: ObservableObject {
         updateChargingVisuals()
     }
     
-    private func addObservers() {
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+}
+
+// MARK: - Private
+
+private extension ChargingIconViewModel {
+    func addObservers() {
         // Enable battery monitoring so that we can recieve battery notifications.
         UIDevice.current.isBatteryMonitoringEnabled = true
         
@@ -42,31 +49,24 @@ final class ChargingIconViewModel: ObservableObject {
         )
     }
     
-    @objc private func updateChargingStatus() {
-        isCharging = UIDevice.current.batteryState != .unplugged
-    }
-    
-    @objc private func updateChargingVisuals() {
-        let batteryLevel = UIDevice.current.batteryLevel * 100
-        batteryPercentage = "\(Int(batteryLevel))%"
-        
-        switch batteryLevel {
-        case 0..<20:
-            indicationColor = .red
-            imageName = "bolt.circle.fill"
-        case 20..<80:
-            indicationColor = .yellow
-            imageName = "bolt.circle.fill"
-        case 80..<100:
-            indicationColor = .green
-            imageName = "bolt.circle.fill"
-        default:
-            indicationColor = .green
-            imageName = "bolt.slash.circle.fill"
+    @objc func updateChargingStatus() {
+        DispatchQueue.main.async {
+            self.isCharging = UIDevice.current.batteryState != .unplugged
         }
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self)
+    @objc func updateChargingVisuals() {
+        let batteryLevel = UIDevice.current.batteryLevel * 100
+        
+        DispatchQueue.main.async {
+            self.indicationColor = UIDevice.current.batteryLevelColorRepresentation()
+            self.batteryPercentage = "\(Int(batteryLevel))%"
+            switch batteryLevel {
+            case 0..<100:
+                self.imageName = "bolt.circle.fill"
+            default:
+                self.imageName = "bolt.slash.circle.fill"
+            }
+        }
     }
 }

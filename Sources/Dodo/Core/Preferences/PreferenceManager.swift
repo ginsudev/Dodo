@@ -9,8 +9,10 @@ import Foundation
 import SwiftUI
 
 final class PreferenceManager {
-    static let shared = PreferenceManager()
     private(set) var settings: Settings!
+    static let shared = PreferenceManager()
+    let dataRefresher = DataRefresher()
+    let defaults = UserDefaults.standard
     
     func loadSettings(withDictionary dict: [String: Any]) {
         self.settings = Settings(withDictionary: dict)

@@ -17,7 +17,6 @@ struct Alarm: Identifiable {
 
 final class AlarmDataSource: ObservableObject {
     static let shared = AlarmDataSource()
-    private let defaults = UserDefaults.standard
     
     @Published var nextEnabledAlarm: Alarm?
     

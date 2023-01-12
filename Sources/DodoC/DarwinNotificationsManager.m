@@ -51,9 +51,6 @@ void defaultNotificationCallback (CFNotificationCenterRef center,
                  const void *object,
                  CFDictionaryRef userInfo)
 {
-    NSLog(@"name: %@", name);
-    NSLog(@"userinfo: %@", userInfo);
-
     NSString *identifier = (__bridge NSString *)name;
     [[DarwinNotificationsManager sharedInstance] notificationCallbackReceivedWithName:identifier];
 }

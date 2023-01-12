@@ -12,19 +12,19 @@ import Orion
 final class RingerVibrationViewModel: ObservableObject {
     let darwinManager = DarwinNotificationsManager.sharedInstance()
     
-    @Published var isEnabledVibration = UserDefaults.standard.bool(forKey: "Dodo.isActiveVibration") {
+    @Published var isEnabledVibration = PreferenceManager.shared.defaults.bool(forKey: "Dodo.isActiveVibration") {
         didSet {
-            UserDefaults.standard.set(isEnabledVibration, forKey: "Dodo.isActiveVibration")
+            PreferenceManager.shared.defaults.set(isEnabledVibration, forKey: "Dodo.isActiveVibration")
         }
     }
     
-    @Published var isEnabledMute = UserDefaults.standard.bool(forKey: "Dodo.isActiveMute") {
+    @Published var isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: "Dodo.isActiveMute") {
         didSet {
-            UserDefaults.standard.set(isEnabledMute, forKey: "Dodo.isActiveMute")
+            PreferenceManager.shared.defaults.set(isEnabledMute, forKey: "Dodo.isActiveMute")
         }
     }
     
-    let vibrationImageName: String = {
+    let vibrationImageName = {
         if #available(iOS 15, *) {
             return "iphone.radiowaves.left.and.right.circle.fill"
         } else {
@@ -32,18 +32,7 @@ final class RingerVibrationViewModel: ObservableObject {
         }
     }()
     
-    let mutedImageName: String = {
-        return "speaker.slash.fill"
-    }()
-    
-    lazy var ringerControl: SBRingerControl? = {
-        if let volumeControl = SBVolumeControl.sharedInstance() {
-            let ringerControl = Ivars<SBRingerControl>(volumeControl)._ringerControl
-            return ringerControl
-        } else {
-            return nil
-        }
-    }()
+    let mutedImageName = "speaker.slash.fill"
     
     init() {
         darwinManager?.register(forNotificationName: "com.apple.springboard.ring-vibrate.changed", callback: { [weak self] in
@@ -59,17 +48,26 @@ final class RingerVibrationViewModel: ObservableObject {
             object: nil
         )
     }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 }
 
 private extension RingerVibrationViewModel {
     func updateVibrationState() {
         let isActiveVibration = TLVibrationManager.shared().shouldVibrateOnRing && TLVibrationManager.shared().shouldVibrateOnSilent
-        self.isEnabledVibration = isActiveVibration
+        DispatchQueue.main.async {
+            self.isEnabledVibration = isActiveVibration
+        }
     }
     
     @objc func updateRingerState() {
-        if let ringerControl {
-            self.isEnabledMute = ringerControl.isRingerMuted
+        if let volumeControl = SBVolumeControl.sharedInstance() {
+            let ringerControl = Ivars<SBRingerControl>(volumeControl)._ringerControl
+            DispatchQueue.main.async {
+                self.isEnabledMute = ringerControl.isRingerMuted
+            }
         }
     }
 }

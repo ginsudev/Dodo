@@ -18,6 +18,7 @@ enum DateTemplate {
 extension TimeDateView {
     final class ViewModel: ObservableObject {
         static let shared = ViewModel()
+        private let dateFormatter = DateFormatter()
 
         @Published var time = ""
         @Published var date = ""
@@ -38,16 +39,17 @@ extension TimeDateView {
         }
         
         func getDate(fromTemplate template: DateTemplate, date: Date? = nil) -> String {
-            let formatter = DateFormatter()
-            formatter.locale = Locale.current
-            formatter.timeZone = TimeZone.current
-            formatter.dateFormat = string(fromTemplate: template)
-            return formatter.string(from: date ?? Date())
+            dateFormatter.locale = Locale.current
+            dateFormatter.dateFormat = string(fromTemplate: template)
+            return dateFormatter.string(from: date ?? Date())
         }
         
         func update(timeTemplate time: DateTemplate, dateTemplate date: DateTemplate) {
-            self.time = getDate(fromTemplate: time)
-            self.date = getDate(fromTemplate: date)
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.time = self.getDate(fromTemplate: time)
+                self.date = self.getDate(fromTemplate: date)
+            }
         }
     }
 }

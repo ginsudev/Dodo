@@ -9,6 +9,7 @@ import SwiftUI
 import DodoC
 import Orion
 
+@MainActor
 final class LockIconViewModel: ObservableObject {
     let darwinManager = DarwinNotificationsManager.sharedInstance()
     
@@ -29,7 +30,7 @@ final class LockIconViewModel: ObservableObject {
     }()
     
     private func didChangeLockStatus() {
-        if let lockStateAggregator {
+        if let lockStateAggregator = self.lockStateAggregator {
             let state = lockStateAggregator.lockState()
             switch state {
             case 0, 1:

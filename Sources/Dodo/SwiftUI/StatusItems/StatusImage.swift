@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct StatusImage: View {
-    @EnvironmentObject var dimensions: Dimensions
     let image: Image
     let color: Color?
     let customSize: CGSize
