@@ -74,12 +74,6 @@ struct SBIconImageInfo {
 @interface CSCoverSheetViewController : UIViewController
 @end
 
-#pragma mark - Checking if LS is active
-@interface SBLockStateAggregator : NSObject
-+ (instancetype)sharedInstance;
-- (NSUInteger)lockState;
-@end
-
 #pragma mark - Fetching media data
 @interface MRArtwork : NSObject
 @property (copy, nonatomic) NSData *imageData;
@@ -162,21 +156,6 @@ struct SBIconImageInfo {
 - (void)turnFlashlightOnForReason:(id)arg1;
 - (void)turnFlashlightOffForReason:(id)arg1;
 - (void)warmUp;
-@end
-
-// MARK: - Ringer and vibration
-@interface TLVibrationManager : NSObject
-@property (nonatomic,readonly) BOOL shouldVibrateOnRing;
-@property (nonatomic,readonly) BOOL shouldVibrateOnSilent;
-+ (instancetype)sharedVibrationManager;
-@end
-
-@interface SBRingerControl : NSObject
-@property (assign,getter=isRingerMuted,nonatomic) BOOL ringerMuted;
-@end
-
-@interface SBVolumeControl : NSObject
-+ (instancetype)sharedInstance;
 @end
 
 #ifndef SPRINGBOARDSERVICES_H_

@@ -8,6 +8,9 @@
 import UIKit
 
 struct Colors {
+    
+    // MARK: - User adjustable
+    
     static var dividerColor: UIColor = .white
     static var timeColor: UIColor = .white
     static var dateColor: UIColor = .white
@@ -18,4 +21,13 @@ struct Colors {
     static var flashlightIconColor: UIColor = .white
     static var vibrationIconColor: UIColor = .white
     static var mutedIconColor: UIColor = .white
+    
+    // MARK: -  Defined
+    
+    /// Red
+    static let batteryMinColor: UIColor = .systemRed
+    /// Yellow
+    static let batteryMidColor: UIColor = .systemYellow
+    /// Green
+    static let batteryMaxColor: UIColor = .systemGreen
 }

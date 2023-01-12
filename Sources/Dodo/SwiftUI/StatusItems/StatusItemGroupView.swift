@@ -62,14 +62,16 @@ private extension StatusItemGroupView {
     
     @ViewBuilder
     var alarms: some View {
-        if PreferenceManager.shared.settings.hasAlarmIcon, let alarm = alarmDataSource.nextEnabledAlarm {
+        if PreferenceManager.shared.settings.hasAlarmIcon,
+           let alarm = alarmDataSource.nextEnabledAlarm {
             AlarmView(alarm: alarm)
         }
     }
     
     @ViewBuilder
     var dnd: some View {
-        if PreferenceManager.shared.settings.hasDNDIcon, dndViewModel.isEnabled {
+        if PreferenceManager.shared.settings.hasDNDIcon,
+           dndViewModel.isEnabled {
             StatusItemView(
                 image: Image(systemName: "moon.fill"),
                 tint: Colors.dndIconColor
@@ -79,7 +81,8 @@ private extension StatusItemGroupView {
     
     @ViewBuilder
     var vibration: some View {
-        if PreferenceManager.shared.settings.hasVibrationIcon, ringerVibrationViewModel.isEnabledVibration {
+        if PreferenceManager.shared.settings.hasVibrationIcon,
+           ringerVibrationViewModel.isEnabledVibration {
             StatusItemView(
                 image: Image(systemName: ringerVibrationViewModel.vibrationImageName),
                 tint: Colors.vibrationIconColor
@@ -89,7 +92,8 @@ private extension StatusItemGroupView {
     
     @ViewBuilder
     var muted: some View {
-        if PreferenceManager.shared.settings.hasMutedIcon, ringerVibrationViewModel.isEnabledMute {
+        if PreferenceManager.shared.settings.hasMutedIcon,
+           ringerVibrationViewModel.isEnabledMute {
             StatusItemView(
                 image: Image(systemName: ringerVibrationViewModel.mutedImageName),
                 tint: Colors.mutedIconColor
@@ -99,7 +103,8 @@ private extension StatusItemGroupView {
     
     @ViewBuilder
     var flashlight: some View {
-         if PreferenceManager.shared.settings.hasFlashlightIcon, AVFlashlight.hasFlashlight() {
+        if PreferenceManager.shared.settings.hasFlashlightIcon,
+           AVFlashlight.hasFlashlight() {
             Divider()
                 .overlay(Color.white)
             StatusItemView(
@@ -108,7 +113,7 @@ private extension StatusItemGroupView {
                     flashlightViewModel.isActiveFlashlight.toggle()
                     HapticManager.playHaptic(withIntensity: .custom(.medium))
                 })
-         }
+        }
     }
 }
 

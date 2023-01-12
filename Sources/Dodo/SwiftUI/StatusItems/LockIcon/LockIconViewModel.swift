@@ -9,29 +9,25 @@ import SwiftUI
 import DodoC
 import Orion
 
-@MainActor
 final class LockIconViewModel: ObservableObject {
-    let darwinManager = DarwinNotificationsManager.sharedInstance()
-    
     @Published var lockImageName = "lock.fill"
     
     init() {
-        darwinManager?.register(forNotificationName: "com.apple.springboard.DeviceLockStatusChanged", callback: { [weak self] in
-            self?.didChangeLockStatus()
-        })
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didChangeLockStatus(notification:)),
+            name: NSNotification.Name("SBAggregateLockStateDidChangeNotification"),
+            object: nil
+        )
     }
     
-    lazy var lockStateAggregator: SBLockStateAggregator? = {
-        if let lockStateAggregator = SBLockStateAggregator.sharedInstance() {
-            return lockStateAggregator
-        } else {
-            return nil
-        }
-    }()
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
     
-    private func didChangeLockStatus() {
-        if let lockStateAggregator = self.lockStateAggregator {
-            let state = lockStateAggregator.lockState()
+    @objc private func didChangeLockStatus(notification: Notification) {
+        if let info = notification.userInfo,
+           let state = info["SBAggregateLockStateKey"] as? Int {
             switch state {
             case 0, 1:
                 self.lockImageName = "lock.open.fill"

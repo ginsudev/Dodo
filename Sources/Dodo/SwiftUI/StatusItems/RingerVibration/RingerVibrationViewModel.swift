@@ -56,18 +56,19 @@ final class RingerVibrationViewModel: ObservableObject {
 
 private extension RingerVibrationViewModel {
     func updateVibrationState() {
-        let isActiveVibration = TLVibrationManager.shared().shouldVibrateOnRing && TLVibrationManager.shared().shouldVibrateOnSilent
+        // silent-vibrate in SpringBoard stores vibration on/off state for silent mode.
+        // ring-vibrate in SpringBoard stores vibration on/off state for ring mode.
+        let silentVibrate = PreferenceManager.shared.defaults.bool(forKey: "silent-vibrate")
+        let ringVibrate = PreferenceManager.shared.defaults.bool(forKey: "ring-vibrate")
         DispatchQueue.main.async {
-            self.isEnabledVibration = isActiveVibration
+            self.isEnabledVibration = silentVibrate && ringVibrate
         }
     }
     
     @objc func updateRingerState() {
-        if let volumeControl = SBVolumeControl.sharedInstance() {
-            let ringerControl = Ivars<SBRingerControl>(volumeControl)._ringerControl
-            DispatchQueue.main.async {
-                self.isEnabledMute = ringerControl.isRingerMuted
-            }
+        DispatchQueue.main.async {
+            // SBRingerMuted in SpringBoard stores ringer on/off state.
+            self.isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: "SBRingerMuted")
         }
     }
 }
