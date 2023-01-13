@@ -73,7 +73,10 @@ private extension Container {
     }
     
     var mainContent: some View {
-        VStack(alignment: .leading, spacing: 10.0) {
+        VStack(
+            alignment: .leading,
+            spacing: 10.0
+        ) {
             if PreferenceManager.shared.settings.hasStatusItems {
                 StatusItemGroupView()
             }

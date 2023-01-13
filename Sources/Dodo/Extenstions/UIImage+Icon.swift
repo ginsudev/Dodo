@@ -20,17 +20,12 @@ extension UIImage {
             continuousCornerRadius: 12
         )
         
-        guard let image = icon?.generateImage(with: imageInfo) as? UIImage else {
+        if let image = icon?.generateImage(with: imageInfo) as? UIImage,
+           let data = image.pngData() {
+            self.init(data: data)
+        } else {
             self.init()
-            return
         }
-        
-        guard let data = image.pngData() else {
-            self.init()
-            return
-        }
-        
-        self.init(data: data)
     }
     
     public func dominantColour() -> UIColor {

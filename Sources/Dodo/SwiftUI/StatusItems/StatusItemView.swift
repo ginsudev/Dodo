@@ -33,6 +33,13 @@ struct StatusItemView: View {
     }
     
     var body: some View {
+        content
+    }
+}
+
+private extension StatusItemView {
+    @ViewBuilder
+    var content: some View {
         if text == nil {
             button
         } else {
@@ -45,12 +52,11 @@ struct StatusItemView: View {
                 )
         }
     }
-}
-
-private extension StatusItemView {
+    
     var button: some View {
         Button {} label: {
             buttonLabel
+                .fixedSize(horizontal: false, vertical: true)
                 .onTapGesture {
                     if text != nil {
                         withAnimation(.easeOut) {
@@ -91,6 +97,7 @@ private extension StatusItemView {
                 .matchedGeometryEffect(id: "statusIcon", in: namespace)
             }
             textView
+                .lineLimit(1)
         }
         .padding(.horizontal, isExpanded ? 7 : 0)
     }
@@ -99,14 +106,14 @@ private extension StatusItemView {
     var textView: some View {
         if let text, isExpanded {
             Text(text)
-            .foregroundColor(Color(tint.suitableForegroundColour()))
-            .font(
-                .system(
-                    size: 12,
-                    weight: .regular,
-                    design: PreferenceManager.shared.settings.fontType
+                .foregroundColor(Color(tint.suitableForegroundColour()))
+                .font(
+                    .system(
+                        size: 12,
+                        weight: .regular,
+                        design: PreferenceManager.shared.settings.fontType
+                    )
                 )
-            )
         }
     }
 }

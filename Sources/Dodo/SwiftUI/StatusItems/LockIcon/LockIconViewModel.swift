@@ -16,7 +16,7 @@ final class LockIconViewModel: ObservableObject {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(didChangeLockStatus(notification:)),
-            name: NSNotification.Name("SBAggregateLockStateDidChangeNotification"),
+            name: NSNotification.Name(Notifications.nc_lockStateDidChange),
             object: nil
         )
     }

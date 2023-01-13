@@ -11,19 +11,7 @@ import Orion
 
 final class RingerVibrationViewModel: ObservableObject {
     let darwinManager = DarwinNotificationsManager.sharedInstance()
-    
-    @Published var isEnabledVibration = PreferenceManager.shared.defaults.bool(forKey: "Dodo.isActiveVibration") {
-        didSet {
-            PreferenceManager.shared.defaults.set(isEnabledVibration, forKey: "Dodo.isActiveVibration")
-        }
-    }
-    
-    @Published var isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: "Dodo.isActiveMute") {
-        didSet {
-            PreferenceManager.shared.defaults.set(isEnabledMute, forKey: "Dodo.isActiveMute")
-        }
-    }
-    
+    let mutedImageName = "speaker.slash.fill"
     let vibrationImageName = {
         if #available(iOS 15, *) {
             return "iphone.radiowaves.left.and.right.circle.fill"
@@ -31,26 +19,36 @@ final class RingerVibrationViewModel: ObservableObject {
             return "waveform.circle.fill"
         }
     }()
-    
-    let mutedImageName = "speaker.slash.fill"
-    
+    @Published var isEnabledVibration = PreferenceManager.shared.defaults.bool(forKey: "Dodo.isActiveVibration") {
+        didSet {
+            PreferenceManager.shared.defaults.set(isEnabledVibration, forKey: "Dodo.isActiveVibration")
+        }
+    }
+    @Published var isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: "Dodo.isActiveMute") {
+        didSet {
+            PreferenceManager.shared.defaults.set(isEnabledMute, forKey: "Dodo.isActiveMute")
+        }
+    }
+        
     init() {
-        darwinManager?.register(forNotificationName: "com.apple.springboard.ring-vibrate.changed", callback: { [weak self] in
+        darwinManager?.register(forNotificationName: Notifications.cf_ringVibrate, callback: { [weak self] in
             self?.updateVibrationState()
         })
-        darwinManager?.register(forNotificationName: "com.apple.springboard.silent-vibrate.changed", callback: { [weak self] in
+        darwinManager?.register(forNotificationName: Notifications.cf_silentVibrate, callback: { [weak self] in
             self?.updateVibrationState()
         })
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(updateRingerState),
-            name: NSNotification.Name("SBRingerChangedNotification"),
+            name: NSNotification.Name(Notifications.nc_ringerChanged),
             object: nil
         )
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+        darwinManager?.unregister(forNotificationName: Notifications.cf_ringVibrate)
+        darwinManager?.unregister(forNotificationName: Notifications.cf_silentVibrate)
     }
 }
 

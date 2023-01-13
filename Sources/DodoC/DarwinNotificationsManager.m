@@ -29,6 +29,12 @@
     return self;
 }
 
+- (void)unregisterForNotificationName:(NSString *)name {
+    handlers[name] = nil;
+    CFNotificationCenterRef center = CFNotificationCenterGetDarwinNotifyCenter();
+    CFNotificationCenterRemoveObserver(center, (__bridge const void *)(self), (__bridge CFStringRef)name, NULL);
+}
+
 - (void)registerForNotificationName:(NSString *)name callback:(void (^)(void))callback {
     handlers[name] = callback;
     CFNotificationCenterRef center = CFNotificationCenterGetDarwinNotifyCenter();

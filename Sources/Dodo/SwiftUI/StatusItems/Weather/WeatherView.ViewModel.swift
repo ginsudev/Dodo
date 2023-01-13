@@ -23,5 +23,10 @@ extension WeatherView {
                 self?.conditionImage = PDDokdo.sharedInstance().currentConditionsImage ?? UIImage(systemName: "xmark.icloud")!
             }
         }
+        
+        func openWeatherApp() {
+            AppsManager.openApplication(withIdentifier: "com.apple.weather")
+            HapticManager.playHaptic(withIntensity: .custom(.medium))
+        }
     }
 }

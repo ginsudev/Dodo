@@ -36,13 +36,14 @@ private extension FlashlightViewModel {
         var name: String
         
         if enabled {
-            SBUIFlashlightController.sharedInstance().warmUp()
             SBUIFlashlightController.sharedInstance().turnFlashlightOn(forReason: nil)
             name = "flashlight.on.fill"
         } else {
             SBUIFlashlightController.sharedInstance().turnFlashlightOff(forReason: nil)
             name = "flashlight.off.fill"
         }
+        
+        HapticManager.playHaptic(withIntensity: .custom(.medium))
         
         DispatchQueue.main.async { [weak self] in
             self?.imageName = name

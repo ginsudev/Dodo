@@ -20,8 +20,7 @@ struct WeatherView: View {
                 HapticManager.playHaptic(withIntensity: .success)
             }
             .onLongPressGesture {
-                AppsManager.openApplication(withIdentifier: "com.apple.weather")
-                HapticManager.playHaptic(withIntensity: .custom(.medium))
+                viewModel.openWeatherApp()
             }
     }
 }

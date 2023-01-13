@@ -27,7 +27,7 @@ extension MediaPlayer {
 
         @Published var trackName = ""
         @Published var artistName = ""
-        @Published var albumArtwork: UIImage? = UIImage(systemName: "music.note") {
+        @Published var albumArtwork: UIImage? = UIImage(systemName: "play.rectangle.fill") {
             didSet {
                 self.artworkColour = self.albumArtwork?.dominantColour() ?? .black
             }
@@ -50,13 +50,13 @@ extension MediaPlayer {
             NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(didChangePlaybackState(notification:)),
-                name: NSNotification.Name("kMRMediaRemoteOriginNowPlayingApplicationIsPlayingDidChangeNotification"),
+                name: NSNotification.Name(Notifications.nc_didChangeIsPlaying),
                 object: nil
             )
             NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(didChangeNowPlayingInfo),
-                name: NSNotification.Name("kMRMediaRemotePlayerNowPlayingInfoDidChangeNotification"),
+                name: NSNotification.Name(Notifications.nc_didChangeNowPlayingInfo),
                 object: nil
             )
         }

@@ -11,7 +11,10 @@ struct TimeDateView: View {
     @StateObject private var viewModel = ViewModel.shared
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0.0) {
+        VStack(
+            alignment: .leading,
+            spacing: 0.0
+        ) {
             Text(viewModel.time)
                 .foregroundColor(Color(Colors.timeColor))
                 .font(

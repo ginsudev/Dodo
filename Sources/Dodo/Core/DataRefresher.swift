@@ -9,8 +9,6 @@ import UIKit
 import DodoC
 import Orion
 
-// MARK: - Public
-
 final class DataRefresher {
     private let darwinManager = DarwinNotificationsManager.sharedInstance()
     private var timer = Timer()
@@ -27,11 +25,11 @@ final class DataRefresher {
     
     init() {
         // Screen turned on / lock screen became active.
-        darwinManager?.register(forNotificationName: "com.apple.springboardservices.eventobserver.internalSBSEventObserverEventContinuityUIWasObscured", callback: { [weak self] in
+        darwinManager?.register(forNotificationName: Notifications.cf_lockScreenDidDismiss, callback: { [weak self] in
             self?.toggleTimer(on: false)
         })
         // Screen turned off / lock screen was dismissed.
-        darwinManager?.register(forNotificationName: "com.apple.springboardservices.eventobserver.internalSBSEventObserverEventContinuityUIBecameVisible", callback: { [weak self] in
+        darwinManager?.register(forNotificationName: Notifications.cf_lockScreenDidAppear, callback: { [weak self] in
             self?.toggleTimer(on: true)
         })
         // Dear AOD tweak devs, post this notification to update Dodo's time.
@@ -45,8 +43,14 @@ final class DataRefresher {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+        darwinManager?.unregister(forNotificationName: Notifications.cf_lockScreenDidDismiss)
+        darwinManager?.unregister(forNotificationName: Notifications.cf_lockScreenDidAppear)
     }
-    
+}
+
+// MARK: - Internal
+
+extension DataRefresher {
     func toggleTimer(on enable: Bool) {
         // Do not start a timer for time/date updates because the user disabled Dodo's clock.
         guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
