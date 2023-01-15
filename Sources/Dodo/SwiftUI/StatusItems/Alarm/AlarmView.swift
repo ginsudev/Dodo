@@ -7,7 +7,9 @@
 
 import SwiftUI
 
-struct AlarmView: View {    
+struct AlarmView: View {
+    @EnvironmentObject var appsManager: AppsManager
+
     let alarm: Alarm
     
     var body: some View {
@@ -19,7 +21,7 @@ struct AlarmView: View {
                 date: alarm.nextFireDate
             ),
             onLongHoldAction: {
-                AppsManager.shared.open(app: .defined(.clock))
+                appsManager.open(app: .defined(.clock))
                 HapticManager.playHaptic(withIntensity: .custom(.medium))
             }
         )

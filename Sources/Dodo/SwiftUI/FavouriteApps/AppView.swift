@@ -11,8 +11,8 @@ import DodoC
 //MARK: - Public
 
 struct AppView: View {
-    @StateObject private var appsManager = AppsManager.shared
-    
+    @EnvironmentObject private var appsManager: AppsManager
+
     private var installedApplications: [String] {
         appsManager.favouriteAppBundleIdentifiers.filter({
             appsManager.isInstalled(app: .custom($0))

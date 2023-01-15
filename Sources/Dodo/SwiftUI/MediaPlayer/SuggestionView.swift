@@ -12,7 +12,7 @@ import DodoC
 
 struct SuggestionView: View {
     @EnvironmentObject var dimensions: Dimensions
-    @StateObject private var appsManager = AppsManager.shared
+    @EnvironmentObject var appsManager: AppsManager
     private let viewModel = ViewModel()
 
     var body: some View {

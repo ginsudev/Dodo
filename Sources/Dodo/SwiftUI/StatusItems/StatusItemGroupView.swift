@@ -111,7 +111,8 @@ private extension StatusItemGroupView {
                 image: Image(systemName: flashlightViewModel.imageName),
                 tint: Colors.flashlightIconColor, onTapAction: {
                     flashlightViewModel.isActiveFlashlight.toggle()
-                })
+                }
+            )
         }
     }
 }

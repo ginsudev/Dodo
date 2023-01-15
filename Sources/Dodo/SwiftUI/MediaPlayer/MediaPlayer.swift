@@ -64,9 +64,7 @@ private extension MediaPlayer {
     @ViewBuilder
     var songDetailsButton: some View {
         Button {
-            if let nowPlayingIdentifier = mediaModel.nowPlayingAppIdentifier() {
-                AppsManager.shared.open(app: .custom(nowPlayingIdentifier))
-            }
+            mediaModel.openNowPlayingApp()
         } label: {
             HStack {
                 albumArtwork

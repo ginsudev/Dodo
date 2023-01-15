@@ -13,6 +13,7 @@ import DodoC
 struct Container: View {
     @StateObject private var mediaModel = MediaPlayer.ViewModel.shared
     @StateObject private var dimensions = Dimensions.shared
+    @StateObject private var appsManager = AppsManager.shared
     @State private var containerFrame: CGRect = .zero
 
     var body: some View {
@@ -20,6 +21,7 @@ struct Container: View {
             gradient
             mainContent
                 .environmentObject(dimensions)
+                .environmentObject(appsManager)
         }
         .background(Color.clear)
     }

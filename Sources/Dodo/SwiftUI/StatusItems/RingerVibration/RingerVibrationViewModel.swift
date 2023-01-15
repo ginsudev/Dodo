@@ -11,7 +11,8 @@ import Orion
 
 final class RingerVibrationViewModel: ObservableObject {
     let darwinManager = DarwinNotificationsManager.sharedInstance()
-    let mutedImageName = "speaker.slash.fill"
+    let mutedImageName = "bell.slash.fill"
+    
     let vibrationImageName = {
         if #available(iOS 15, *) {
             return "iphone.radiowaves.left.and.right.circle.fill"
@@ -19,11 +20,13 @@ final class RingerVibrationViewModel: ObservableObject {
             return "waveform.circle.fill"
         }
     }()
+    
     @Published var isEnabledVibration = PreferenceManager.shared.defaults.bool(forKey: "Dodo.isActiveVibration") {
         didSet {
             PreferenceManager.shared.defaults.set(isEnabledVibration, forKey: "Dodo.isActiveVibration")
         }
     }
+    
     @Published var isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: "Dodo.isActiveMute") {
         didSet {
             PreferenceManager.shared.defaults.set(isEnabledMute, forKey: "Dodo.isActiveMute")

@@ -265,48 +265,44 @@ class DNDNotificationsService_Hook: ClassHook<DNDNotificationsService> {
 //MARK: - Preferences
 fileprivate func prefsDict() -> [String : Any]? {
     var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
-
     let path = "/var/mobile/Library/Preferences/com.ginsu.dodo.plist"
-    
     let defaultsPath = GSUtilities.sharedInstance().correctedFilePathFromPath(
         withRootPrefix: ":root:Library/PreferenceBundles/dodo.bundle/defaults.plist"
     )!
 
-    if !FileManager().fileExists(atPath: path) {
-        try? FileManager().copyItem(
-            atPath: defaultsPath,
-            toPath: path
-        )
-    }
-
-    let plistURL = URL(fileURLWithPath: path)
-    
-    guard let plistXML = try? Data(contentsOf: plistURL) else {
+    do {
+        if !FileManager().fileExists(atPath: path) {
+            try FileManager().copyItem(
+                atPath: defaultsPath,
+                toPath: path
+            )
+        }
+        let plistURL = URL(fileURLWithPath: path)
+        let plistXML = try Data(contentsOf: plistURL)
+        let plistDict = try PropertyListSerialization.propertyList(
+            from: plistXML,
+            options: .mutableContainersAndLeaves,
+            format: &propertyListFormat
+        ) as? [String : AnyObject]
+        return plistDict
+    } catch {
         return nil
     }
-    
-    guard let plistDict = try! PropertyListSerialization.propertyList(
-        from: plistXML,
-        options: .mutableContainersAndLeaves,
-        format: &propertyListFormat
-    ) as? [String : AnyObject] else {
-        return nil
-    }
-
-    return plistDict
 }
 
-fileprivate func readPrefs() {
-    guard let dict = prefsDict() else {
-        return
+fileprivate func readPrefs() -> Bool {
+    if let dict = prefsDict() {
+        PreferenceManager.shared.loadSettings(withDictionary: dict)
+        return true
+    } else {
+        return false
     }
-    PreferenceManager.shared.loadSettings(withDictionary: dict)
 }
 
 struct Dodo: Tweak {
     init() {
-        readPrefs()
-        if PreferenceManager.shared.settings.isEnabled {
+        if readPrefs(),
+           PreferenceManager.shared.settings.isEnabled {
             Main().activate()
         }
     }
