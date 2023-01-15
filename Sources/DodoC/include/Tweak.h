@@ -18,7 +18,7 @@ struct SBIconImageInfo {
 
 @interface SBIcon : NSObject
 @property (nonatomic,copy,readonly) NSString * displayName;
-- (id)generateIconImageWithInfo:(struct SBIconImageInfo)arg1;
+- (UIImage *)generateIconImageWithInfo:(struct SBIconImageInfo)arg1;
 - (Class)iconImageViewClassForLocation:(id)arg1 ;
 @end
 
@@ -26,9 +26,28 @@ struct SBIconImageInfo {
 - (SBIcon *)expectedIconForDisplayIdentifier:(id)arg1;
 @end
 
+@interface SBHIconManager : NSObject
+@end
+
+@interface SBApplication : NSObject
+@property (nonatomic,readonly) NSString * bundleIdentifier;
+@property (nonatomic,readonly) NSString * displayName;
+@end
+
+@interface SBApplicationController : NSObject
++ (instancetype)sharedInstance;
+- (SBApplication *)applicationWithBundleIdentifier:(NSString *)identifier;
+@end
+
 @interface SBIconController : NSObject
 @property (nonatomic,retain) SBIconModel * model;
 + (instancetype)sharedInstance;
++ (instancetype)sharedInstanceIfExists;
+@end
+
+@interface SBHomeScreenService : NSObject
+@property (nonatomic,copy,readonly) NSArray<NSString *> * allHomeScreenApplicationBundleIdentifiers;
+- (instancetype)initWithIconController:(SBIconController *)arg1 ;
 @end
 
 @interface FBSSystemService : NSObject
@@ -88,11 +107,6 @@ struct SBIconImageInfo {
 @property (retain, nonatomic) MRArtwork *artwork;
 @property (nonatomic,copy) MRContentItemMetadata * metadata;
 - (instancetype)initWithNowPlayingInfo:(NSDictionary *)nowPlayingInfo;
-@end
-
-@interface SBApplication : NSObject
-@property (nonatomic,readonly) NSString * bundleIdentifier;
-@property (nonatomic,readonly) NSString * displayName;
 @end
 
 @interface SpringBoard : UIApplication

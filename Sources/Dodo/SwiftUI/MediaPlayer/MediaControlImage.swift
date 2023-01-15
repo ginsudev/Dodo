@@ -8,15 +8,18 @@
 import SwiftUI
 
 enum PlaybackButtonType: CGFloat {
-    case playPause = 44
-    case prevNext = 34
+    case playPause = 44.0
+    case prevNext = 34.0
 }
 
 struct MediaControlImage: View {
     private let image: UIImage
     private let playbackButtonType: PlaybackButtonType
     
-    init(image: UIImage, playbackButtonType: PlaybackButtonType) {
+    init(
+        image: UIImage,
+        playbackButtonType: PlaybackButtonType
+    ) {
         self.image = image
         self.playbackButtonType = playbackButtonType
     }
@@ -25,6 +28,9 @@ struct MediaControlImage: View {
         Image(uiImage: image)
             .resizable()
             .renderingMode(.template)
-            .frame(width: playbackButtonType.rawValue, height: playbackButtonType.rawValue)
+            .frame(
+                width: playbackButtonType.rawValue,
+                height: playbackButtonType.rawValue
+            )
     }
 }

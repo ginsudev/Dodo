@@ -16,6 +16,15 @@ extension MediaPlayer {
             withRootPrefix: ":root:Library/Application Support/Dodo/Themes/\(PreferenceManager.shared.settings.themeName)/"
         )
         
+        var modularBackgroundColorMultiply: UIColor {
+            if !hasActiveMediaApp,
+               let image = UIImage.image(forBundleIdentifier: AppsManager.shared.suggestedAppBundleIdentifier) {
+                return image.dominantColour()
+            } else {
+                return artworkColour
+            }
+        }
+        
         @Published var hasActiveMediaApp = false {
             didSet {
                 guard !hasActiveMediaApp else {
@@ -113,6 +122,8 @@ extension MediaPlayer {
         }
     }
 }
+
+// MARK: - Internal
 
 extension MediaPlayer.ViewModel {
     func temporarilySwapColor(_ newColor: UIColor) {

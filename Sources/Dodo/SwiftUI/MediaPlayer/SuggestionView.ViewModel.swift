@@ -15,11 +15,21 @@ extension SuggestionView {
     }
     
     struct ViewModel {
-        var appsManager = AppsManager.self
+        var suggestedAppIcon: UIImage {
+            if let image = UIImage.image(forBundleIdentifier: AppsManager.shared.suggestedAppBundleIdentifier) {
+                return image
+            } else {
+                if #available(iOS 15.0, *) {
+                    return UIImage(systemName: "questionmark.app.fill")!
+                } else {
+                    return UIImage(systemName: "questionmark.square.fill")!
+                }
+            }
+        }
         
         var bluetoothColor: UIColor {
             if PreferenceManager.shared.settings.playerStyle == .classic {
-                return UIImage(withBundleIdentifier: appsManager.suggestedAppBundleIdentifier).dominantColour().withAlphaComponent(0.3)
+               return suggestedAppIcon.dominantColour().withAlphaComponent(0.3)
             } else {
                 return .white
             }

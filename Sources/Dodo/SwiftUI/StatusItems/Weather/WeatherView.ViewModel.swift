@@ -25,7 +25,7 @@ extension WeatherView {
         }
         
         func openWeatherApp() {
-            AppsManager.openApplication(withIdentifier: "com.apple.weather")
+            AppsManager.shared.open(app: .defined(.weather))
             HapticManager.playHaptic(withIntensity: .custom(.medium))
         }
     }

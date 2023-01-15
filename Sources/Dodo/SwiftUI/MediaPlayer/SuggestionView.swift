@@ -12,6 +12,7 @@ import DodoC
 
 struct SuggestionView: View {
     @EnvironmentObject var dimensions: Dimensions
+    @StateObject private var appsManager = AppsManager.shared
     private let viewModel = ViewModel()
 
     var body: some View {
@@ -28,12 +29,10 @@ struct SuggestionView: View {
 private extension SuggestionView {
     var openAppButton: some View {
         Button {
-            viewModel.appsManager.openApplication(
-                withIdentifier: viewModel.appsManager.suggestedAppBundleIdentifier
-            )
+            appsManager.open(app: .custom(appsManager.suggestedAppBundleIdentifier))
         } label: {
             HStack {
-                Image(uiImage: UIImage(withBundleIdentifier: viewModel.appsManager.suggestedAppBundleIdentifier))
+                Image(uiImage: viewModel.suggestedAppIcon)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: 45, maxHeight: 45)

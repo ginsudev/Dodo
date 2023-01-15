@@ -9,23 +9,22 @@ import UIKit
 import DodoC
 
 extension UIImage {
-    convenience init!(withBundleIdentifier identifier: String?) {
-        let icon: SBIcon? = SBIconController.sharedInstance().model.expectedIcon(forDisplayIdentifier: identifier)
-        
-        let imageSize = CGSize(width: 60, height: 60)
-        
-        let imageInfo = SBIconImageInfo(
-            size: imageSize,
-            scale: UIScreen.main.scale,
-            continuousCornerRadius: 12
-        )
-        
-        if let image = icon?.generateImage(with: imageInfo) as? UIImage,
-           let data = image.pngData() {
-            self.init(data: data)
-        } else {
-            self.init()
+    static func image(forBundleIdentifier identifier: String) -> UIImage? {
+        if let icon = SBIconController.sharedInstance().model.expectedIcon(forDisplayIdentifier: identifier) {
+            let imageSize = CGSize(
+                width: 60,
+                height: 60
+            )
+            let imageInfo = SBIconImageInfo(
+                size: imageSize,
+                scale: UIScreen.main.scale,
+                continuousCornerRadius: 12
+            )
+            if let image = icon.generateImage(with: imageInfo) {
+               return image
+            }
         }
+        return nil
     }
     
     public func dominantColour() -> UIColor {

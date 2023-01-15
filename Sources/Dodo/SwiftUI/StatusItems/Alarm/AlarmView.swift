@@ -19,7 +19,7 @@ struct AlarmView: View {
                 date: alarm.nextFireDate
             ),
             onLongHoldAction: {
-                AppsManager.openApplication(withIdentifier: "com.apple.mobiletimer")
+                AppsManager.shared.open(app: .defined(.clock))
                 HapticManager.playHaptic(withIntensity: .custom(.medium))
             }
         )

@@ -131,7 +131,7 @@ struct Settings {
             break
         }
         
-        AppsManager.favouriteAppBundleIdentifiers = dict[
+        AppsManager.shared.favouriteAppBundleIdentifiers = dict[
             "favouriteApps",
             default: [
                 "com.apple.camera",
@@ -139,7 +139,7 @@ struct Settings {
                 "com.apple.MobileSMS",
                 "com.apple.mobilemail"
             ]
-        ] as? [String]
+        ] as! [String]
         
         Colors.timeColor = UIColor(hexString: dict["timeColor", default: "#FFFFFFFF"] as! String)
         Colors.dateColor = UIColor(hexString: dict["dateColor", default: "#FFFFFFFF"] as! String)

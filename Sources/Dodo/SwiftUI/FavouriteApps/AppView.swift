@@ -6,10 +6,19 @@
 //
 
 import SwiftUI
+import DodoC
 
 //MARK: - Public
 
 struct AppView: View {
+    @StateObject private var appsManager = AppsManager.shared
+    
+    private var installedApplications: [String] {
+        appsManager.favouriteAppBundleIdentifiers.filter({
+            appsManager.isInstalled(app: .custom($0))
+        })
+    }
+    
     var body: some View {
         ScrollView(.vertical) {
             if case .adaptive = Dimensions.shared.favouriteAppsGridSizeType {
@@ -29,13 +38,13 @@ struct AppView: View {
 private extension AppView {
     @ViewBuilder
     var gridView: some View {
-        if let appIdentifiers = AppsManager.favouriteAppBundleIdentifiers {
-            LazyVGrid(columns: columns, alignment: .trailing) {
-                ForEach(appIdentifiers, id: \.self) { identifier in
+        LazyVGrid(columns: columns, alignment: .trailing) {
+            ForEach(installedApplications, id: \.self) { identifier in
+                if let image = UIImage.image(forBundleIdentifier: identifier) {
                     Button {
-                        AppsManager.openApplication(withIdentifier: identifier)
+                        appsManager.open(app: .custom(identifier))
                     } label: {
-                        Image(uiImage: UIImage(withBundleIdentifier: identifier))
+                        Image(uiImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                     }

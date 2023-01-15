@@ -57,11 +57,7 @@ private extension MediaPlayer {
     var modularBackground: some View {
         RoundedRectangle(cornerRadius: style.cornerRadius())
             .foregroundColor(.white)
-            .colorMultiply(
-                mediaModel.hasActiveMediaApp
-                ? Color(mediaModel.artworkColour)
-                : Color(UIImage(withBundleIdentifier: AppsManager.suggestedAppBundleIdentifier).dominantColour())
-            )
+            .colorMultiply(Color(mediaModel.modularBackgroundColorMultiply))
             .animation(.easeInOut, value: mediaModel.artworkColour)
     }
     
@@ -69,7 +65,7 @@ private extension MediaPlayer {
     var songDetailsButton: some View {
         Button {
             if let nowPlayingIdentifier = mediaModel.nowPlayingAppIdentifier() {
-                AppsManager.openApplication(withIdentifier: nowPlayingIdentifier)
+                AppsManager.shared.open(app: .custom(nowPlayingIdentifier))
             }
         } label: {
             HStack {
