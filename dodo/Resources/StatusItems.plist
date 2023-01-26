@@ -32,15 +32,15 @@
 			<key>title</key>
 			<string>Indicator size</string>
 			<key>default</key>
-			<real>18</real>
+			<real>18.0</real>
 			<key>defaults</key>
 			<string>com.ginsu.dodo</string>
 			<key>key</key>
 			<string>indicatorSize</string>
 			<key>min</key>
-			<real>13</real>
+			<real>13.0</real>
 			<key>max</key>
-			<real>30</real>
+			<real>30.0</real>
 			<key>dynamicRule</key>
             <string>hasStatusItemsStatus,==,0</string>
 		</dict>

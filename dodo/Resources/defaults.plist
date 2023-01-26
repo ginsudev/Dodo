@@ -60,13 +60,13 @@
 	<key>notificationVerticalOffset</key>
 	<real>190.0</real>
 	<key>timeFontSize</key>
-	<real>50</real>
+	<real>50.0</real>
 	<key>dateFontSize</key>
-	<real>15</real>
+	<real>15.0</real>
 	<key>weatherFontSize</key>
-	<real>15</real>
+	<real>15.0</real>
 	<key>indicatorSize</key>
-	<real>18</real>
+	<real>18.0</real>
 
 	<key>timeTemplateCustom</key>
 	<string>h:mm</string>

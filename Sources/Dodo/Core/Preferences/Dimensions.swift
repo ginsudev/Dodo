@@ -34,7 +34,10 @@ final class Dimensions: ObservableObject {
         : 0
     }()
     
-    var statusItemSize: CGSize = CGSize(width: 18.0, height: 18.0)
+    var statusItemSize: CGSize = CGSize(
+        width: 18.0,
+        height: 18.0
+    )
     
     var favouriteAppsGridSizeType: GridSizeType = .flexible
     var favouriteAppsFlexibleGridItemSize: Double = 40.0

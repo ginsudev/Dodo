@@ -8,6 +8,8 @@
 import Foundation
 import DodoC
 
+// MARK: - Public
+
 extension MediaPlayer {
     final class ViewModel: ObservableObject {
         static let shared = ViewModel()

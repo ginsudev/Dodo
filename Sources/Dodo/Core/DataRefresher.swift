@@ -10,7 +10,6 @@ import DodoC
 import Orion
 
 final class DataRefresher {
-    private let darwinManager = DarwinNotificationsManager.sharedInstance()
     private var timer = Timer()
     private var timerRunning = false
     
@@ -24,33 +23,25 @@ final class DataRefresher {
     }()
     
     init() {
-        // Screen turned on / lock screen became active.
-        darwinManager?.register(forNotificationName: Notifications.cf_lockScreenDidDismiss, callback: { [weak self] in
-            self?.toggleTimer(on: false)
-        })
-        // Screen turned off / lock screen was dismissed.
-        darwinManager?.register(forNotificationName: Notifications.cf_lockScreenDidAppear, callback: { [weak self] in
-            self?.toggleTimer(on: true)
-        })
-        // Dear AOD tweak devs, post this notification to update Dodo's time.
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(refresh),
-            name: NSNotification.Name("Dodo.updateTimeAndDate"),
-            object: nil
-        )
+        addObservers()
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
-        darwinManager?.unregister(forNotificationName: Notifications.cf_lockScreenDidDismiss)
-        darwinManager?.unregister(forNotificationName: Notifications.cf_lockScreenDidAppear)
     }
 }
 
 // MARK: - Internal
 
 extension DataRefresher {
+    @objc func toggleTimer(notification: Notification) {
+        if notification.name.rawValue == Notifications.nc_didDimLockScreen || notification.name.rawValue == Notifications.nc_didDismissLockScreen {
+            toggleTimer(on: false)
+        } else {
+            toggleTimer(on: true)
+        }
+    }
+    
     func toggleTimer(on enable: Bool) {
         // Do not start a timer for time/date updates because the user disabled Dodo's clock.
         guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
@@ -89,6 +80,42 @@ extension DataRefresher {
 // MARK: - Private
 
 private extension DataRefresher {
+    func addObservers() {
+        // Screen turned on / lock screen became active.
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(toggleTimer(notification:)),
+            name: NSNotification.Name(Notifications.nc_didUndimLockScreen),
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(toggleTimer(notification:)),
+            name: NSNotification.Name(Notifications.nc_didPresentLockScreen),
+            object: nil
+        )
+        // Screen turned off / lock screen was dismissed.
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(toggleTimer(notification:)),
+            name: NSNotification.Name(Notifications.nc_didDimLockScreen),
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(toggleTimer(notification:)),
+            name: NSNotification.Name(Notifications.nc_didDismissLockScreen),
+            object: nil
+        )
+        // Dear AOD tweak devs, post this notification to update Dodo's time.
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refresh),
+            name: NSNotification.Name("Dodo.updateTimeAndDate"),
+            object: nil
+        )
+    }
+    
     @objc func refresh() {
         // Refresh time and date
         TimeDateView.ViewModel.shared.update(
@@ -116,18 +143,10 @@ private extension DataRefresher {
     }
     
     func updateAlarms() {
-        DispatchQueue.global().async { [weak self] in
-            if let cache = self?.alarmCache {
-                var array = [Alarm]()
-                for case let alarm as MTAlarm in Array(cache.orderedAlarms) {
-                    if let convertedAlarm = self?.convertMobileTimer(alarm) {
-                        array.append(convertedAlarm)
-                    }
-                }
-                
-                DispatchQueue.main.async {
-                    AlarmDataSource.shared.alarms = array
-                }
+        if let cache = self.alarmCache,
+           let nextAlarm = cache.nextAlarm {
+            DispatchQueue.main.async { [weak self] in
+                AlarmDataSource.shared.nextEnabledAlarm = self?.convertMobileTimer(nextAlarm)
             }
         }
     }

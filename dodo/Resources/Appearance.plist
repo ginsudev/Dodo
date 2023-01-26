@@ -231,15 +231,15 @@ Both: Shows Dodo's time and media player.</string>
 			<key>title</key>
 			<string>Time font size</string>
 			<key>default</key>
-			<real>50</real>
+			<real>50.0</real>
 			<key>defaults</key>
 			<string>com.ginsu.dodo</string>
 			<key>key</key>
 			<string>timeFontSize</string>
 			<key>min</key>
-			<real>1</real>
+			<real>1.0</real>
 			<key>max</key>
-			<real>100</real>
+			<real>100.0</real>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -249,15 +249,15 @@ Both: Shows Dodo's time and media player.</string>
 			<key>title</key>
 			<string>Date font size</string>
 			<key>default</key>
-			<real>15</real>
+			<real>15.0</real>
 			<key>defaults</key>
 			<string>com.ginsu.dodo</string>
 			<key>key</key>
 			<string>dateFontSize</string>
 			<key>min</key>
-			<real>1</real>
+			<real>1.0</real>
 			<key>max</key>
-			<real>100</real>
+			<real>100.0</real>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -267,15 +267,15 @@ Both: Shows Dodo's time and media player.</string>
 			<key>title</key>
 			<string>Weather font size</string>
 			<key>default</key>
-			<real>15</real>
+			<real>15.0</real>
 			<key>defaults</key>
 			<string>com.ginsu.dodo</string>
 			<key>key</key>
 			<string>weatherFontSize</string>
 			<key>min</key>
-			<real>1</real>
+			<real>1.0</real>
 			<key>max</key>
-			<real>100</real>
+			<real>100.0</real>
 			<key>dynamicRule</key>
             <string>showWeatherStatus,==,0</string>
 		</dict>

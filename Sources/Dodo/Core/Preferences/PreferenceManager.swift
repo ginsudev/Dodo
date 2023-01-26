@@ -158,7 +158,7 @@ struct Settings {
         Dimensions.shared.favouriteAppsFixedGridItemSize = dict["favouriteAppsFixedGridItemSize", default: 40.0] as! Double
         Dimensions.shared.favouriteAppsFixedGridColumnAmount = dict["favouriteAppsFixedGridColumnAmount", default: 3] as! Int
         
-        let indicatorSize = dict["indicatorSize", default: 18] as! Int
+        let indicatorSize = dict["indicatorSize", default: 18.0] as! Double
         Dimensions.shared.statusItemSize = CGSize(width: indicatorSize, height: indicatorSize)
     }
 }

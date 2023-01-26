@@ -178,7 +178,7 @@
 			<key>min</key>
 			<real>0.0</real>
 			<key>max</key>
-			<real>1000</real>
+			<real>1000.0</real>
 		</dict>
 		<dict>
             <key>cell</key>

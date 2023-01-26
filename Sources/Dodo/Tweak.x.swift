@@ -87,7 +87,9 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     
     //orion: new
     func didUpdateHeightDodo() {
-        heightConstraint.constant = Dimensions.shared.height
+        DispatchQueue.main.async { [weak self] in
+            self?.heightConstraint.constant = Dimensions.shared.height
+        }
     }
 }
 
