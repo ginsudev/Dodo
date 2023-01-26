@@ -86,7 +86,8 @@ private extension SuggestionView {
     var bluetoothButtonType: BluetoothButtonType  {
         if (UIDevice._hasHomeButton() || dimensions.isLandscape) && !UIDevice.currentIsIPad() {
             return .icon
+        } else {
+            return .iconWithText
         }
-        return .iconWithText
     }
 }

@@ -56,9 +56,16 @@ private extension MediaPlayer {
     
     var modularBackground: some View {
         RoundedRectangle(cornerRadius: style.cornerRadius())
-            .foregroundColor(.white)
+            .fill(
+                Color.white,
+                strokeBorder: Color.secondary.opacity(0.3),
+                lineWidth: 0.4
+            )
             .colorMultiply(Color(mediaModel.modularBackgroundColorMultiply))
-            .animation(.easeInOut, value: mediaModel.artworkColour)
+            .animation(
+                .easeInOut,
+                value: mediaModel.artworkColour
+            )
     }
     
     @ViewBuilder

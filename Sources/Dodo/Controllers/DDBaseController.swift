@@ -33,6 +33,5 @@ final class DDBaseController: UIViewController {
         hostingController.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         hostingController.view.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
         hostingController.view.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
-        // hostingController.view.updateConstraints()
     }
 }

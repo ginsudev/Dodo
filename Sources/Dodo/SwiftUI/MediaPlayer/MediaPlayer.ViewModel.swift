@@ -79,7 +79,9 @@ extension MediaPlayer.ViewModel {
     
     func togglePlayPause(shouldPlay play: Bool) {
         let iconPath = MediaPlayer.ViewModel.themePath + (play ? "pause": "play") + ".png"
-        self.playPauseIcon = UIImage(named: iconPath)
+        DispatchQueue.main.async {
+            self.playPauseIcon = UIImage(named: iconPath)
+        }
     }
     
     func nowPlayingAppIdentifier() -> String? {
@@ -113,13 +115,14 @@ private extension MediaPlayer.ViewModel {
     }
     
     @objc func didChangePlaybackState(notification: Notification) {
-        hasActiveMediaApp = nowPlayingAppIdentifier() != nil
-        guard hasActiveMediaApp else {
-            return
-        }
-        if let userInfo = notification.userInfo,
-           let isPlaying = userInfo["kMRMediaRemoteNowPlayingApplicationIsPlayingUserInfoKey"] as? Bool {
-            togglePlayPause(shouldPlay: isPlaying)
+        DispatchQueue.main.async { [weak self] in
+            self?.hasActiveMediaApp = self?.nowPlayingAppIdentifier() != nil
+            guard self?.hasActiveMediaApp == true else { return }
+            
+            if let userInfo = notification.userInfo,
+               let isPlaying = userInfo["kMRMediaRemoteNowPlayingApplicationIsPlayingUserInfoKey"] as? Bool {
+                self?.togglePlayPause(shouldPlay: isPlaying)
+            }
         }
     }
     

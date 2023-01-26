@@ -29,7 +29,7 @@ extension UIColor {
     }
     
     public func suitableForegroundColour() -> UIColor {
-        return isLight() ? .black : .white
+        isLight() ? .black : .white
     }
     
     private func isLight() -> Bool {
