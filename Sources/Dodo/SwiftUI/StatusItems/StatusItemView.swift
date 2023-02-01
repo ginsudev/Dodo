@@ -8,6 +8,16 @@
 import SwiftUI
 
 struct StatusItemView: View {
+    enum StatusItem {
+        case lockIcon
+        case chargingIcon
+        case alarms
+        case dnd
+        case vibration
+        case muted
+        case flashlight
+    }
+    
     @EnvironmentObject var dimensions: Dimensions
     @Namespace private var namespace
     @State private var isExpanded = false

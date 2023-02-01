@@ -14,7 +14,7 @@ final class ChargingIconViewModel: ObservableObject {
     @Published private(set) var batteryPercentage: String = ""
     
     init() {
-        guard PreferenceManager.shared.settings.hasChargingIcon || PreferenceManager.shared.settings.hasChargingFlash else {
+        guard PreferenceManager.shared.settings.statusItems.contains(.chargingIcon) || PreferenceManager.shared.settings.hasChargingFlash else {
             return
         }
         addObservers()

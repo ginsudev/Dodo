@@ -18,18 +18,13 @@ struct StatusItemGroupView: View {
     @StateObject private var dndViewModel = DNDViewModel.shared
     @StateObject private var flashlightViewModel = FlashlightViewModel()
     @StateObject private var ringerVibrationViewModel = RingerVibrationViewModel()
+    let statusItems = PreferenceManager.shared.settings.statusItems
     
     var body: some View {
-        HStack(spacing: 10.0) {
-            // Indication
-            lockIcon
-            chargingIcon
-            alarms
-            dnd
-            vibration
-            muted
-            // Action
-            flashlight
+        HStack(spacing: Dimensions.Padding.medium) {
+            ForEach(statusItems, id: \.self) {
+                statusItem(forType: $0)
+            }
         }
         .frame(maxHeight: dimensions.statusItemSize.height)
     }
@@ -39,19 +34,29 @@ struct StatusItemGroupView: View {
 
 private extension StatusItemGroupView {
     @ViewBuilder
-    var lockIcon: some View {
-        if PreferenceManager.shared.settings.hasLockIcon {
-            StatusItemView(
-                image: Image(systemName: lockIconViewModel.lockImageName),
-                tint: Colors.lockIconColor
-            )
+    func statusItem(forType type: StatusItemView.StatusItem) -> some View {
+        switch type {
+        case .lockIcon: lockIcon
+        case .chargingIcon: chargingIcon
+        case .alarms: alarms
+        case .dnd: dnd
+        case .vibration: vibration
+        case .muted: muted
+        case .flashlight: flashlight
         }
     }
     
     @ViewBuilder
+    var lockIcon: some View {
+        StatusItemView(
+            image: Image(systemName: lockIconViewModel.lockImageName),
+            tint: Colors.lockIconColor
+        )
+    }
+    
+    @ViewBuilder
     var chargingIcon: some View {
-        if PreferenceManager.shared.settings.hasChargingIcon,
-           chargingViewModel.isCharging {
+        if chargingViewModel.isCharging {
             StatusItemView(
                 image: Image(systemName: chargingViewModel.imageName),
                 tint: chargingViewModel.indicationColor,
@@ -62,16 +67,14 @@ private extension StatusItemGroupView {
     
     @ViewBuilder
     var alarms: some View {
-        if PreferenceManager.shared.settings.hasAlarmIcon,
-           let alarm = alarmDataSource.nextEnabledAlarm {
+        if let alarm = alarmDataSource.nextEnabledAlarm {
             AlarmView(alarm: alarm)
         }
     }
     
     @ViewBuilder
     var dnd: some View {
-        if PreferenceManager.shared.settings.hasDNDIcon,
-           dndViewModel.isEnabled {
+        if dndViewModel.isEnabled {
             StatusItemView(
                 image: Image(systemName: "moon.fill"),
                 tint: Colors.dndIconColor
@@ -81,8 +84,7 @@ private extension StatusItemGroupView {
     
     @ViewBuilder
     var vibration: some View {
-        if PreferenceManager.shared.settings.hasVibrationIcon,
-           ringerVibrationViewModel.isEnabledVibration {
+        if ringerVibrationViewModel.isEnabledVibration {
             StatusItemView(
                 image: Image(systemName: ringerVibrationViewModel.vibrationImageName),
                 tint: Colors.vibrationIconColor
@@ -92,8 +94,7 @@ private extension StatusItemGroupView {
     
     @ViewBuilder
     var muted: some View {
-        if PreferenceManager.shared.settings.hasMutedIcon,
-           ringerVibrationViewModel.isEnabledMute {
+        if ringerVibrationViewModel.isEnabledMute {
             StatusItemView(
                 image: Image(systemName: ringerVibrationViewModel.mutedImageName),
                 tint: Colors.mutedIconColor
@@ -103,8 +104,7 @@ private extension StatusItemGroupView {
     
     @ViewBuilder
     var flashlight: some View {
-        if PreferenceManager.shared.settings.hasFlashlightIcon,
-           AVFlashlight.hasFlashlight() {
+        if AVFlashlight.hasFlashlight() {
             Divider()
                 .overlay(Color.white)
             StatusItemView(
@@ -114,6 +114,11 @@ private extension StatusItemGroupView {
                 }
             )
         }
+    }
+    
+    // TODO: - Show the status items in a flexible grid when in landscape.
+    var rows: [GridItem] {
+        return Array(repeating: .init(.flexible(minimum: dimensions.statusItemSize.height), spacing: 10.0, alignment: .leading), count: dimensions.isLandscape ? 3 : 1)
     }
 }
 

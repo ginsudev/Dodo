@@ -21,41 +21,35 @@ final class PreferenceManager {
 
 struct Settings {
     // Global on/off
-    var isEnabled: Bool
+    let isEnabled: Bool
     // Media player
-    var timeMediaPlayerStyle: TimeMediaPlayerStyle
-    var playerStyle: MediaPlayerStyle
-    var showSuggestions: Bool
-    var showDivider: Bool
+    let timeMediaPlayerStyle: TimeMediaPlayerStyle
+    let playerStyle: MediaPlayerStyle
+    let showSuggestions: Bool
+    let showDivider: Bool
     // Charging
-    var hasChargingFlash: Bool
+    let hasChargingFlash: Bool
     // Aesthetics
-    var fontType: Font.Design
-    var timeFontSize: Double
-    var dateFontSize: Double
-    var weatherFontSize: Double
-    var themeName: String
+    let fontType: Font.Design
+    let timeFontSize: Double
+    let dateFontSize: Double
+    let weatherFontSize: Double
+    let themeName: String
     // Positioning & Dimensions
-    var notificationVerticalOffset: Double
+    let notificationVerticalOffset: Double
     // TimeDate
-    var timeTemplate: DateTemplate
-    var dateTemplate: DateTemplate
-    var is24HourModeEnabled: Bool
+    let timeTemplate: DateTemplate
+    let dateTemplate: DateTemplate
+    let is24HourModeEnabled: Bool
     // Favourite apps
-    var hasFavouriteApps: Bool
-    var isVisibleFavouriteAppsFade: Bool
+    let hasFavouriteApps: Bool
+    let isVisibleFavouriteAppsFade: Bool
     // Weather
-    var showWeather: Bool
-    var isActiveWeatherAutomaticRefresh: Bool
+    let showWeather: Bool
+    let isActiveWeatherAutomaticRefresh: Bool
     // Status items
-    var hasStatusItems: Bool
-    var hasLockIcon: Bool
-    var hasChargingIcon: Bool
-    var hasDNDIcon: Bool
-    var hasAlarmIcon: Bool
-    var hasFlashlightIcon: Bool
-    var hasVibrationIcon: Bool
-    var hasMutedIcon: Bool
+    let hasStatusItems: Bool
+    let statusItems: [StatusItemView.StatusItem]
     
     init(withDictionary dict: [String: Any]) {
         isEnabled = dict["isEnabled", default: true] as! Bool
@@ -73,15 +67,20 @@ struct Settings {
         timeFontSize = dict["timeFontSize", default: 50.0] as! Double
         dateFontSize = dict["dateFontSize", default: 15.0] as! Double
         weatherFontSize = dict["weatherFontSize", default: 15.0] as! Double
-        hasStatusItems = dict["hasStatusItems", default: true] as! Bool
-        hasLockIcon = dict["hasLockIcon", default: true] as! Bool
-        hasChargingIcon = dict["hasChargingIcon", default: true] as! Bool
         isActiveWeatherAutomaticRefresh = dict["isActiveWeatherAutomaticRefresh", default: true] as! Bool
-        hasDNDIcon = dict["hasDNDIcon", default: true] as! Bool
-        hasAlarmIcon = dict["hasAlarmIcon", default: true] as! Bool
-        hasFlashlightIcon = dict["hasFlashlightIcon", default: true] as! Bool
-        hasVibrationIcon = dict["hasVibrationIcon", default: false] as! Bool
-        hasMutedIcon = dict["hasMutedIcon", default: true] as! Bool
+        hasStatusItems = dict["hasStatusItems", default: true] as! Bool
+        
+        statusItems = {
+            var items: [StatusItemView.StatusItem] = []
+            if dict["hasLockIcon", default: true] as! Bool { items.append(.lockIcon) }
+            if dict["hasChargingIcon", default: true] as! Bool { items.append(.chargingIcon) }
+            if dict["hasAlarmIcon", default: true] as! Bool { items.append(.alarms) }
+            if dict["hasDNDIcon", default: true] as! Bool { items.append(.dnd) }
+            if dict["hasVibrationIcon", default: false] as! Bool { items.append(.vibration) }
+            if dict["hasMutedIcon", default: true] as! Bool { items.append(.muted) }
+            if dict["hasFlashlightIcon", default: true] as! Bool { items.append(.flashlight) }
+            return items
+        }()
         
         let fontType = dict["fontType", default: 2] as! Int
         switch fontType {
