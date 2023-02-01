@@ -8,10 +8,10 @@
 import Foundation
 
 enum GSPrefsComparator: String {
-case equals = "==",
-     notEqualTo = "!=",
-     lessThanOrEqualTo = "<=",
-     lessThan = "<",
-     greaterThanOrEqualTo = ">=",
-     greaterThan = ">"
+    case equals = "=="
+    case notEqualTo = "!="
+    case lessThanOrEqualTo = "<="
+    case lessThan = "<"
+    case greaterThanOrEqualTo = ">="
+    case greaterThan = ">"
 }
