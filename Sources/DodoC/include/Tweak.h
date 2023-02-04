@@ -66,6 +66,14 @@ struct SBIconImageInfo {
 @interface CSTeachableMomentsContainerView : UIView
 @end
 
+@interface SBDashBoardLockScreenEnvironment : NSObject
+
+@end
+
+@interface SBLockScreenViewControllerBase : NSObject
+
+@end
+
 @interface CSAdjunctItemView : UIView
 @end
 

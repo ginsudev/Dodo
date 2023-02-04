@@ -30,6 +30,9 @@ extension MediaPlayer {
         @Published var hasActiveMediaApp = false {
             didSet {
                 guard !hasActiveMediaApp else {
+                    if let identifier = nowPlayingAppIdentifier() {
+                        AppsManager.shared.suggestedAppBundleIdentifier = identifier
+                    }
                     return
                 }
                 artworkColour = .black

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StatusItemView: View {
-    enum StatusItem {
+    enum StatusItem: Identifiable {
         case lockIcon
         case chargingIcon
         case alarms
@@ -16,6 +16,18 @@ struct StatusItemView: View {
         case vibration
         case muted
         case flashlight
+        
+        var id: String {
+            switch self {
+            case .lockIcon: return "lockIcon"
+            case .chargingIcon: return "chargingIcon"
+            case .alarms: return "alarms"
+            case .dnd: return "dnd"
+            case .vibration: return "vibration"
+            case .muted: return "muted"
+            case .flashlight: return "flashlight"
+            }
+        }
     }
     
     @EnvironmentObject var dimensions: Dimensions
