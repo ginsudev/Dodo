@@ -143,7 +143,7 @@ struct SBIconImageInfo {
 @end
 
 @interface MTAlarmCache : NSObject
-@property (nonatomic,retain) NSMutableArray * orderedAlarms;
+@property (nonatomic,retain) NSMutableArray<MTAlarm *> * orderedAlarms;
 @property (nonatomic,retain) NSMutableArray * sleepAlarms;
 @property (nonatomic,retain) MTAlarm * nextAlarm;
 @end

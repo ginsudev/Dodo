@@ -10,8 +10,8 @@ import DodoC
 import Orion
 
 final class DataRefresher {
-    private var timer = Timer()
-    private var timerRunning = false
+    private let darwinManager = DarwinNotificationsManager.sharedInstance()
+    private var timer: Timer?
     
     private lazy var alarmCache: MTAlarmCache? = {
         if let observer = SBScheduledAlarmObserver.sharedInstance() {
@@ -28,50 +28,46 @@ final class DataRefresher {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+        darwinManager?.unregister(forNotificationName: Notifications.cf_lockScreenDidAppear)
+        darwinManager?.unregister(forNotificationName: Notifications.cf_lockScreenDidDismiss)
     }
 }
 
 // MARK: - Internal
 
 extension DataRefresher {
-    @objc func toggleTimer(notification: Notification) {
-        if notification.name.rawValue == Notifications.nc_didDimLockScreen || notification.name.rawValue == Notifications.nc_didDismissLockScreen {
-            toggleTimer(on: false)
-        } else {
-            toggleTimer(on: true)
-        }
-    }
-    
     func toggleTimer(on enable: Bool) {
         // Do not start a timer for time/date updates because the user disabled Dodo's clock.
         guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
             refreshOnce()
             return
         }
+        
         // If `false` was passed in, invalidate the timer and return, don't start another timer.
-        guard enable else {
-            if self.timer.isValid {
-                self.timer.invalidate()
-                timerRunning = false
-            }
+        guard enable, timer == nil else {
+            self.timer?.invalidate()
+            self.timer = nil
             return
         }
+        
         // Do not start a timer if one already exists.
-        guard !self.timer.isValid else {
-            return
-        }
+        guard self.timer?.isValid != true else { return }
+
         // Safety checks passed, start timer.
-        self.timer = Timer.scheduledTimer(
-            timeInterval: 1,
-            target: self,
-            selector: #selector(refresh),
-            userInfo: nil,
-            repeats: true
-        )
-        // Fire the timer imediately (this happens once).
-        self.timer.fire()
-        // Update timer status.
-        timerRunning = true
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self else { return }
+            self.timer = Timer.scheduledTimer(
+                timeInterval: 1,
+                target: self,
+                selector: #selector(self.refresh),
+                userInfo: nil,
+                repeats: true
+            )
+            RunLoop.current.run()
+            // Fire the timer imediately (this happens once).
+            self.timer?.fire()
+        }
+
         // Update values that only need to be updated once.
         refreshOnce()
     }
@@ -82,31 +78,13 @@ extension DataRefresher {
 private extension DataRefresher {
     func addObservers() {
         // Screen turned on / lock screen became active.
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(toggleTimer(notification:)),
-            name: NSNotification.Name(Notifications.nc_didUndimLockScreen),
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(toggleTimer(notification:)),
-            name: NSNotification.Name(Notifications.nc_didPresentLockScreen),
-            object: nil
-        )
+        darwinManager?.register(forNotificationName: Notifications.cf_lockScreenDidDismiss, callback: { [weak self] in
+            self?.toggleTimer(on: false)
+        })
         // Screen turned off / lock screen was dismissed.
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(toggleTimer(notification:)),
-            name: NSNotification.Name(Notifications.nc_didDimLockScreen),
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(toggleTimer(notification:)),
-            name: NSNotification.Name(Notifications.nc_didDismissLockScreen),
-            object: nil
-        )
+        darwinManager?.register(forNotificationName: Notifications.cf_lockScreenDidAppear, callback: { [weak self] in
+            self?.toggleTimer(on: true)
+        })
         // Dear AOD tweak devs, post this notification to update Dodo's time.
         NotificationCenter.default.addObserver(
             self,
@@ -143,10 +121,13 @@ private extension DataRefresher {
     }
     
     func updateAlarms() {
-        if let cache = self.alarmCache,
-           let nextAlarm = cache.nextAlarm {
-            DispatchQueue.main.async { [weak self] in
-                AlarmDataSource.shared.nextEnabledAlarm = self?.convertMobileTimer(nextAlarm)
+        DispatchQueue.global().async { [weak self] in
+            if let cache = self?.alarmCache,
+               let orderedAlarms = cache.orderedAlarms as? [MTAlarm] {
+                let alarms = orderedAlarms.compactMap { self?.convertMobileTimer($0) }
+                DispatchQueue.main.async {
+                    AlarmDataSource.shared.alarms = alarms
+                }
             }
         }
     }

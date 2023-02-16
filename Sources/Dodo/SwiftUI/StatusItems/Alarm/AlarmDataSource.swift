@@ -20,9 +20,9 @@ final class AlarmDataSource: ObservableObject {
     
     @Published var nextEnabledAlarm: Alarm?
     
-//    @Published var alarms = [Alarm]() {
-//        didSet {
-//            nextEnabledAlarm = alarms.first(where: {$0.isEnabled})
-//        }
-//    }
+    @Published var alarms = [Alarm]() {
+        didSet {
+            nextEnabledAlarm = alarms.first(where: \.isEnabled)
+        }
+    }
 }

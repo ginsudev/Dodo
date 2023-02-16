@@ -22,8 +22,8 @@ struct StatusItemGroupView: View {
     
     var body: some View {
         HStack(spacing: Dimensions.Padding.medium) {
-            ForEach(statusItems, id: \.self) {
-                statusItem(forType: $0)
+            ForEach(statusItems, id: \.self) { item in
+                statusItem(forType: item)
             }
         }
         .frame(maxHeight: dimensions.statusItemSize.height)
@@ -105,21 +105,22 @@ private extension StatusItemGroupView {
     @ViewBuilder
     var flashlight: some View {
         if AVFlashlight.hasFlashlight() {
-            Divider()
-                .overlay(Color.white)
-            StatusItemView(
-                image: Image(systemName: flashlightViewModel.imageName),
-                tint: Colors.flashlightIconColor, onTapAction: {
-                    flashlightViewModel.isActiveFlashlight.toggle()
-                }
-            )
+            HStack {
+                Divider()
+                    .overlay(Color.white)
+                StatusItemView(
+                    image: Image(systemName: flashlightViewModel.imageName),
+                    tint: Colors.flashlightIconColor, onTapAction: {
+                        flashlightViewModel.isActiveFlashlight.toggle()
+                    }
+                )
+            }
         }
     }
     
-    // TODO: - Show the status items in a flexible grid when in landscape.
-    var rows: [GridItem] {
-        return Array(repeating: .init(.flexible(minimum: dimensions.statusItemSize.height), spacing: 10.0, alignment: .leading), count: dimensions.isLandscape ? 3 : 1)
-    }
+//    var rows: [GridItem] {
+//        return Array(repeating: .init(.flexible(minimum: dimensions.statusItemSize.height), spacing: 10.0, alignment: .leading), count: dimensions.isLandscape ? 2 : 1)
+//    }
 }
 
 // MARK: - Previews

@@ -15,13 +15,9 @@ struct Notifications {
     /// Vibration on silent state changed notification.
     static var cf_silentVibrate = "com.apple.springboard.silent-vibrate.changed"
     /// Lock screen did dismiss notification
-    static var nc_didDismissLockScreen = "SBCoverSheetDidDismissNotification"
+    static var cf_lockScreenDidDismiss = "com.apple.springboardservices.eventobserver.internalSBSEventObserverEventContinuityUIWasObscured"
     /// Lock screen did appear notification
-    static var nc_didPresentLockScreen = "SBCoverSheetDidPresentNotification"
-    /// Lock screen did undim notification.
-    static var nc_didUndimLockScreen = "SBLockScreenUndimmedNotification"
-    /// Lock screen did dim notification
-    static var nc_didDimLockScreen = "SBLockScreenDimmedNotification"
+    static var cf_lockScreenDidAppear = "com.apple.springboardservices.eventobserver.internalSBSEventObserverEventContinuityUIBecameVisible"
     /// Ringer enabled state changed notification.
     static var nc_ringerChanged = "SBRingerChangedNotification"
     /// Lock state changed notification.
@@ -31,10 +27,3 @@ struct Notifications {
     /// Media info did change notification.
     static var nc_didChangeNowPlayingInfo = "kMRMediaRemotePlayerNowPlayingInfoDidChangeNotification"
 }
-
-/*
- SBLockScreenUndimmedNotification
- SBLockScreenDimmedNotification
- SBCoverSheetDidPresentNotification
- SBCoverSheetDidDismissNotification
- */
