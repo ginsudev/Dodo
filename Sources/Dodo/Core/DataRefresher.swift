@@ -11,7 +11,7 @@ import Orion
 
 final class DataRefresher {
     private let darwinManager = DarwinNotificationsManager.sharedInstance()
-    private var timer: Timer?
+    private var timer = Timer()
     
     private lazy var alarmCache: MTAlarmCache? = {
         if let observer = SBScheduledAlarmObserver.sharedInstance() {
@@ -30,46 +30,6 @@ final class DataRefresher {
         NotificationCenter.default.removeObserver(self)
         darwinManager?.unregister(forNotificationName: Notifications.cf_lockScreenDidAppear)
         darwinManager?.unregister(forNotificationName: Notifications.cf_lockScreenDidDismiss)
-    }
-}
-
-// MARK: - Internal
-
-extension DataRefresher {
-    func toggleTimer(on enable: Bool) {
-        // Do not start a timer for time/date updates because the user disabled Dodo's clock.
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
-            refreshOnce()
-            return
-        }
-        
-        // If `false` was passed in, invalidate the timer and return, don't start another timer.
-        guard enable, timer == nil else {
-            self.timer?.invalidate()
-            self.timer = nil
-            return
-        }
-        
-        // Do not start a timer if one already exists.
-        guard self.timer?.isValid != true else { return }
-
-        // Safety checks passed, start timer.
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            guard let self else { return }
-            self.timer = Timer.scheduledTimer(
-                timeInterval: 1,
-                target: self,
-                selector: #selector(self.refresh),
-                userInfo: nil,
-                repeats: true
-            )
-            RunLoop.current.run()
-            // Fire the timer imediately (this happens once).
-            self.timer?.fire()
-        }
-
-        // Update values that only need to be updated once.
-        refreshOnce()
     }
 }
 
@@ -92,6 +52,36 @@ private extension DataRefresher {
             name: NSNotification.Name("Dodo.updateTimeAndDate"),
             object: nil
         )
+    }
+    
+    func toggleTimer(on enable: Bool) {
+        // Do not start a timer for time/date updates because the user disabled Dodo's clock.
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
+            refreshOnce()
+            return
+        }
+        
+        // If `false` was passed in, invalidate the timer and return, don't start another timer.
+        guard enable, !self.timer.isValid else {
+            self.timer.invalidate()
+            return
+        }
+        
+        // Checks passed, start timer
+        self.timer = Timer.scheduledTimer(
+            timeInterval: 1,
+            target: self,
+            selector: #selector(self.refresh),
+            userInfo: nil,
+            repeats: true
+        )
+
+        // Add timer to the main run loop so it still works while the user is scrolling.
+        RunLoop.main.add(self.timer, forMode: .common)
+        self.timer.fire()
+
+        // Refresh values that only need to be refreshed once.
+        refreshOnce()
     }
     
     @objc func refresh() {
