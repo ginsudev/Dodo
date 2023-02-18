@@ -27,6 +27,7 @@ struct Settings {
     let playerStyle: MediaPlayerStyle
     let showSuggestions: Bool
     let showDivider: Bool
+    let isMarqueeLabels: Bool
     // Charging
     let hasChargingFlash: Bool
     // Aesthetics
@@ -69,6 +70,7 @@ struct Settings {
         weatherFontSize = dict["weatherFontSize", default: 15.0] as! Double
         isActiveWeatherAutomaticRefresh = dict["isActiveWeatherAutomaticRefresh", default: true] as! Bool
         hasStatusItems = dict["hasStatusItems", default: true] as! Bool
+        isMarqueeLabels = dict["isMarqueeLabels", default: false] as! Bool
         
         statusItems = {
             var items: [StatusItemView.StatusItem] = []

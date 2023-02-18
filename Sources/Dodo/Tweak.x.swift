@@ -230,18 +230,8 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
         target.view.layer.mask = cropFrame
                 
         let screenHeight = UIScreen.main.bounds.height
-        
-        let startY: CGFloat = {
-            var value = screenHeight
-            value -= (Dimensions.shared.height + Dimensions.shared.androBarHeight + 50)
-            return value / screenHeight
-        }()
-        
-        let endY: CGFloat = {
-            var value = screenHeight
-            value -= (Dimensions.shared.height + Dimensions.shared.androBarHeight - 30)
-            return value / screenHeight
-        }()
+        let startY: CGFloat = (Dimensions.shared.startPosition - Dimensions.shared.androBarHeight - 50) / screenHeight
+        let endY: CGFloat = (Dimensions.shared.startPosition - Dimensions.shared.androBarHeight) / screenHeight
         
         cropFrame.startPoint = CGPoint(
             x: 0.5,

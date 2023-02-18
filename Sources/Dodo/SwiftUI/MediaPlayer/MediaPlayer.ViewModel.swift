@@ -27,6 +27,8 @@ extension MediaPlayer {
             }
         }
         
+        @Published var isScreenOn = false
+        
         @Published var hasActiveMediaApp = false {
             didSet {
                 guard !hasActiveMediaApp else {

@@ -26,6 +26,7 @@ extension View {
         background(
             GeometryReader { geometryProxy in
                 Color.clear
+                    .ignoresSafeArea()
                     .preference(
                         key: FramePreferenceKey.self,
                         value: geometryProxy.frame(in: coordinateSpace)

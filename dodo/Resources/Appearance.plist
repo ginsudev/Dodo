@@ -103,7 +103,25 @@ Both: Shows Dodo's time and media player.</string>
 			<key>label</key>
 			<string>Show suggestions</string>
 			<key>cellSubtitleText</key>
-			<string>Suggest media apps based on recent listening.</string>
+			<string>Suggest media apps based on recent listening</string>
+			<key>dynamicRule</key>
+            <string>timeMediaPlayerStyleStatus,==,0</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>cellClass</key>
+			<string>PSSubtitleSwitchTableCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>isMarqueeLabels</string>
+			<key>label</key>
+			<string>Marquee labels</string>
+			<key>cellSubtitleText</key>
+			<string>Scrolls text if long enough</string>
 			<key>dynamicRule</key>
             <string>timeMediaPlayerStyleStatus,==,0</string>
 		</dict>

@@ -55,6 +55,10 @@ private extension DataRefresher {
     }
     
     func toggleTimer(on enable: Bool) {
+        if PreferenceManager.shared.settings.timeMediaPlayerStyle != .time {
+            MediaPlayer.ViewModel.shared.isScreenOn = enable
+        }
+        
         // Do not start a timer for time/date updates because the user disabled Dodo's clock.
         guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
             refreshOnce()

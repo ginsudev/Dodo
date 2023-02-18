@@ -78,6 +78,7 @@ struct SBIconImageInfo {
 @end
 
 @interface NCNotificationStructuredListViewController : UIViewController
+@property (nonatomic,readonly) CGSize effectiveContentSize;
 @end
 
 @interface SBFLockScreenDateView : UIView

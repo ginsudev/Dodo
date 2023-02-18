@@ -19,14 +19,8 @@ final class Dimensions: ObservableObject {
     static let shared = Dimensions()
     @Published var isLandscape: Bool = false
     
-    var height: CGFloat = 0.0 {
-        didSet {
-            NotificationCenter.default.post(
-                name: NSNotification.Name("Dodo.didUpdateHeight"),
-                object: nil
-            )
-        }
-    }
+    var height: CGFloat = .zero
+    var startPosition: CGFloat = .zero
     
     let androBarHeight: CGFloat = {
         GSUtilities.sharedInstance().isAndroBarInstalled()
@@ -34,7 +28,7 @@ final class Dimensions: ObservableObject {
         : 0
     }()
     
-    var statusItemSize: CGSize = CGSize(
+    var statusItemSize: CGSize = .init(
         width: 18.0,
         height: 18.0
     )

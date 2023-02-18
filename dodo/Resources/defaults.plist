@@ -36,6 +36,8 @@
 	<true/>
 	<key>hasChargingIcon</key>
 	<true/>
+	<key>isMarqueeLabels</key>
+	<false/>
 
 	<key>favouriteAppsGridSizeType</key>
 	<integer>0</integer>

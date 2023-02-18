@@ -14,8 +14,8 @@ struct Container: View {
     @StateObject private var mediaModel = MediaPlayer.ViewModel.shared
     @StateObject private var dimensions = Dimensions.shared
     @StateObject private var appsManager = AppsManager.shared
-    @State private var containerFrame: CGRect = .zero
-
+    @State private var rect: CGRect = .zero
+    
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             gradient
@@ -97,11 +97,20 @@ private extension Container {
         .padding(.bottom, UIDevice._hasHomeButton() ? Dimensions.Padding.system : Dimensions.Padding.small)
         .padding(.bottom, dimensions.androBarHeight)
         .frame(alignment: .bottom)
-        .readFrame(in: .local, for: $containerFrame)
-        .onChange(of: containerFrame) { newFrame in
-            DispatchQueue.main.async {
-                dimensions.height = newFrame.height + 50
-            }
+        .readFrame(for: $rect)
+        .onChange(of: rect.height, perform: { _ in
+            updateFrame(rect)
+        })
+    }
+    
+    func updateFrame(_ frame: CGRect) {
+        DispatchQueue.main.async {
+            dimensions.height = frame.height
+            dimensions.startPosition = frame.minY
+            NotificationCenter.default.post(
+                name: NSNotification.Name("Dodo.didUpdateHeight"),
+                object: nil
+            )
         }
     }
 }

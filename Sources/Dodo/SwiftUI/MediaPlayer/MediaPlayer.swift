@@ -101,22 +101,44 @@ private extension MediaPlayer {
         }
     }
     
+    @ViewBuilder
     var trackDetails: some View {
-        VStack(alignment: .leading) {
-            Text(mediaModel.trackName)
-                .font(.system(
-                    size: 15,
-                    weight: .regular,
-                    design: PreferenceManager.shared.settings.fontType)
+        if PreferenceManager.shared.settings.isMarqueeLabels {
+            VStack(alignment: .leading, spacing: 0.0) {
+                MarqueeText(
+                    text: mediaModel.trackName,
+                    color: .white,
+                    font: .systemFont(ofSize: 15),
+                    rate: 50,
+                    fadeLength: 10.0,
+                    isScrollable: mediaModel.isScreenOn
                 )
-            Text(mediaModel.artistName)
-                .font(.system(
-                    size: 12,
-                    weight: .regular,
-                    design: PreferenceManager.shared.settings.fontType)
+                MarqueeText(
+                    text: mediaModel.artistName,
+                    color: .white,
+                    font: .systemFont(ofSize: 12),
+                    rate: 60,
+                    fadeLength: 20.0,
+                    isScrollable: mediaModel.isScreenOn
                 )
+            }
+        } else {
+            VStack(alignment: .leading) {
+                Text(mediaModel.trackName)
+                    .font(.system(
+                        size: 15,
+                        weight: .regular,
+                        design: PreferenceManager.shared.settings.fontType)
+                    )
+                Text(mediaModel.artistName)
+                    .font(.system(
+                        size: 12,
+                        weight: .regular,
+                        design: PreferenceManager.shared.settings.fontType)
+                    )
+            }
+            .foregroundColor(Color(mediaModel.foregroundColour))
+            .lineLimit(1)
         }
-        .foregroundColor(Color(mediaModel.foregroundColour))
-        .lineLimit(1)
     }
 }
