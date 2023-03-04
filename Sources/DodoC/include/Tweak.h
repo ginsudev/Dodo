@@ -1,4 +1,5 @@
 #import <UIKit/UIKit.h>
+#import <SwiftUI/SwiftUI.h>
 #import <libgscommon/libgsutils.h>
 #import <PeterDev/libpddokdo.h>
 #import <AVKit/AVKit.h>
@@ -206,4 +207,8 @@ extern int SBSLaunchApplicationWithIdentifier(CFStringRef identifier, Boolean su
 @interface UIDevice (Private)
 + (BOOL)_hasHomeButton;
 + (BOOL)currentIsIPad;
+@end
+
+@interface HostingScrollView : UIScrollView
+
 @end

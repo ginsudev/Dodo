@@ -14,7 +14,6 @@ struct Container: View {
     @StateObject private var mediaModel = MediaPlayer.ViewModel.shared
     @StateObject private var dimensions = Dimensions.shared
     @StateObject private var appsManager = AppsManager.shared
-    @State private var rect: CGRect = .zero
     
     var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -24,6 +23,9 @@ struct Container: View {
                 .environmentObject(appsManager)
         }
         .background(Color.clear)
+        .readFrame(for: { frame in
+            updateFrame(frame)
+        })
     }
 }
 
@@ -70,7 +72,10 @@ private extension Container {
     var favouriteApps: some View {
         if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
             AppView()
-                .frame(height: 80, alignment: .bottom)
+                .frame(
+                    height: 80,
+                    alignment: .bottom
+                )
         }
     }
     
@@ -96,17 +101,11 @@ private extension Container {
         .padding(.horizontal, Dimensions.Padding.system)
         .padding(.bottom, UIDevice._hasHomeButton() ? Dimensions.Padding.system : Dimensions.Padding.small)
         .padding(.bottom, dimensions.androBarHeight)
-        .frame(alignment: .bottom)
-        .readFrame(for: $rect)
-        .onChange(of: rect.height, perform: { _ in
-            updateFrame(rect)
-        })
     }
     
     func updateFrame(_ frame: CGRect) {
         DispatchQueue.main.async {
-            dimensions.height = frame.height
-            dimensions.startPosition = frame.minY
+            dimensions.dodoFrame = frame
             NotificationCenter.default.post(
                 name: NSNotification.Name("Dodo.didUpdateHeight"),
                 object: nil

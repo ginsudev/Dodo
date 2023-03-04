@@ -14,16 +14,13 @@ struct MainContent: View {
     @State private var infoViewFrame: CGRect = .zero
     
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(
+            alignment: .center,
+            spacing: 0
+        ) {
             infoView
-                .layoutPriority(1)
+            Spacer()
             favouriteApps
-                .frame(
-                    minWidth: 0,
-                    maxWidth: UIScreen.main.bounds.width - infoViewFrame.width,
-                    maxHeight: infoViewFrame.height
-                )
-                .layoutPriority(-1)
         }
     }
 }
@@ -38,7 +35,10 @@ private extension MainContent {
             weatherView
             TimeDateView()
         }
-        .fixedSize()
+        .fixedSize(
+            horizontal: true,
+            vertical: false
+        )
         .readFrame(for: $infoViewFrame)
     }
     
@@ -46,7 +46,16 @@ private extension MainContent {
     var favouriteApps: some View {
         if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
             AppView()
-                .fixedSize(horizontal: false, vertical: true)
+                .layoutPriority(-1)
+                .frame(
+                    minWidth: 0.0,
+                    maxWidth: .infinity,
+                    maxHeight: infoViewFrame.height
+                )
+                .fixedSize(
+                    horizontal: false,
+                    vertical: true
+                )
         }
     }
     

@@ -304,6 +304,46 @@
 			<key>dynamicRule</key>
             <string>hasMutedIconStatus,==,0</string>
         </dict>
+		<dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.ginsu.dodo</string>
+			<key>key</key>
+			<string>hasSecondsIcon</string>
+			<key>label</key>
+			<string>Seconds indicator</string>
+			<key>dynamicRule</key>
+            <string>hasStatusItemsStatus,==,0</string>
+			<key>id</key>
+            <string>hasSecondsIconStatus</string>
+		</dict>
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>cellClass</key>
+            <string>GSColorPickerCell</string>
+            <key>fallbackHex</key>
+            <string>#FFFFFFFF</string>
+            <key>supportsAlpha</key> 
+            <true/>
+            <key>defaults</key>
+            <string>com.ginsu.dodo</string>
+            <key>key</key>
+            <string>secondsIconColor</string>
+            <key>default</key>
+            <string>#FFFFFFFF</string>
+            <key>label</key>
+            <string>Seconds icon color</string>
+			<key>dynamicRule</key>
+            <string>hasSecondsIconStatus,==,0</string>
+        </dict>
 	</array>
 	<key>title</key>
 	<string>Status items</string>

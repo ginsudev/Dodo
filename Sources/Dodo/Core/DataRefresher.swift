@@ -55,9 +55,7 @@ private extension DataRefresher {
     }
     
     func toggleTimer(on enable: Bool) {
-        if PreferenceManager.shared.settings.timeMediaPlayerStyle != .time {
-            MediaPlayer.ViewModel.shared.isScreenOn = enable
-        }
+        Dimensions.shared.isVisibleLockScreen = enable
         
         // Do not start a timer for time/date updates because the user disabled Dodo's clock.
         guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
@@ -115,13 +113,11 @@ private extension DataRefresher {
     }
     
     func updateAlarms() {
-        DispatchQueue.global().async { [weak self] in
-            if let cache = self?.alarmCache,
-               let orderedAlarms = cache.orderedAlarms as? [MTAlarm] {
-                let alarms = orderedAlarms.compactMap { self?.convertMobileTimer($0) }
-                DispatchQueue.main.async {
-                    AlarmDataSource.shared.alarms = alarms
-                }
+        if let cache = self.alarmCache,
+           let orderedAlarms = cache.orderedAlarms as? [MTAlarm] {
+            let alarms = orderedAlarms.compactMap { self.convertMobileTimer($0) }
+            DispatchQueue.main.async {
+                AlarmDataSource.shared.alarms = alarms
             }
         }
     }

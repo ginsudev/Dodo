@@ -5,7 +5,6 @@
 //  Created by Noah Little on 21/12/2022.
 //
 
-import UIKit
 import SwiftUI
 import DodoC
 
@@ -17,10 +16,10 @@ enum GridSizeType: Int {
 
 final class Dimensions: ObservableObject {
     static let shared = Dimensions()
-    @Published var isLandscape: Bool = false
+    @Published var isLandscape = false
+    @Published var isVisibleLockScreen = false
     
-    var height: CGFloat = .zero
-    var startPosition: CGFloat = .zero
+    var dodoFrame: CGRect = .zero
     
     let androBarHeight: CGFloat = {
         GSUtilities.sharedInstance().isAndroBarInstalled()

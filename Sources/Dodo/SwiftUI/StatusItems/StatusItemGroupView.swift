@@ -12,21 +12,32 @@ import DodoC
 
 struct StatusItemGroupView: View {
     @EnvironmentObject var dimensions: Dimensions
+    @EnvironmentObject var appsManager: AppsManager
     @StateObject private var chargingViewModel = ChargingIconViewModel()
     @StateObject private var lockIconViewModel = LockIconViewModel()
     @StateObject private var alarmDataSource = AlarmDataSource.shared
     @StateObject private var dndViewModel = DNDViewModel.shared
     @StateObject private var flashlightViewModel = FlashlightViewModel()
     @StateObject private var ringerVibrationViewModel = RingerVibrationViewModel()
+    @StateObject private var timeDateViewModel = TimeDateView.ViewModel.shared
     let statusItems = PreferenceManager.shared.settings.statusItems
     
     var body: some View {
         HStack(spacing: Dimensions.Padding.medium) {
             ForEach(statusItems, id: \.self) { item in
                 statusItem(forType: item)
+                    .scaledToFit()
             }
+            Spacer()
         }
-        .frame(maxHeight: dimensions.statusItemSize.height)
+        .frame(
+            maxWidth: .infinity,
+            idealHeight: dimensions.statusItemSize.height
+        )
+        .fixedSize(
+            horizontal: false,
+            vertical: true
+        )
     }
 }
 
@@ -34,7 +45,7 @@ struct StatusItemGroupView: View {
 
 private extension StatusItemGroupView {
     @ViewBuilder
-    func statusItem(forType type: StatusItemView.StatusItem) -> some View {
+    func statusItem(forType type: StatusItemView<AnyView>.StatusItem) -> some View {
         switch type {
         case .lockIcon: lockIcon
         case .chargingIcon: chargingIcon
@@ -43,62 +54,82 @@ private extension StatusItemGroupView {
         case .vibration: vibration
         case .muted: muted
         case .flashlight: flashlight
+        case .seconds: seconds
         }
     }
     
     @ViewBuilder
     var lockIcon: some View {
-        StatusItemView(
-            image: Image(systemName: lockIconViewModel.lockImageName),
-            tint: Colors.lockIconColor
-        )
+        StatusItemView(tint: Colors.lockIconColor) {
+            Image(systemName: lockIconViewModel.lockImageName)
+                .resizable()
+                .renderingMode(.template)
+        }
     }
     
     @ViewBuilder
     var chargingIcon: some View {
         if chargingViewModel.isCharging {
             StatusItemView(
-                image: Image(systemName: chargingViewModel.imageName),
-                tint: chargingViewModel.indicationColor,
-                text: chargingViewModel.batteryPercentage
-            )
+                text: chargingViewModel.batteryPercentage,
+                tint: chargingViewModel.indicationColor
+            ) {
+                Image(systemName: chargingViewModel.imageName)
+                    .resizable()
+                    .renderingMode(.template)
+            }
         }
     }
     
     @ViewBuilder
     var alarms: some View {
         if let alarm = alarmDataSource.nextEnabledAlarm {
-            AlarmView(alarm: alarm)
+            StatusItemView(
+                text: TimeDateView.ViewModel.shared.getDate(
+                    fromTemplate: .time,
+                    date: alarm.nextFireDate
+                ),
+                tint: Colors.alarmIconColor) {
+                    Image(systemName: "alarm.fill")
+                        .resizable()
+                        .renderingMode(.template)
+                } onLongHoldAction: {
+                    appsManager.open(app: .defined(.clock))
+                    HapticManager.playHaptic(withIntensity: .custom(.medium))
+                }
         }
     }
     
     @ViewBuilder
     var dnd: some View {
         if dndViewModel.isEnabled {
-            StatusItemView(
-                image: Image(systemName: "moon.fill"),
-                tint: Colors.dndIconColor
-            )
+            StatusItemView(tint: Colors.dndIconColor) {
+                Image(systemName: "moon.fill")
+                    .resizable()
+                    .renderingMode(.template)
+            }
         }
     }
     
     @ViewBuilder
     var vibration: some View {
         if ringerVibrationViewModel.isEnabledVibration {
-            StatusItemView(
-                image: Image(systemName: ringerVibrationViewModel.vibrationImageName),
-                tint: Colors.vibrationIconColor
-            )
+            StatusItemView(tint: Colors.vibrationIconColor) {
+                Image(systemName: ringerVibrationViewModel.vibrationImageName)
+                    .resizable()
+                    .renderingMode(.template)
+            }
         }
     }
     
     @ViewBuilder
     var muted: some View {
         if ringerVibrationViewModel.isEnabledMute {
-            StatusItemView(
-                image: Image(systemName: ringerVibrationViewModel.mutedImageName),
-                tint: Colors.mutedIconColor
-            )
+            StatusItemView(tint: Colors.vibrationIconColor) {
+                Image(systemName: ringerVibrationViewModel.mutedImageName)
+                    .resizable()
+                    .renderingMode(.template)
+            }
         }
     }
     
@@ -109,8 +140,13 @@ private extension StatusItemGroupView {
                 Divider()
                     .overlay(Color.white)
                 StatusItemView(
-                    image: Image(systemName: flashlightViewModel.imageName),
-                    tint: Colors.flashlightIconColor, onTapAction: {
+                    tint: Colors.vibrationIconColor,
+                    content: {
+                        Image(systemName: flashlightViewModel.imageName)
+                            .resizable()
+                            .renderingMode(.template)
+                    },
+                    onTapAction: {
                         flashlightViewModel.isActiveFlashlight.toggle()
                     }
                 )
@@ -118,9 +154,20 @@ private extension StatusItemGroupView {
         }
     }
     
-//    var rows: [GridItem] {
-//        return Array(repeating: .init(.flexible(minimum: dimensions.statusItemSize.height), spacing: 10.0, alignment: .leading), count: dimensions.isLandscape ? 2 : 1)
-//    }
+    @ViewBuilder
+    var seconds: some View {
+        StatusItemView(tint: Colors.vibrationIconColor) {
+            Circle()
+                .foregroundColor(Color(Colors.secondsIconColor))
+                .statusItem()
+                .overlay (
+                    Text(timeDateViewModel.seconds)
+                        .font(.caption2)
+                        .bold()
+                        .foregroundColor(Color(Colors.secondsIconColor.suitableForegroundColour()))
+                )
+        }
+    }
 }
 
 // MARK: - Previews

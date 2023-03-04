@@ -14,9 +14,9 @@ struct AppView: View {
     @EnvironmentObject private var appsManager: AppsManager
 
     private var installedApplications: [String] {
-        appsManager.favouriteAppBundleIdentifiers.filter({
+        appsManager.favouriteAppBundleIdentifiers.filter {
             appsManager.isInstalled(app: .custom($0))
-        })
+        }
     }
     
     var body: some View {
@@ -38,7 +38,10 @@ struct AppView: View {
 private extension AppView {
     @ViewBuilder
     var gridView: some View {
-        LazyVGrid(columns: columns, alignment: .trailing) {
+        LazyVGrid(
+            columns: columns,
+            alignment: .trailing
+        ) {
             ForEach(installedApplications, id: \.self) { identifier in
                 if let image = UIImage.image(forBundleIdentifier: identifier) {
                     Button {
@@ -46,7 +49,7 @@ private extension AppView {
                     } label: {
                         Image(uiImage: image)
                             .resizable()
-                            .aspectRatio(contentMode: .fit)
+                            .scaledToFit()
                     }
                 }
             }

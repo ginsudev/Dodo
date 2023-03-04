@@ -24,6 +24,8 @@
 	<true/>
 	<key>hasAlarmIcon</key>
 	<true/>
+	<key>hasSecondsIcon</key>
+	<true/>
 	<key>hasDNDIcon</key>
 	<true/>
 	<key>hasFlashlightIcon</key>
@@ -93,6 +95,8 @@
 	<key>vibrationIconColor</key>
 	<string>#FFFFFFFF</string>
 	<key>mutedIconColor</key>
+	<string>#FFFFFFFF</string>
+	<key>secondsIconColor</key>
 	<string>#FFFFFFFF</string>
 	<key>themeName</key>
 	<string>Rounded</string>

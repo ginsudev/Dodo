@@ -7,9 +7,12 @@
 
 import SwiftUI
 
-struct StatusItemView: View {
+// MARK: - Public
+
+struct StatusItemView<Content: View>: View {
     enum StatusItem {
         case lockIcon
+        case seconds
         case chargingIcon
         case alarms
         case dnd
@@ -18,58 +21,58 @@ struct StatusItemView: View {
         case flashlight
     }
     
+    let text: String?
+    let tint: UIColor
+    @ViewBuilder let content: Content
+    let onTapAction: (() -> Void)?
+    let onLongHoldAction: (() -> Void)?
+    
     @EnvironmentObject var dimensions: Dimensions
     @Namespace private var namespace
     @State private var isExpanded = false
     
-    let image: Image
-    let tint: UIColor
-    let text: String?
-    let onTapAction: (() -> Void)?
-    let onLongHoldAction: (() -> Void)?
-    
     init(
-        image: Image,
-        tint: UIColor = .white,
         text: String? = nil,
+        tint: UIColor,
+        @ViewBuilder content: @escaping () -> Content,
         onTapAction: (() -> Void)? = nil,
         onLongHoldAction: (() -> Void)? = nil
     ) {
-        self.image = image
-        self.tint = tint
         self.text = text
+        self.tint = tint
+        self.content = content()
         self.onTapAction = onTapAction
         self.onLongHoldAction = onLongHoldAction
     }
     
     var body: some View {
-        content
-    }
-}
-
-private extension StatusItemView {
-    @ViewBuilder
-    var content: some View {
         if text == nil {
             button
         } else {
             button
-                .background(
-                    isExpanded
-                    ? RoundedRectangle(cornerRadius: 9)
-                        .foregroundColor(Color(tint).opacity(0.7))
-                    : nil
-                )
+                .background(backgroundView)
+        }
+    }
+}
+
+// MARK: - Private
+
+private extension StatusItemView {
+    @ViewBuilder
+    var backgroundView: some View {
+        if isExpanded {
+            RoundedRectangle(cornerRadius: 9)
+                .fill(Color(tint).opacity(0.7))
         }
     }
     
     var button: some View {
         Button {} label: {
             buttonLabel
-                .fixedSize(horizontal: false, vertical: true)
+                .fixedSize(horizontal: true, vertical: true)
                 .onTapGesture {
                     if text != nil {
-                        withAnimation(.easeOut) {
+                        withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
                             isExpanded.toggle()
                         }
                     }
@@ -88,26 +91,23 @@ private extension StatusItemView {
     }
     
     var buttonLabel: some View {
-        HStack {
+        HStack(spacing: 2.0) {
             if isExpanded {
-                StatusImage(
-                    image: image,
-                    color: Color(tint.suitableForegroundColour()),
-                    customSize: CGSize(
-                        width: 10,
-                        height: 10
-                    )
-                )
-                .matchedGeometryEffect(id: "statusIcon", in: namespace)
+                content
+                    .statusItem()
+                    .foregroundColor(Color(tint.suitableForegroundColour()))
+                    .scaleEffect(0.7)
+                    .matchedGeometryEffect(id: "statusIcon", in: namespace)
             } else {
-                StatusImage(
-                    image: image,
-                    color: Color(tint)
-                )
-                .matchedGeometryEffect(id: "statusIcon", in: namespace)
+                content
+                    .statusItem()
+                    .foregroundColor(Color(tint))
+                    .scaleEffect(1.0)
+                    .matchedGeometryEffect(id: "statusIcon", in: namespace)
             }
             textView
                 .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
         }
         .padding(.horizontal, isExpanded ? 7 : 0)
     }

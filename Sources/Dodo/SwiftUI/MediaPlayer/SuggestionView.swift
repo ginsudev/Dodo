@@ -43,10 +43,10 @@ private extension SuggestionView {
     
     var openAppButtonText: some View {
         VStack(alignment: .leading) {
-            Text(LocalisedText.recommended.text())
+            Text(LocalisedText.recommended.text)
                 .foregroundColor(.white)
                 .font(.system(size: 15, weight: .regular, design: PreferenceManager.shared.settings.fontType))
-            Text(LocalisedText.tap.text())
+            Text(LocalisedText.tap.text)
                 .foregroundColor(Color(UIColor.lightText))
                 .font(.system(size: 13, weight: .regular, design: PreferenceManager.shared.settings.fontType))
         }
@@ -64,7 +64,7 @@ private extension SuggestionView {
                     .background(Color(viewModel.bluetoothColor))
                     .clipShape(Circle())
             } else {
-                Text("\(Image(systemName: "airplayaudio")) \(LocalisedText.bluetooth.text())")
+                Text("\(Image(systemName: "airplayaudio")) \(LocalisedText.bluetooth.text)")
                     .font(.system(
                         size: 13,
                         weight: .regular,

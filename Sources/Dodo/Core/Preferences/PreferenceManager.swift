@@ -50,7 +50,7 @@ struct Settings {
     let isActiveWeatherAutomaticRefresh: Bool
     // Status items
     let hasStatusItems: Bool
-    let statusItems: [StatusItemView.StatusItem]
+    let statusItems: [StatusItemView<AnyView>.StatusItem]
     
     init(withDictionary dict: [String: Any]) {
         isEnabled = dict["isEnabled", default: true] as! Bool
@@ -73,8 +73,9 @@ struct Settings {
         isMarqueeLabels = dict["isMarqueeLabels", default: false] as! Bool
         
         statusItems = {
-            var items: [StatusItemView.StatusItem] = []
+            var items: [StatusItemView<AnyView>.StatusItem] = []
             if dict["hasLockIcon", default: true] as! Bool { items.append(.lockIcon) }
+            if dict["hasSecondsIcon", default: true] as! Bool { items.append(.seconds) }
             if dict["hasChargingIcon", default: true] as! Bool { items.append(.chargingIcon) }
             if dict["hasAlarmIcon", default: true] as! Bool { items.append(.alarms) }
             if dict["hasDNDIcon", default: true] as! Bool { items.append(.dnd) }
@@ -152,7 +153,8 @@ struct Settings {
         Colors.flashlightIconColor = UIColor(hexString: dict["flashlightIconColor", default: "#FFFFFFFF"] as! String)
         Colors.vibrationIconColor = UIColor(hexString: dict["vibrationIconColor", default: "#FFFFFFFF"] as! String)
         Colors.mutedIconColor = UIColor(hexString: dict["mutedIconColor", default: "#FFFFFFFF"] as! String)
-        
+        Colors.secondsIconColor = UIColor(hexString: dict["secondsIconColor", default: "#FFFFFFFF"] as! String)
+
         Dimensions.shared.favouriteAppsGridSizeType = GridSizeType(rawValue: dict["favouriteAppsGridSizeType", default: 0] as! Int)!
         Dimensions.shared.favouriteAppsFlexibleGridItemSize = dict["favouriteAppsFlexibleGridItemSize", default: 40.0] as! Double
         Dimensions.shared.favouriteAppsFlexibleGridColumnAmount = dict["favouriteAppsFlexibleGridColumnAmount", default: 3] as! Int
@@ -160,6 +162,9 @@ struct Settings {
         Dimensions.shared.favouriteAppsFixedGridColumnAmount = dict["favouriteAppsFixedGridColumnAmount", default: 3] as! Int
         
         let indicatorSize = dict["indicatorSize", default: 18.0] as! Double
-        Dimensions.shared.statusItemSize = CGSize(width: indicatorSize, height: indicatorSize)
+        Dimensions.shared.statusItemSize = CGSize(
+            width: indicatorSize,
+            height: indicatorSize
+        )
     }
 }

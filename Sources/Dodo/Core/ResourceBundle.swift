@@ -12,7 +12,7 @@ enum LocalisedText {
     case bluetooth
     case tap
     
-    func text() -> String {
+    var text: String {
         switch self {
         case .recommended:
             return ResourceBundle.localisation(for: "Recommended_For_You")
@@ -35,6 +35,10 @@ struct ResourceBundle {
         guard let bundle else {
             return text
         }
-        return bundle.localizedString(forKey: text, value: nil, table: nil)
+        return bundle.localizedString(
+            forKey: text,
+            value: nil,
+            table: nil
+        )
     }
 }

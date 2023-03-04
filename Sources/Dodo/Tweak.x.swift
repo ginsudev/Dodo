@@ -9,19 +9,11 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     
     @Property (.nonatomic, .retain) var dodoController = DDBaseController()
     @Property (.nonatomic, .retain) var widthConstraint = NSLayoutConstraint()
-    @Property (.nonatomic, .retain) var heightConstraint = NSLayoutConstraint()
     
     func viewDidLoad() {
         orig.viewDidLoad()
         
-        NotificationCenter.default.addObserver(
-            target,
-            selector: #selector(didUpdateHeightDodo),
-            name: NSNotification.Name("Dodo.didUpdateHeight"),
-            object: nil
-        )
-        
-        //Init Dodo base controller
+        // Init Dodo base controller
         dodoController = DDBaseController()
         dodoController.view.translatesAutoresizingMaskIntoConstraints = false
         target.addChild(dodoController)
@@ -29,13 +21,11 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
         
         // Create a reference to the width anchor because it changes depending on device orientation.
         widthConstraint = dodoController.view.widthAnchor.constraint(equalTo: target.view.widthAnchor)
-        heightConstraint = dodoController.view.heightAnchor.constraint(equalToConstant: 250)
         
         // Activate these constraints once.
         NSLayoutConstraint.activate([
             dodoController.view.bottomAnchor.constraint(equalTo: target.view.bottomAnchor),
             dodoController.view.leftAnchor.constraint(equalTo: target.view.leftAnchor),
-            heightConstraint
         ])
     }
     
@@ -53,7 +43,7 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
             return insets
         }
         
-        insets.bottom = Dimensions.shared.height + 50
+        insets.bottom = Dimensions.shared.dodoFrame.height + 50
         
         guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
             return insets
@@ -83,13 +73,6 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
             return 0
         }
         return PreferenceManager.shared.settings.notificationVerticalOffset
-    }
-    
-    //orion: new
-    func didUpdateHeightDodo() {
-        DispatchQueue.main.async { [weak self] in
-            self?.heightConstraint.constant = Dimensions.shared.height
-        }
     }
 }
 
@@ -229,9 +212,9 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
     func dodoSetupMask() {
         target.view.layer.mask = cropFrame
                 
-        let screenHeight = UIScreen.main.bounds.height
-        let startY: CGFloat = (Dimensions.shared.startPosition - Dimensions.shared.androBarHeight - 50) / screenHeight
-        let endY: CGFloat = (Dimensions.shared.startPosition - Dimensions.shared.androBarHeight) / screenHeight
+        let screenHeight = target.view.bounds.maxY
+        let startY: CGFloat = (Dimensions.shared.dodoFrame.minY - Dimensions.shared.androBarHeight - 50) / screenHeight
+        let endY: CGFloat = (Dimensions.shared.dodoFrame.minY - Dimensions.shared.androBarHeight) / screenHeight
         
         cropFrame.startPoint = CGPoint(
             x: 0.5,
@@ -255,7 +238,7 @@ class DNDNotificationsService_Hook: ClassHook<DNDNotificationsService> {
 }
 
 //MARK: - Preferences
-fileprivate func prefsDict() -> [String : Any]? {
+private func prefsDict() -> [String : Any]? {
     var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
     let path = "/var/mobile/Library/Preferences/com.ginsu.dodo.plist"
     let defaultsPath = GSUtilities.sharedInstance().correctedFilePathFromPath(
@@ -282,7 +265,7 @@ fileprivate func prefsDict() -> [String : Any]? {
     }
 }
 
-fileprivate func readPrefs() -> Bool {
+private func readPrefs() -> Bool {
     if let dict = prefsDict() {
         PreferenceManager.shared.loadSettings(withDictionary: dict)
         return true

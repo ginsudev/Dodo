@@ -21,6 +21,7 @@ struct Colors {
     static var flashlightIconColor: UIColor = .white
     static var vibrationIconColor: UIColor = .white
     static var mutedIconColor: UIColor = .white
+    static var secondsIconColor: UIColor = .white
     
     // MARK: -  Defined
     

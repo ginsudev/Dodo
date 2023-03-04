@@ -13,6 +13,7 @@ enum DateTemplate {
     case timeCustom(String)
     case date
     case dateCustom(String)
+    case seconds
 }
 
 extension TimeDateView {
@@ -22,6 +23,7 @@ extension TimeDateView {
 
         @Published var time = ""
         @Published var date = ""
+        @Published var seconds = ""
 
         private func string(fromTemplate template: DateTemplate) -> String {
             switch template {
@@ -35,6 +37,8 @@ extension TimeDateView {
                 return "EEEE, MMMM d"
             case .dateCustom(let dateCustom):
                 return dateCustom
+            case .seconds:
+                return "ss"
             }
         }
         
@@ -49,6 +53,7 @@ extension TimeDateView {
                 guard let self else { return }
                 self.time = self.getDate(fromTemplate: time)
                 self.date = self.getDate(fromTemplate: date)
+                self.seconds = self.getDate(fromTemplate: .seconds)
             }
         }
     }

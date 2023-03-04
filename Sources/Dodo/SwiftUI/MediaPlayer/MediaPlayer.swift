@@ -111,7 +111,7 @@ private extension MediaPlayer {
                     font: .systemFont(ofSize: 15),
                     rate: 50,
                     fadeLength: 10.0,
-                    isScrollable: mediaModel.isScreenOn
+                    isScrollable: dimensions.isVisibleLockScreen
                 )
                 MarqueeText(
                     text: mediaModel.artistName,
@@ -119,7 +119,7 @@ private extension MediaPlayer {
                     font: .systemFont(ofSize: 12),
                     rate: 60,
                     fadeLength: 20.0,
-                    isScrollable: mediaModel.isScreenOn
+                    isScrollable: dimensions.isVisibleLockScreen
                 )
             }
         } else {

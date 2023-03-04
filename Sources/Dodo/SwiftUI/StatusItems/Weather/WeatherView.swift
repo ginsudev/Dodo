@@ -14,14 +14,16 @@ struct WeatherView: View {
     @StateObject private var viewModel = ViewModel.shared
     
     var body: some View {
-        weatherInfo
-            .onTapGesture {
-                viewModel.updateWeather()
-                HapticManager.playHaptic(withIntensity: .success)
-            }
-            .onLongPressGesture {
-                viewModel.openWeatherApp()
-            }
+        Button { } label: {
+            weatherInfo
+                .onTapGesture {
+                    viewModel.updateWeather()
+                    HapticManager.playHaptic(withIntensity: .success)
+                }
+                .onLongPressGesture {
+                    viewModel.openWeatherApp()
+                }
+        }
     }
 }
 
@@ -30,7 +32,10 @@ struct WeatherView: View {
 private extension WeatherView {
     var weatherInfo: some View {
         HStack {
-            StatusImage(image: Image(uiImage: viewModel.conditionImage))
+            Image(uiImage: viewModel.conditionImage)
+                .resizable()
+                .renderingMode(.original)
+                .statusItem()
             Text("\(viewModel.locationName) | \(viewModel.temperature)")
                 .font(
                     .system(
