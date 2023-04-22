@@ -28,9 +28,9 @@ extension TimeDateView {
         private func string(fromTemplate template: DateTemplate) -> String {
             switch template {
             case .timeWithSeconds:
-                return PreferenceManager.shared.settings.is24HourModeEnabled ? "HH:mm:ss" : "h:mm:ss"
+                return PreferenceManager.shared.settings.isEnabled24HourMode ? "HH:mm:ss" : "h:mm:ss"
             case .time:
-                return PreferenceManager.shared.settings.is24HourModeEnabled ? "HH:mm" : "h:mm"
+                return PreferenceManager.shared.settings.isEnabled24HourMode ? "HH:mm" : "h:mm"
             case .timeCustom(let timeCustom):
                 return timeCustom
             case .date:

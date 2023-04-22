@@ -7,12 +7,7 @@
 
 import SwiftUI
 import DodoC
-
-enum GridSizeType: Int {
-    case flexible = 0
-    case fixed = 1
-    case adaptive = 2
-}
+import GSCore
 
 final class Dimensions: ObservableObject {
     static let shared = Dimensions()
@@ -21,18 +16,14 @@ final class Dimensions: ObservableObject {
     
     var dodoFrame: CGRect = .zero
     
-    let androBarHeight: CGFloat = {
-        GSUtilities.sharedInstance().isAndroBarInstalled()
-        ? GSUtilities.sharedInstance().androBarHeight
-        : 0
-    }()
+    var androBarHeight = AndroBar().barHeight
     
     var statusItemSize: CGSize = .init(
         width: 18.0,
         height: 18.0
     )
     
-    var favouriteAppsGridSizeType: GridSizeType = .flexible
+    var favouriteAppsGridSizeType: Settings.GridSizeType = .flexible
     var favouriteAppsFlexibleGridItemSize: Double = 40.0
     var favouriteAppsFlexibleGridColumnAmount: Int = 3
     var favouriteAppsFixedGridItemSize: Double = 40.0

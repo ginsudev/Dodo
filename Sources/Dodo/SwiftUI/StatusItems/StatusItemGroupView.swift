@@ -15,7 +15,7 @@ struct StatusItemGroupView: View {
     @EnvironmentObject var appsManager: AppsManager
     @StateObject private var chargingViewModel = ChargingIconViewModel()
     @StateObject private var lockIconViewModel = LockIconViewModel()
-    @StateObject private var alarmDataSource = AlarmDataSource.shared
+    @StateObject private var alarmDataSource = AlarmTimerDataSource.shared
     @StateObject private var dndViewModel = DNDViewModel.shared
     @StateObject private var flashlightViewModel = FlashlightViewModel()
     @StateObject private var ringerVibrationViewModel = RingerVibrationViewModel()
@@ -28,6 +28,7 @@ struct StatusItemGroupView: View {
                 statusItem(forType: item)
                     .scaledToFit()
             }
+            // timer
             Spacer()
         }
         .frame(
@@ -99,6 +100,25 @@ private extension StatusItemGroupView {
                 }
         }
     }
+    
+//    @ViewBuilder
+//    var timer: some View {
+//        if let timer = alarmDataSource.nextTimer {
+//            StatusItemView(
+//                text: TimeDateView.ViewModel.shared.getDate(
+//                    fromTemplate: .timeWithSeconds,
+//                    date: timer.remainingTimeDate
+//                ),
+//                tint: Colors.alarmIconColor) {
+//                    Image(systemName: "timer")
+//                        .resizable()
+//                        .renderingMode(.template)
+//                } onLongHoldAction: {
+//                    appsManager.open(app: .defined(.clock))
+//                    HapticManager.playHaptic(withIntensity: .custom(.medium))
+//                }
+//        }
+//    }
     
     @ViewBuilder
     var dnd: some View {

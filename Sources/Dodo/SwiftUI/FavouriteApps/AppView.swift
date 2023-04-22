@@ -7,6 +7,7 @@
 
 import SwiftUI
 import DodoC
+import GSCore
 
 //MARK: - Public
 
@@ -43,7 +44,7 @@ private extension AppView {
             alignment: .trailing
         ) {
             ForEach(installedApplications, id: \.self) { identifier in
-                if let image = UIImage.image(forBundleIdentifier: identifier) {
+                if let image = UIImage.icon(bundleIdentifier: identifier) {
                     Button {
                         appsManager.open(app: .custom(identifier))
                     } label: {

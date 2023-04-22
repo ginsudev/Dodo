@@ -59,7 +59,7 @@ private extension ChargingIconViewModel {
         let batteryLevel = UIDevice.current.batteryLevel * 100
         
         DispatchQueue.main.async {
-            self.indicationColor = UIDevice.current.batteryLevelColorRepresentation()
+            self.indicationColor = UIDevice.current.batteryLevelColorRepresentation
             self.batteryPercentage = "\(Int(batteryLevel))%"
             switch batteryLevel {
             case 0..<100:

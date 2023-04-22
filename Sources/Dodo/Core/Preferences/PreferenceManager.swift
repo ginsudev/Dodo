@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Comet
 
 final class PreferenceManager {
     private(set) var settings: Settings!
@@ -31,7 +32,7 @@ struct Settings {
     // Charging
     let hasChargingFlash: Bool
     // Aesthetics
-    let fontType: Font.Design
+    let selectedFont: FontType
     let timeFontSize: Double
     let dateFontSize: Double
     let weatherFontSize: Double
@@ -41,7 +42,7 @@ struct Settings {
     // TimeDate
     let timeTemplate: DateTemplate
     let dateTemplate: DateTemplate
-    let is24HourModeEnabled: Bool
+    let isEnabled24HourMode: Bool
     // Favourite apps
     let hasFavouriteApps: Bool
     let isVisibleFavouriteAppsFade: Bool
@@ -61,7 +62,7 @@ struct Settings {
         showDivider = dict["showDivider", default: true] as! Bool
         hasChargingFlash = dict["hasChargingFlash", default: false] as! Bool
         themeName = dict["themeName", default: "Rounded"] as! String
-        is24HourModeEnabled = dict["is24HourModeEnabled", default: false] as! Bool
+        isEnabled24HourMode = dict["isEnabled24HourMode", default: false] as! Bool
         hasFavouriteApps = dict["hasFavouriteApps", default: true] as! Bool
         isVisibleFavouriteAppsFade = dict["isVisibleFavouriteAppsFade", default: false] as! Bool
         notificationVerticalOffset = dict["notificationVerticalOffset", default: 190.0] as! Double
@@ -71,6 +72,7 @@ struct Settings {
         isActiveWeatherAutomaticRefresh = dict["isActiveWeatherAutomaticRefresh", default: true] as! Bool
         hasStatusItems = dict["hasStatusItems", default: true] as! Bool
         isMarqueeLabels = dict["isMarqueeLabels", default: false] as! Bool
+        selectedFont = FontType(rawValue: dict["selectedFont", default: 0] as! Int)!
         
         statusItems = {
             var items: [StatusItemView<AnyView>.StatusItem] = []
@@ -84,26 +86,7 @@ struct Settings {
             if dict["hasFlashlightIcon", default: true] as! Bool { items.append(.flashlight) }
             return items
         }()
-        
-        let fontType = dict["fontType", default: 2] as! Int
-        switch fontType {
-        case 1:
-            self.fontType = .default
-            break
-        case 2:
-            self.fontType = .rounded
-            break
-        case 3:
-            self.fontType = .monospaced
-            break
-        case 4:
-            self.fontType = .serif
-            break
-        default:
-            self.fontType = .rounded
-            break
-        }
-        
+
         let timeTemplate = dict["timeTemplate", default: 0] as! Int
         switch timeTemplate {
         case 0:
@@ -134,7 +117,7 @@ struct Settings {
         }
         
         AppsManager.shared.favouriteAppBundleIdentifiers = dict[
-            "favouriteApps",
+            "selectedFavouriteApps",
             default: [
                 "com.apple.camera",
                 "com.apple.Preferences",
@@ -143,17 +126,17 @@ struct Settings {
             ]
         ] as! [String]
         
-        Colors.timeColor = UIColor(hexString: dict["timeColor", default: "#FFFFFFFF"] as! String)
-        Colors.dateColor = UIColor(hexString: dict["dateColor", default: "#FFFFFFFF"] as! String)
-        Colors.dividerColor = UIColor(hexString: dict["dividerColor", default: "#FFFFFFFF"] as! String)
-        Colors.weatherColor = UIColor(hexString: dict["weatherColor", default: "#FFFFFFFF"] as! String)
-        Colors.lockIconColor = UIColor(hexString: dict["lockIconColor", default: "#FFFFFFFF"] as! String)
-        Colors.alarmIconColor = UIColor(hexString: dict["alarmIconColor", default: "#FFFFFFFF"] as! String)
-        Colors.dndIconColor = UIColor(hexString: dict["dndIconColor", default: "#FFFFFFFF"] as! String)
-        Colors.flashlightIconColor = UIColor(hexString: dict["flashlightIconColor", default: "#FFFFFFFF"] as! String)
-        Colors.vibrationIconColor = UIColor(hexString: dict["vibrationIconColor", default: "#FFFFFFFF"] as! String)
-        Colors.mutedIconColor = UIColor(hexString: dict["mutedIconColor", default: "#FFFFFFFF"] as! String)
-        Colors.secondsIconColor = UIColor(hexString: dict["secondsIconColor", default: "#FFFFFFFF"] as! String)
+        Colors.timeColor = UIColor(hex: dict["timeColor", default: "FFFFFF"] as! String)
+        Colors.dateColor = UIColor(hex: dict["dateColor", default: "FFFFFF"] as! String)
+        Colors.dividerColor = UIColor(hex: dict["dividerColor", default: "FFFFFF"] as! String)
+        Colors.weatherColor = UIColor(hex: dict["weatherColor", default: "FFFFFF"] as! String)
+        Colors.lockIconColor = UIColor(hex: dict["lockIconColor", default: "FFFFFF"] as! String)
+        Colors.alarmIconColor = UIColor(hex: dict["alarmIconColor", default: "FFFFFF"] as! String)
+        Colors.dndIconColor = UIColor(hex: dict["dndIconColor", default: "FFFFFF"] as! String)
+        Colors.flashlightIconColor = UIColor(hex: dict["flashlightIconColor", default: "FFFFFF"] as! String)
+        Colors.vibrationIconColor = UIColor(hex: dict["vibrationIconColor", default: "FFFFFF"] as! String)
+        Colors.mutedIconColor = UIColor(hex: dict["mutedIconColor", default: "FFFFFF"] as! String)
+        Colors.secondsIconColor = UIColor(hex: dict["secondsIconColor", default: "FFFFFF"] as! String)
 
         Dimensions.shared.favouriteAppsGridSizeType = GridSizeType(rawValue: dict["favouriteAppsGridSizeType", default: 0] as! Int)!
         Dimensions.shared.favouriteAppsFlexibleGridItemSize = dict["favouriteAppsFlexibleGridItemSize", default: 40.0] as! Double

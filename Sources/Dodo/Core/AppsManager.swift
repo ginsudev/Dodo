@@ -7,6 +7,7 @@
 
 import DodoC
 import SwiftUI
+import GSCore
 
 /// AppsManager
 /// Storing app identifiers and shortcuts to opening applications.
@@ -37,42 +38,11 @@ final class AppsManager: ObservableObject {
 // MARK: - Internal
 
 extension AppsManager {
-    enum DefinedApp: String {
-        case weather = "com.apple.weather"
-        case clock = "com.apple.mobiletimer"
+    func open(app: ApplicationService.App) {
+        ApplicationService().open(app: app)
     }
     
-    enum App {
-        case defined(DefinedApp)
-        case custom(String)
-    }
-    
-    func open(app: App) {
-        guard let service = FBSSystemService.shared() else {
-            return
-        }
-        let launchOptions = [
-            FBSOpenApplicationOptionKeyPromptUnlockDevice: NSNumber(value: 1),
-            FBSOpenApplicationOptionKeyUnlockDevice: NSNumber(value: 1)
-        ]
-        
-        var identifier: String {
-            switch app {
-            case .defined(let defined):
-                return defined.rawValue
-            case .custom(let identifier):
-                return identifier
-            }
-        }
-        
-        service.openApplication(
-            identifier,
-            options: launchOptions,
-            withResult: nil
-        )
-    }
-    
-    func isInstalled(app: App) -> Bool {
+    func isInstalled(app: ApplicationService.App) -> Bool {
         var identifier: String {
             switch app {
             case .defined(let defined):

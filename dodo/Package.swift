@@ -66,7 +66,7 @@ let swiftFlags: [String] = libFlags + [
 
 let package = Package(
     name: "dodo",
-    platforms: [.iOS("12.2")],
+    platforms: [.iOS("14.0")],
     products: [
         .library(
             name: "dodo",

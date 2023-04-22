@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import GSCore
 
 extension SuggestionView {
     enum BluetoothButtonType {
@@ -16,7 +17,7 @@ extension SuggestionView {
     
     struct ViewModel {
         var suggestedAppIcon: UIImage {
-            if let image = UIImage.image(forBundleIdentifier: AppsManager.shared.suggestedAppBundleIdentifier) {
+            if let image = UIImage.icon(bundleIdentifier: AppsManager.shared.suggestedAppBundleIdentifier) {
                 return image
             } else {
                 if #available(iOS 15.0, *) {

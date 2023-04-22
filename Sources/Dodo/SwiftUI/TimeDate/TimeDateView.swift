@@ -20,8 +20,7 @@ struct TimeDateView: View {
                 .font(
                     .system(
                         size: PreferenceManager.shared.settings.timeFontSize,
-                        weight: .regular,
-                        design: PreferenceManager.shared.settings.fontType
+                        design: PreferenceManager.shared.settings.selectedFont.representedFont
                     )
                 )
             Text(viewModel.date)
@@ -29,8 +28,7 @@ struct TimeDateView: View {
                 .font(
                     .system(
                         size: PreferenceManager.shared.settings.dateFontSize,
-                        weight: .regular,
-                        design: PreferenceManager.shared.settings.fontType
+                        design: PreferenceManager.shared.settings.selectedFont.representedFont
                     )
                 )
         }

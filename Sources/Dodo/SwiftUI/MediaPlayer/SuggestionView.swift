@@ -14,7 +14,7 @@ struct SuggestionView: View {
     @EnvironmentObject var dimensions: Dimensions
     @EnvironmentObject var appsManager: AppsManager
     private let viewModel = ViewModel()
-
+    
     var body: some View {
         HStack {
             openAppButton
@@ -35,7 +35,10 @@ private extension SuggestionView {
                 Image(uiImage: viewModel.suggestedAppIcon)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 45, maxHeight: 45)
+                    .frame(
+                        maxWidth: 45,
+                        maxHeight: 45
+                    )
                 openAppButtonText
             }
         }
@@ -45,10 +48,20 @@ private extension SuggestionView {
         VStack(alignment: .leading) {
             Text(LocalisedText.recommended.text)
                 .foregroundColor(.white)
-                .font(.system(size: 15, weight: .regular, design: PreferenceManager.shared.settings.fontType))
+                .font(
+                    .system(
+                        size: 15.0,
+                        design: PreferenceManager.shared.settings.selectedFont.representedFont
+                    )
+                )
             Text(LocalisedText.tap.text)
                 .foregroundColor(Color(UIColor.lightText))
-                .font(.system(size: 13, weight: .regular, design: PreferenceManager.shared.settings.fontType))
+                .font(
+                    .system(
+                        size: 13.0,
+                        design: PreferenceManager.shared.settings.selectedFont.representedFont
+                    )
+                )
         }
         .multilineTextAlignment(.leading)
     }
@@ -65,16 +78,19 @@ private extension SuggestionView {
                     .clipShape(Circle())
             } else {
                 Text("\(Image(systemName: "airplayaudio")) \(LocalisedText.bluetooth.text)")
-                    .font(.system(
-                        size: 13,
-                        weight: .regular,
-                        design: PreferenceManager.shared.settings.fontType)
+                    .font(
+                        .system(
+                            size: 13.0,
+                            design: PreferenceManager.shared.settings.selectedFont.representedFont
+                        )
                     )
-                    .padding(EdgeInsets(
-                        top: 10,
-                        leading: 15,
-                        bottom: 10,
-                        trailing: 15)
+                    .padding(
+                        EdgeInsets(
+                            top: 10,
+                            leading: 15,
+                            bottom: 10,
+                            trailing: 15
+                        )
                     )
                     .foregroundColor(Color(viewModel.bluetoothColor.suitableForegroundColour()))
                     .background(Color(viewModel.bluetoothColor))

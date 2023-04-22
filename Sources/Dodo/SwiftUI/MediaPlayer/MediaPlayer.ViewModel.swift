@@ -7,20 +7,18 @@
 
 import Foundation
 import DodoC
+import GSCore
 
 // MARK: - Public
 
 extension MediaPlayer {
     final class ViewModel: ObservableObject {
         static let shared = ViewModel()
-
-        static let themePath: String = GSUtilities.sharedInstance().correctedFilePathFromPath(
-            withRootPrefix: ":root:Library/Application Support/Dodo/Themes/\(PreferenceManager.shared.settings.themeName)/"
-        )
+        static let themePath: String = "/Library/Application Support/Dodo/Themes/\(PreferenceManager.shared.settings.themeName)/".rootify
         
         var modularBackgroundColorMultiply: UIColor {
             if !hasActiveMediaApp,
-               let image = UIImage.image(forBundleIdentifier: AppsManager.shared.suggestedAppBundleIdentifier) {
+               let image = UIImage.icon(bundleIdentifier: AppsManager.shared.suggestedAppBundleIdentifier) {
                 return image.dominantColour()
             } else {
                 return artworkColour

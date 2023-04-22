@@ -8,7 +8,7 @@
 import UIKit
 
 struct Colors {
-    
+
     // MARK: - User adjustable
     
     static var dividerColor: UIColor = .white

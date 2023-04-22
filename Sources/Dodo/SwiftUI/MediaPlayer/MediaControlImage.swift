@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-enum PlaybackButtonType: CGFloat {
-    case playPause = 44.0
-    case prevNext = 34.0
-}
-
 struct MediaControlImage: View {
+    enum PlaybackButtonType: CGFloat {
+        case playPause = 44.0
+        case prevNext = 34.0
+    }
+    
     private let image: UIImage
     private let playbackButtonType: PlaybackButtonType
     

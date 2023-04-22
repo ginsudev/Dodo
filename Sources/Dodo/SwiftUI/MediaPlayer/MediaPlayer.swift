@@ -12,9 +12,9 @@ import SwiftUI
 struct MediaPlayer: View {
     @EnvironmentObject var mediaModel: ViewModel
     @EnvironmentObject var dimensions: Dimensions
-    private let style: MediaPlayerStyle
+    private let style: Settings.MediaPlayerStyle
     
-    init(style: MediaPlayerStyle) {
+    init(style: Settings.MediaPlayerStyle) {
         self.style = style
     }
 
@@ -51,11 +51,14 @@ private extension MediaPlayer {
             }
         }
         // Take up all the space we need in portrait, only take up what we need in landscape.
-        .fixedSize(horizontal: dimensions.isLandscape, vertical: true)
+        .fixedSize(
+            horizontal: dimensions.isLandscape,
+            vertical: true
+        )
     }
     
     var modularBackground: some View {
-        RoundedRectangle(cornerRadius: style.cornerRadius())
+        RoundedRectangle(cornerRadius: style.cornerRadius)
             .fill(
                 Color.white,
                 strokeBorder: Color.secondary.opacity(0.3),
@@ -93,10 +96,10 @@ private extension MediaPlayer {
                     maxWidth: 45,
                     maxHeight: 45
                 )
-                .cornerRadius(style.artworkRadius())
+                .cornerRadius(style.artworkRadius)
                 .shadow(
                     color: .black.opacity(0.4),
-                    radius: style.artworkRadius()
+                    radius: style.artworkRadius
                 )
         }
     }
@@ -125,16 +128,18 @@ private extension MediaPlayer {
         } else {
             VStack(alignment: .leading) {
                 Text(mediaModel.trackName)
-                    .font(.system(
-                        size: 15,
-                        weight: .regular,
-                        design: PreferenceManager.shared.settings.fontType)
+                    .font(
+                        .system(
+                            size: 15.0,
+                            design: PreferenceManager.shared.settings.selectedFont.representedFont
+                        )
                     )
                 Text(mediaModel.artistName)
-                    .font(.system(
-                        size: 12,
-                        weight: .regular,
-                        design: PreferenceManager.shared.settings.fontType)
+                    .font(
+                        .system(
+                            size: 12.0,
+                            design: PreferenceManager.shared.settings.selectedFont.representedFont
+                        )
                     )
             }
             .foregroundColor(Color(mediaModel.foregroundColour))

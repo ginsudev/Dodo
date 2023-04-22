@@ -1,5 +1,6 @@
 import Orion
 import DodoC
+import GSCore
 
 struct Main: HookGroup {}
 
@@ -237,32 +238,18 @@ class DNDNotificationsService_Hook: ClassHook<DNDNotificationsService> {
     }
 }
 
-//MARK: - Preferences
-private func prefsDict() -> [String : Any]? {
-    var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
-    let path = "/var/mobile/Library/Preferences/com.ginsu.dodo.plist"
-    let defaultsPath = GSUtilities.sharedInstance().correctedFilePathFromPath(
-        withRootPrefix: ":root:Library/PreferenceBundles/dodo.bundle/defaults.plist"
-    )!
+//class MTTimerManager_Hook: ClassHook<MTTimerCache> {
+//    func updateTimer(_ timer: MTTimer) -> AnyObject {
+//        AlarmTimerDataSource.shared.nextTimer = .init(id: timer.timerID, fireDate: timer.fireDate, remainingTime: timer.remainingTime)
+//        return orig.updateTimer(timer)
+//    }
+//}
 
-    do {
-        if !FileManager().fileExists(atPath: path) {
-            try FileManager().copyItem(
-                atPath: defaultsPath,
-                toPath: path
-            )
-        }
-        let plistURL = URL(fileURLWithPath: path)
-        let plistXML = try Data(contentsOf: plistURL)
-        let plistDict = try PropertyListSerialization.propertyList(
-            from: plistXML,
-            options: .mutableContainersAndLeaves,
-            format: &propertyListFormat
-        ) as? [String : AnyObject]
-        return plistDict
-    } catch {
-        return nil
-    }
+// MARK: - Preferences
+private func prefsDict() -> [String : Any]? {
+    let path = "/var/mobile/Library/Preferences/com.ginsu.dodo.plist"
+    let plistURL = URL(fileURLWithPath: path)
+    return plistURL.plistDict()
 }
 
 private func readPrefs() -> Bool {

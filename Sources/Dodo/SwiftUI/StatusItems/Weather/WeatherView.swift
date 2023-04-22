@@ -40,8 +40,7 @@ private extension WeatherView {
                 .font(
                     .system(
                         size: PreferenceManager.shared.settings.weatherFontSize,
-                        weight: .regular,
-                        design: PreferenceManager.shared.settings.fontType
+                        design: PreferenceManager.shared.settings.selectedFont.representedFont
                     )
                 )
                 .lineLimit(1)

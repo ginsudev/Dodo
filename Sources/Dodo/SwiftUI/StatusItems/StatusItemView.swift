@@ -119,9 +119,8 @@ private extension StatusItemView {
                 .foregroundColor(Color(tint.suitableForegroundColour()))
                 .font(
                     .system(
-                        size: 12,
-                        weight: .regular,
-                        design: PreferenceManager.shared.settings.fontType
+                        size: 12.0,
+                        design: PreferenceManager.shared.settings.selectedFont.representedFont
                     )
                 )
         }

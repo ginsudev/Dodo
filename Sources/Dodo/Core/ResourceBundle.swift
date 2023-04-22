@@ -6,6 +6,7 @@
 //
 
 import DodoC
+import GSCore
 
 enum LocalisedText {
     case recommended
@@ -25,11 +26,7 @@ enum LocalisedText {
 }
 
 struct ResourceBundle {
-    private static let bundle = Bundle(
-        path: GSUtilities.sharedInstance().correctedFilePathFromPath(
-            withRootPrefix: ":root:Library/Application Support/Dodo/Dodo.bundle"
-        )
-    )
+    private static let bundle = Bundle(path: "/Library/Application Support/Dodo/Dodo.bundle".rootify)
     
     static func localisation(for text: String) -> String {
         guard let bundle else {

@@ -1,31 +1,10 @@
 #import <UIKit/UIKit.h>
-#import <SwiftUI/SwiftUI.h>
-#import <libgscommon/libgsutils.h>
 #import <PeterDev/libpddokdo.h>
 #import <AVKit/AVKit.h>
 #include "MediaRemote.h"
 #include "DarwinNotificationsManager.h"
 
 #pragma mark - Icon stuff
-FOUNDATION_EXPORT NSString *const FBSOpenApplicationOptionKeyUnlockDevice;
-FOUNDATION_EXPORT NSString *const FBSOpenApplicationOptionKeyActivateSuspended;
-FOUNDATION_EXPORT NSString *const FBSOpenApplicationOptionKeyPromptUnlockDevice;
-
-struct SBIconImageInfo {
-    struct CGSize size;
-    double scale;
-    double continuousCornerRadius;
-};
-
-@interface SBIcon : NSObject
-@property (nonatomic,copy,readonly) NSString * displayName;
-- (UIImage *)generateIconImageWithInfo:(struct SBIconImageInfo)arg1;
-- (Class)iconImageViewClassForLocation:(id)arg1 ;
-@end
-
-@interface SBIconModel : NSObject
-- (SBIcon *)expectedIconForDisplayIdentifier:(id)arg1;
-@end
 
 @interface SBHIconManager : NSObject
 @end
@@ -40,25 +19,9 @@ struct SBIconImageInfo {
 - (SBApplication *)applicationWithBundleIdentifier:(NSString *)identifier;
 @end
 
-@interface SBIconController : NSObject
-@property (nonatomic,retain) SBIconModel * model;
-+ (instancetype)sharedInstance;
-+ (instancetype)sharedInstanceIfExists;
-@end
-
-@interface SBHomeScreenService : NSObject
-@property (nonatomic,copy,readonly) NSArray<NSString *> * allHomeScreenApplicationBundleIdentifiers;
-- (instancetype)initWithIconController:(SBIconController *)arg1 ;
-@end
-
-@interface FBSSystemService : NSObject
-+ (instancetype)sharedService;
-- (void)openApplication:(NSString *)app options:(NSDictionary *)options withResult:(void (^)(void))result;
-@end
-
 #pragma mark - Lock screen views
 @interface CSCombinedListViewController : UIViewController
--(void) _updateListViewContentInset;
+- (void) _updateListViewContentInset;
 @end
 
 @interface CSQuickActionsView : UIView
@@ -68,11 +31,9 @@ struct SBIconImageInfo {
 @end
 
 @interface SBDashBoardLockScreenEnvironment : NSObject
-
 @end
 
 @interface SBLockScreenViewControllerBase : NSObject
-
 @end
 
 @interface CSAdjunctItemView : UIView
@@ -158,6 +119,26 @@ struct SBIconImageInfo {
 + (instancetype)sharedInstance;
 @end
 
+// MARK: - Timer
+@interface MTMetrics : NSObject
++ (instancetype)_sharedPublicMetrics;
+@end
+
+@interface MTTimer : NSObject
+@property (readonly, nonatomic) NSUUID *timerID;
+@property (readonly, nonatomic) NSDate *fireDate;
+@property (readonly, nonatomic) CGFloat remainingTime;
+@end
+
+@interface MTTimerCache : NSObject
+@property (retain, nonatomic) MTTimer *nextTimer;
+@end
+
+@interface MTTimerManager : NSObject
+@property (retain, nonatomic) MTTimerCache *cache;
+- (instancetype)initWithMetrics:(MTMetrics *)metrics;
+@end
+
 // MARK: - DND
 @interface DNDState : NSObject
 @property (getter=isActive,nonatomic,readonly) BOOL active;
@@ -180,19 +161,6 @@ struct SBIconImageInfo {
 - (void)turnFlashlightOnForReason:(id)arg1;
 - (void)turnFlashlightOffForReason:(id)arg1;
 - (void)warmUp;
-@end
-
-#ifndef SPRINGBOARDSERVICES_H_
-extern int SBSLaunchApplicationWithIdentifier(CFStringRef identifier, Boolean suspended);
-#endif
-
-@interface SBMainSwitcherViewController : UIViewController
-+ (instancetype)sharedInstanceIfExists;
-- (void)addAppLayoutForDisplayItem:(id)arg1 completion:(/*^block*/id)arg2 ;
-@end
-
-@interface SBDisplayItem : NSObject
-+ (instancetype)displayItemWithType:(long long)arg1 bundleIdentifier:(id)arg2 uniqueIdentifier:(id)arg3;
 @end
 
 #pragma mark - Private

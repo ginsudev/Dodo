@@ -92,6 +92,17 @@ private extension DataRefresher {
             timeTemplate: PreferenceManager.shared.settings.timeTemplate,
             dateTemplate: PreferenceManager.shared.settings.dateTemplate
         )
+        
+//        DispatchQueue.main.async { [weak self] in
+//            if let timerCache = AlarmTimerDataSource.shared.timerCache,
+//               let timer = timerCache.nextTimer {
+//                print("[Dodo]: \(timer)")
+//                AlarmTimerDataSource.shared.nextTimer = self?.convertMobileTimer(timer)
+//            } else {
+//                print("[Dodo]: no timer")
+//                AlarmTimerDataSource.shared.nextTimer = nil
+//            }
+//        }
     }
     
     func refreshOnce() {
@@ -108,27 +119,35 @@ private extension DataRefresher {
     }
     
     func chargingIndication() {
-        let chargeColor = UIDevice.current.batteryLevelColorRepresentation()
+        let chargeColor = UIDevice.current.batteryLevelColorRepresentation
         MediaPlayer.ViewModel.shared.temporarilySwapColor(chargeColor)
     }
     
     func updateAlarms() {
         if let cache = self.alarmCache,
            let orderedAlarms = cache.orderedAlarms as? [MTAlarm] {
-            let alarms = orderedAlarms.compactMap { self.convertMobileTimer($0) }
+            let alarms = orderedAlarms.compactMap { self.convertMobileAlarm($0) }
             DispatchQueue.main.async {
-                AlarmDataSource.shared.alarms = alarms
+                AlarmTimerDataSource.shared.alarms = alarms
             }
         }
     }
     
-    func convertMobileTimer(_ alarm: MTAlarm) -> Alarm {
-        Alarm(
+    func convertMobileAlarm(_ alarm: MTAlarm) -> DDAlarm {
+        .init(
             id: alarm.alarmID,
             url: alarm.alarmURL,
             nextFireDate: alarm.nextFireDate,
             displayTitle: alarm.displayTitle,
             isEnabled: alarm.isEnabled
+        )
+    }
+    
+    func convertMobileTimer(_ timer: MTTimer) -> DDTimer {
+        .init(
+            id: timer.timerID,
+            fireDate: timer.fireDate,
+            remainingTime: timer.remainingTime
         )
     }
 }

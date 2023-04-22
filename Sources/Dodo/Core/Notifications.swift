@@ -9,7 +9,7 @@ import Foundation
 
 /// Notifications
 /// A collection of system notifications tightly packed together in one place.
-struct Notifications {
+enum Notifications {
     /// Vibration on ringer state changed notification.
     static var cf_ringVibrate = "com.apple.springboard.ring-vibrate.changed"
     /// Vibration on silent state changed notification.
