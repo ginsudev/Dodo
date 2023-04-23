@@ -145,7 +145,7 @@ private extension StatusItemGroupView {
     @ViewBuilder
     var muted: some View {
         if ringerVibrationViewModel.isEnabledMute {
-            StatusItemView(tint: Colors.vibrationIconColor) {
+            StatusItemView(tint: Colors.mutedIconColor) {
                 Image(systemName: ringerVibrationViewModel.mutedImageName)
                     .resizable()
                     .renderingMode(.template)
@@ -160,7 +160,7 @@ private extension StatusItemGroupView {
                 Divider()
                     .overlay(Color.white)
                 StatusItemView(
-                    tint: Colors.vibrationIconColor,
+                    tint: Colors.flashlightIconColor,
                     content: {
                         Image(systemName: flashlightViewModel.imageName)
                             .resizable()

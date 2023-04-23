@@ -29,7 +29,7 @@ private extension RootView {
         HeaderView(
             viewModel: .init(
                 title: "Dodo",
-                version: "4.0.0",
+                version: "4.0.1",
                 author: .ginsu
             )
         )
