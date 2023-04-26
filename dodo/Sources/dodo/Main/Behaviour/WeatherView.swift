@@ -14,6 +14,13 @@ struct WeatherView: View {
     
     var body: some View {
         Form {
+            if Ecosystem.jailbreakType == .rootless {
+                Section {
+                    Text("This feature is unavailable for rootless jailbreaks at the moment.")
+                        .foregroundColor(.red)
+                }
+            }
+            
             Section {
                 Toggle("Enabled", isOn: $preferenceStorage.showWeather)
             } footer: {
@@ -28,6 +35,7 @@ struct WeatherView: View {
             }
             .disabled(!preferenceStorage.showWeather)
         }
+        .disabled(Ecosystem.jailbreakType == .rootless)
         .navigationTitle("Weather")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

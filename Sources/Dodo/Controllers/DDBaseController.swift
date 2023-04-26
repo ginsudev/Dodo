@@ -9,7 +9,7 @@ import UIKit
 
 final class DDBaseController: UIViewController {
     private let hostingController = LSPresentableHostingController(rootView: Container())
-    
+
     override func _canShowWhileLocked() -> Bool {
         return true
     }

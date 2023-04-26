@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Comet
+import GSCore
 
 final class PreferenceManager {
     private(set) var settings: Settings!
@@ -57,7 +58,7 @@ struct Settings {
         isEnabled = dict["isEnabled", default: true] as! Bool
         timeMediaPlayerStyle = TimeMediaPlayerStyle(rawValue: dict["timeMediaPlayerStyle", default: 2] as! Int)!
         playerStyle = MediaPlayerStyle(rawValue: dict["playerStyle", default: 0] as! Int)!
-        showWeather = dict["showWeather", default: true] as! Bool
+        showWeather = dict["showWeather", default: true] as! Bool && Ecosystem.jailbreakType == .root
         showSuggestions = dict["showSuggestions", default: true] as! Bool
         showDivider = dict["showDivider", default: true] as! Bool
         hasChargingFlash = dict["hasChargingFlash", default: false] as! Bool

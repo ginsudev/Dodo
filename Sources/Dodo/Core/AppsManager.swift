@@ -49,6 +49,8 @@ extension AppsManager {
                 return defined.rawValue
             case .custom(let identifier):
                 return identifier
+            @unknown default:
+                return ""
             }
         }
         return SBApplicationController.sharedInstance().application(withBundleIdentifier: identifier) != nil
