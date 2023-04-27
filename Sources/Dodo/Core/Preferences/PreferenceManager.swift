@@ -11,10 +11,12 @@ import Comet
 import GSCore
 
 final class PreferenceManager {
-    private(set) var settings: Settings!
     static let shared = PreferenceManager()
-    let dataRefresher = DataRefresher()
+
+    private(set) var settings: Settings!
     let defaults = UserDefaults.standard
+
+    let dataRefresher = DataRefresher()
     
     func loadSettings(withDictionary dict: [String: Any]) {
         self.settings = Settings(withDictionary: dict)
@@ -97,7 +99,7 @@ struct Settings {
             self.timeTemplate = .timeWithSeconds
             break
         case 2:
-            self.timeTemplate = .timeCustom(dict["timeTemplateCustom", default: "h:mm"] as! String)
+            self.timeTemplate = .timeCustom(dict["timeTemplateCustomFormat", default: "h:mm"] as! String)
             break
         default:
             self.timeTemplate = .time
@@ -110,7 +112,7 @@ struct Settings {
             self.dateTemplate = .date
             break
         case 1:
-            self.dateTemplate = .dateCustom(dict["dateTemplateCustom", default: "EEEE, MMMM d"] as! String)
+            self.dateTemplate = .dateCustom(dict["dateTemplateCustomFormat", default: "EEEE, MMMM d"] as! String)
             break
         default:
             self.dateTemplate = .date

@@ -238,13 +238,6 @@ class DNDNotificationsService_Hook: ClassHook<DNDNotificationsService> {
     }
 }
 
-//class MTTimerManager_Hook: ClassHook<MTTimerCache> {
-//    func updateTimer(_ timer: MTTimer) -> AnyObject {
-//        AlarmTimerDataSource.shared.nextTimer = .init(id: timer.timerID, fireDate: timer.fireDate, remainingTime: timer.remainingTime)
-//        return orig.updateTimer(timer)
-//    }
-//}
-
 // MARK: - Preferences
 private func prefsDict() -> [String : Any]? {
     let path = "/var/mobile/Library/Preferences/com.ginsu.dodo.plist"

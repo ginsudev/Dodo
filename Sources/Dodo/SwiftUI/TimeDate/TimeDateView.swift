@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct TimeDateView: View {
-    @StateObject private var viewModel = ViewModel.shared
+    @Environment(\.isVisibleLockScreen) var isVisibleLockScreen
+    
+    @State private var timeString = ""
+    @State private var dateString = ""
     
     var body: some View {
         VStack(
             alignment: .leading,
             spacing: 0.0
         ) {
-            Text(viewModel.time)
+            Text(timeString)
                 .foregroundColor(Color(Colors.timeColor))
                 .font(
                     .system(
@@ -23,7 +26,7 @@ struct TimeDateView: View {
                         design: PreferenceManager.shared.settings.selectedFont.representedFont
                     )
                 )
-            Text(viewModel.date)
+            Text(dateString)
                 .foregroundColor(Color(Colors.dateColor))
                 .font(
                     .system(
@@ -33,5 +36,21 @@ struct TimeDateView: View {
                 )
         }
         .lineLimit(1)
+        .onReceive(NotificationCenter.default.publisher(for: .RefreshContent)) { _ in
+            refreshDates()
+        }
+    }
+}
+
+private extension TimeDateView {
+    func refreshDates() {
+        guard isVisibleLockScreen else { return }
+        
+        if let time = PreferenceManager.shared.settings.timeTemplate.dateString() {
+            timeString = time
+        }
+        if let date = PreferenceManager.shared.settings.dateTemplate.dateString() {
+            dateString = date
+        }
     }
 }

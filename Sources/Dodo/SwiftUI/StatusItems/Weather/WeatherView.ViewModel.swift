@@ -13,8 +13,6 @@ extension WeatherView {
         @Published private(set) var temperature = ""
         @Published private(set) var conditionImage = UIImage(systemName: "xmark.icloud")!
         
-        static let shared = ViewModel()
-        
         func updateWeather() {
 #if ROOTFUL
             PDDokdo.sharedInstance().refreshWeatherData()

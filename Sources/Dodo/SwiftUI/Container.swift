@@ -26,6 +26,7 @@ struct Container: View {
         .readFrame(for: { frame in
             updateFrame(frame)
         })
+        .environment(\.isVisibleLockScreen, dimensions.isVisibleLockScreen)
     }
 }
 
@@ -60,9 +61,9 @@ private extension Container {
     
     @ViewBuilder
     var divider: some View {
-        if PreferenceManager.shared.settings.showDivider
-        && !dimensions.isLandscape
-        && (PreferenceManager.shared.settings.showSuggestions || mediaModel.hasActiveMediaApp) {
+        if PreferenceManager.shared.settings.showDivider,
+           !dimensions.isLandscape,
+           (PreferenceManager.shared.settings.showSuggestions || mediaModel.hasActiveMediaApp) {
             Divider()
                 .overlay(Color(Colors.dividerColor).opacity(0.5))
         }

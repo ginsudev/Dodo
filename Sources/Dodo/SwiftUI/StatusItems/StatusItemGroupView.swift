@@ -19,7 +19,8 @@ struct StatusItemGroupView: View {
     @StateObject private var dndViewModel = DNDViewModel.shared
     @StateObject private var flashlightViewModel = FlashlightViewModel()
     @StateObject private var ringerVibrationViewModel = RingerVibrationViewModel()
-    @StateObject private var timeDateViewModel = TimeDateView.ViewModel.shared
+    @State private var secondsString = ""
+    
     let statusItems = PreferenceManager.shared.settings.statusItems
     
     var body: some View {
@@ -86,10 +87,7 @@ private extension StatusItemGroupView {
     var alarms: some View {
         if let alarm = alarmDataSource.nextEnabledAlarm {
             StatusItemView(
-                text: TimeDateView.ViewModel.shared.getDate(
-                    fromTemplate: .time,
-                    date: alarm.nextFireDate
-                ),
+                text: DateTemplate.time.dateString(date: alarm.nextFireDate),
                 tint: Colors.alarmIconColor) {
                     Image(systemName: "alarm.fill")
                         .resizable()
@@ -100,25 +98,6 @@ private extension StatusItemGroupView {
                 }
         }
     }
-    
-//    @ViewBuilder
-//    var timer: some View {
-//        if let timer = alarmDataSource.nextTimer {
-//            StatusItemView(
-//                text: TimeDateView.ViewModel.shared.getDate(
-//                    fromTemplate: .timeWithSeconds,
-//                    date: timer.remainingTimeDate
-//                ),
-//                tint: Colors.alarmIconColor) {
-//                    Image(systemName: "timer")
-//                        .resizable()
-//                        .renderingMode(.template)
-//                } onLongHoldAction: {
-//                    appsManager.open(app: .defined(.clock))
-//                    HapticManager.playHaptic(withIntensity: .custom(.medium))
-//                }
-//        }
-//    }
     
     @ViewBuilder
     var dnd: some View {
@@ -181,11 +160,14 @@ private extension StatusItemGroupView {
                 .foregroundColor(Color(Colors.secondsIconColor))
                 .statusItem()
                 .overlay (
-                    Text(timeDateViewModel.seconds)
+                    Text(secondsString)
                         .font(.caption2)
                         .bold()
                         .foregroundColor(Color(Colors.secondsIconColor.suitableForegroundColour()))
                 )
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .RefreshContent)) { _ in
+            secondsString = DateTemplate.seconds.dateString()!
         }
     }
 }

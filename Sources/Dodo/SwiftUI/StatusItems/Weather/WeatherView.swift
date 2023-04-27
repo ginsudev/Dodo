@@ -11,7 +11,7 @@ import DodoC
 //MARK: - Public
 
 struct WeatherView: View {
-    @StateObject private var viewModel = ViewModel.shared
+    @StateObject private var viewModel = ViewModel()
     
     var body: some View {
         Button { } label: {
@@ -23,6 +23,9 @@ struct WeatherView: View {
                 .onLongPressGesture {
                     viewModel.openWeatherApp()
                 }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .RefreshOnceContent)) { [weak viewModel] _ in
+            viewModel?.updateWeather()
         }
     }
 }

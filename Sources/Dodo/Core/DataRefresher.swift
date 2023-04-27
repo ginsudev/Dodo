@@ -5,7 +5,7 @@
 //  Created by Noah Little on 19/11/2022.
 //
 
-import UIKit
+import UIKit.UIDevice
 import DodoC
 import Orion
 
@@ -45,13 +45,6 @@ private extension DataRefresher {
         darwinManager?.register(forNotificationName: Notifications.cf_lockScreenDidAppear, callback: { [weak self] in
             self?.toggleTimer(on: true)
         })
-        // Dear AOD tweak devs, post this notification to update Dodo's time.
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(refresh),
-            name: NSNotification.Name("Dodo.updateTimeAndDate"),
-            object: nil
-        )
     }
     
     func toggleTimer(on enable: Bool) {
@@ -88,30 +81,19 @@ private extension DataRefresher {
     
     @objc func refresh() {
         // Refresh time and date
-        TimeDateView.ViewModel.shared.update(
-            timeTemplate: PreferenceManager.shared.settings.timeTemplate,
-            dateTemplate: PreferenceManager.shared.settings.dateTemplate
-        )
-        
-//        DispatchQueue.main.async { [weak self] in
-//            if let timerCache = AlarmTimerDataSource.shared.timerCache,
-//               let timer = timerCache.nextTimer {
-//                print("[Dodo]: \(timer)")
-//                AlarmTimerDataSource.shared.nextTimer = self?.convertMobileTimer(timer)
-//            } else {
-//                print("[Dodo]: no timer")
-//                AlarmTimerDataSource.shared.nextTimer = nil
-//            }
-//        }
+        NotificationCenter.default.post(name: .RefreshContent, object: nil)
     }
     
     func refreshOnce() {
         // Update the weather
-        if PreferenceManager.shared.settings.showWeather && PreferenceManager.shared.settings.isActiveWeatherAutomaticRefresh {
-            WeatherView.ViewModel.shared.updateWeather()
+        if PreferenceManager.shared.settings.showWeather,
+           PreferenceManager.shared.settings.isActiveWeatherAutomaticRefresh {
+            NotificationCenter.default.post(name: .RefreshOnceContent, object: nil)
         }
+        
         // Charging indication
-        if PreferenceManager.shared.settings.hasChargingFlash && UIDevice.current.batteryState != .unplugged {
+        if PreferenceManager.shared.settings.hasChargingFlash,
+           UIDevice.current.batteryState != .unplugged {
             chargingIndication()
         }
         // Alarms
@@ -140,14 +122,6 @@ private extension DataRefresher {
             nextFireDate: alarm.nextFireDate,
             displayTitle: alarm.displayTitle,
             isEnabled: alarm.isEnabled
-        )
-    }
-    
-    func convertMobileTimer(_ timer: MTTimer) -> DDTimer {
-        .init(
-            id: timer.timerID,
-            fireDate: timer.fireDate,
-            remainingTime: timer.remainingTime
         )
     }
 }

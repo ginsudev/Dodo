@@ -11,19 +11,24 @@ import Foundation
 /// A collection of system notifications tightly packed together in one place.
 enum Notifications {
     /// Vibration on ringer state changed notification.
-    static var cf_ringVibrate = "com.apple.springboard.ring-vibrate.changed"
+    static let cf_ringVibrate = "com.apple.springboard.ring-vibrate.changed"
     /// Vibration on silent state changed notification.
-    static var cf_silentVibrate = "com.apple.springboard.silent-vibrate.changed"
+    static let cf_silentVibrate = "com.apple.springboard.silent-vibrate.changed"
     /// Lock screen did dismiss notification
-    static var cf_lockScreenDidDismiss = "com.apple.springboardservices.eventobserver.internalSBSEventObserverEventContinuityUIWasObscured"
+    static let cf_lockScreenDidDismiss = "com.apple.springboardservices.eventobserver.internalSBSEventObserverEventContinuityUIWasObscured"
     /// Lock screen did appear notification
-    static var cf_lockScreenDidAppear = "com.apple.springboardservices.eventobserver.internalSBSEventObserverEventContinuityUIBecameVisible"
+    static let cf_lockScreenDidAppear = "com.apple.springboardservices.eventobserver.internalSBSEventObserverEventContinuityUIBecameVisible"
     /// Ringer enabled state changed notification.
-    static var nc_ringerChanged = "SBRingerChangedNotification"
+    static let nc_ringerChanged = "SBRingerChangedNotification"
     /// Lock state changed notification.
-    static var nc_lockStateDidChange = "SBAggregateLockStateDidChangeNotification"
+    static let nc_lockStateDidChange = "SBAggregateLockStateDidChangeNotification"
     /// Media is playing did change notification.
-    static var nc_didChangeIsPlaying = "kMRMediaRemoteOriginNowPlayingApplicationIsPlayingDidChangeNotification"
+    static let nc_didChangeIsPlaying = "kMRMediaRemoteOriginNowPlayingApplicationIsPlayingDidChangeNotification"
     /// Media info did change notification.
-    static var nc_didChangeNowPlayingInfo = "kMRMediaRemotePlayerNowPlayingInfoDidChangeNotification"
+    static let nc_didChangeNowPlayingInfo = "kMRMediaRemotePlayerNowPlayingInfoDidChangeNotification"
+}
+
+extension Notification.Name {
+    static let RefreshContent = Notification.Name("Dodo.RefreshContent")
+    static let RefreshOnceContent = Notification.Name("Dodo.RefreshOnceContent")
 }
