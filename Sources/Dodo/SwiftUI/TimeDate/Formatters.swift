@@ -58,6 +58,8 @@ struct Formatters {
 
 extension String {
     var twentyFourHourized: Self {
-        replacingOccurrences(of: "h", with: "H")
+        if PreferenceManager.shared.settings.isEnabled24HourMode {
+            return replacingOccurrences(of: "h:", with: "HH:")
+        } else { return self }
     }
 }
