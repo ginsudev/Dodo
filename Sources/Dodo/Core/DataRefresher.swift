@@ -6,11 +6,12 @@
 //
 
 import UIKit.UIDevice
+import Combine
 import DodoC
 import Orion
 
 final class DataRefresher {
-    private let darwinManager = DarwinNotificationsManager.sharedInstance()
+    private var bag = Set<AnyCancellable>()
     private var timer = Timer()
     
     private lazy var alarmCache: MTAlarmCache? = {
@@ -23,28 +24,31 @@ final class DataRefresher {
     }()
     
     init() {
-        addObservers()
+        subscribe()
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
-        darwinManager?.unregister(forNotificationName: Notifications.cf_lockScreenDidAppear)
-        darwinManager?.unregister(forNotificationName: Notifications.cf_lockScreenDidDismiss)
     }
 }
 
 // MARK: - Private
 
 private extension DataRefresher {
-    func addObservers() {
+    func subscribe() {
         // Screen turned on / lock screen became active.
-        darwinManager?.register(forNotificationName: Notifications.cf_lockScreenDidDismiss, callback: { [weak self] in
-            self?.toggleTimer(on: false)
-        })
+        NotificationCenter.default.publisher(for: .didAppearLockScreen)
+            .sink { [weak self] _ in
+                self?.toggleTimer(on: true)
+            }
+            .store(in: &bag)
+        
         // Screen turned off / lock screen was dismissed.
-        darwinManager?.register(forNotificationName: Notifications.cf_lockScreenDidAppear, callback: { [weak self] in
-            self?.toggleTimer(on: true)
-        })
+        NotificationCenter.default.publisher(for: .didDismissLockScreen)
+            .sink { [weak self] _ in
+                self?.toggleTimer(on: false)
+            }
+            .store(in: &bag)
     }
     
     func toggleTimer(on enable: Bool) {
@@ -81,14 +85,14 @@ private extension DataRefresher {
     
     @objc func refresh() {
         // Refresh time and date
-        NotificationCenter.default.post(name: .RefreshContent, object: nil)
+        NotificationCenter.default.post(name: .refreshContent, object: nil)
     }
     
     func refreshOnce() {
         // Update the weather
         if PreferenceManager.shared.settings.showWeather,
            PreferenceManager.shared.settings.isActiveWeatherAutomaticRefresh {
-            NotificationCenter.default.post(name: .RefreshOnceContent, object: nil)
+            NotificationCenter.default.post(name: .refreshOnceContent, object: nil)
         }
         
         // Charging indication

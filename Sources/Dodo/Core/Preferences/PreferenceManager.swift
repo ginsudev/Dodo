@@ -12,10 +12,10 @@ import GSCore
 
 final class PreferenceManager {
     static let shared = PreferenceManager()
-
+    
     private(set) var settings: Settings!
+    private let notificationBridge = NotificationBridge()
     let defaults = UserDefaults.standard
-
     let dataRefresher = DataRefresher()
     
     func loadSettings(withDictionary dict: [String: Any]) {
@@ -54,7 +54,14 @@ struct Settings {
     let isActiveWeatherAutomaticRefresh: Bool
     // Status items
     let hasStatusItems: Bool
-    let statusItems: [StatusItemView<AnyView>.StatusItem]
+    let hasLockIcon: Bool
+    let hasSecondsIcon: Bool
+    let hasChargingIcon: Bool
+    let hasAlarmIcon: Bool
+    let hasDNDIcon: Bool
+    let hasVibrationIcon: Bool
+    let hasMutedIcon: Bool
+    let hasFlashlightIcon: Bool
     
     init(withDictionary dict: [String: Any]) {
         isEnabled = dict["isEnabled", default: true] as! Bool
@@ -73,23 +80,19 @@ struct Settings {
         dateFontSize = dict["dateFontSize", default: 15.0] as! Double
         weatherFontSize = dict["weatherFontSize", default: 15.0] as! Double
         isActiveWeatherAutomaticRefresh = dict["isActiveWeatherAutomaticRefresh", default: true] as! Bool
-        hasStatusItems = dict["hasStatusItems", default: true] as! Bool
         isMarqueeLabels = dict["isMarqueeLabels", default: false] as! Bool
         selectedFont = FontType(rawValue: dict["selectedFont", default: 0] as! Int)!
         
-        statusItems = {
-            var items: [StatusItemView<AnyView>.StatusItem] = []
-            if dict["hasLockIcon", default: true] as! Bool { items.append(.lockIcon) }
-            if dict["hasSecondsIcon", default: true] as! Bool { items.append(.seconds) }
-            if dict["hasChargingIcon", default: true] as! Bool { items.append(.chargingIcon) }
-            if dict["hasAlarmIcon", default: true] as! Bool { items.append(.alarms) }
-            if dict["hasDNDIcon", default: true] as! Bool { items.append(.dnd) }
-            if dict["hasVibrationIcon", default: false] as! Bool { items.append(.vibration) }
-            if dict["hasMutedIcon", default: true] as! Bool { items.append(.muted) }
-            if dict["hasFlashlightIcon", default: true] as! Bool { items.append(.flashlight) }
-            return items
-        }()
-
+        hasStatusItems = dict["hasStatusItems", default: true] as! Bool
+        hasLockIcon = dict["hasLockIcon", default: true] as! Bool
+        hasSecondsIcon = dict["hasSecondsIcon", default: true] as! Bool
+        hasChargingIcon = dict["hasChargingIcon", default: true] as! Bool
+        hasAlarmIcon = dict["hasAlarmIcon", default: true] as! Bool
+        hasDNDIcon = dict["hasDNDIcon", default: true] as! Bool
+        hasVibrationIcon = dict["hasVibrationIcon", default: false] as! Bool
+        hasMutedIcon = dict["hasMutedIcon", default: true] as! Bool
+        hasFlashlightIcon = dict["hasFlashlightIcon", default: true] as! Bool
+        
         let timeTemplate = dict["timeTemplate", default: 0] as! Int
         switch timeTemplate {
         case 0:

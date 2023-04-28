@@ -13,20 +13,17 @@ import DodoC
 struct StatusItemGroupView: View {
     @EnvironmentObject var dimensions: Dimensions
     @EnvironmentObject var appsManager: AppsManager
-    @StateObject private var chargingViewModel = ChargingIconViewModel()
-    @StateObject private var lockIconViewModel = LockIconViewModel()
+    @StateObject private var viewModel = ViewModel()
+    
+    // TODO: - Merge these into the ViewModel and Combine-ify them.
     @StateObject private var alarmDataSource = AlarmTimerDataSource.shared
     @StateObject private var dndViewModel = DNDViewModel.shared
     @StateObject private var flashlightViewModel = FlashlightViewModel()
-    @StateObject private var ringerVibrationViewModel = RingerVibrationViewModel()
-    @State private var secondsString = ""
-    
-    let statusItems = PreferenceManager.shared.settings.statusItems
     
     var body: some View {
         HStack(spacing: Dimensions.Padding.medium) {
-            ForEach(statusItems, id: \.self) { item in
-                statusItem(forType: item)
+            ForEach(viewModel.statusItems) {
+                createStatusItem(type: $0)
                     .scaledToFit()
             }
             // timer
@@ -47,23 +44,9 @@ struct StatusItemGroupView: View {
 
 private extension StatusItemGroupView {
     @ViewBuilder
-    func statusItem(forType type: StatusItemView<AnyView>.StatusItem) -> some View {
-        switch type {
-        case .lockIcon: lockIcon
-        case .chargingIcon: chargingIcon
-        case .alarms: alarms
-        case .dnd: dnd
-        case .vibration: vibration
-        case .muted: muted
-        case .flashlight: flashlight
-        case .seconds: seconds
-        }
-    }
-    
-    @ViewBuilder
     var lockIcon: some View {
         StatusItemView(tint: Colors.lockIconColor) {
-            Image(systemName: lockIconViewModel.lockImageName)
+            Image(systemName: viewModel.lockImageName)
                 .resizable()
                 .renderingMode(.template)
         }
@@ -71,12 +54,12 @@ private extension StatusItemGroupView {
     
     @ViewBuilder
     var chargingIcon: some View {
-        if chargingViewModel.isCharging {
+        if viewModel.isCharging {
             StatusItemView(
-                text: chargingViewModel.batteryPercentage,
-                tint: chargingViewModel.indicationColor
+                text: viewModel.batteryPercentage,
+                tint: viewModel.chargingIndicationColor
             ) {
-                Image(systemName: chargingViewModel.imageName)
+                Image(systemName: viewModel.chargingImageName)
                     .resizable()
                     .renderingMode(.template)
             }
@@ -112,9 +95,17 @@ private extension StatusItemGroupView {
     
     @ViewBuilder
     var vibration: some View {
-        if ringerVibrationViewModel.isEnabledVibration {
+        let vibrationImageName: String = {
+            if #available(iOS 15, *) {
+                return "iphone.radiowaves.left.and.right.circle.fill"
+            } else {
+                return "waveform.circle.fill"
+            }
+        }()
+        
+        if viewModel.isEnabledVibration {
             StatusItemView(tint: Colors.vibrationIconColor) {
-                Image(systemName: ringerVibrationViewModel.vibrationImageName)
+                Image(systemName: vibrationImageName)
                     .resizable()
                     .renderingMode(.template)
             }
@@ -123,9 +114,9 @@ private extension StatusItemGroupView {
     
     @ViewBuilder
     var muted: some View {
-        if ringerVibrationViewModel.isEnabledMute {
+        if viewModel.isEnabledMute {
             StatusItemView(tint: Colors.mutedIconColor) {
-                Image(systemName: ringerVibrationViewModel.mutedImageName)
+                Image(systemName: "bell.slash.fill")
                     .resizable()
                     .renderingMode(.template)
             }
@@ -156,18 +147,29 @@ private extension StatusItemGroupView {
     @ViewBuilder
     var seconds: some View {
         StatusItemView(tint: Colors.vibrationIconColor) {
-            Circle()
-                .foregroundColor(Color(Colors.secondsIconColor))
-                .statusItem()
-                .overlay (
-                    Text(secondsString)
-                        .font(.caption2)
-                        .bold()
-                        .foregroundColor(Color(Colors.secondsIconColor.suitableForegroundColour()))
+            Text(viewModel.secondsString)
+                .font(.caption2)
+                .bold()
+                .foregroundColor(Color(Colors.secondsIconColor.suitableForegroundColour()))
+                .background(
+                    Circle()
+                        .foregroundColor(Color(Colors.secondsIconColor))
+                        .statusItem()
                 )
         }
-        .onReceive(NotificationCenter.default.publisher(for: .RefreshContent)) { _ in
-            secondsString = DateTemplate.seconds.dateString()!
+    }
+    
+    @ViewBuilder
+    func createStatusItem(type: Settings.StatusItem) -> some View {
+        switch type {
+        case .lockIcon: lockIcon
+        case .chargingIcon: chargingIcon
+        case .alarms: alarms
+        case .dnd: dnd
+        case .vibration: vibration
+        case .muted: muted
+        case .flashlight: flashlight
+        case .seconds: seconds
         }
     }
 }

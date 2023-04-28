@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 import DodoC
 import GSCore
 
@@ -15,6 +16,8 @@ extension MediaPlayer {
     final class ViewModel: ObservableObject {
         static let shared = ViewModel()
         static let themePath: String = "/Library/Application Support/Dodo/Themes/\(PreferenceManager.shared.settings.themeName)/".rootify
+        
+        private var bag = Set<AnyCancellable>()
         
         var modularBackgroundColorMultiply: UIColor {
             if !hasActiveMediaApp,
@@ -58,7 +61,7 @@ extension MediaPlayer {
         @Published var foregroundColour: UIColor = .white
         
         init() {
-            addObservers()
+            subscribe()
         }
         
         deinit {
@@ -100,22 +103,23 @@ extension MediaPlayer.ViewModel {
 // MARK: - Private
 
 private extension MediaPlayer.ViewModel {
-    func addObservers() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(didChangePlaybackState(notification:)),
-            name: NSNotification.Name(Notifications.nc_didChangeIsPlaying),
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(didChangeNowPlayingInfo),
-            name: NSNotification.Name(Notifications.nc_didChangeNowPlayingInfo),
-            object: nil
-        )
+    func subscribe() {
+        NotificationCenter.default.publisher(for: .didChangeIsPlaying)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                self?.didChangePlaybackState(notification: notification)
+            }
+            .store(in: &bag)
+
+        NotificationCenter.default.publisher(for: .didChangeNowPlayingInfo)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.didChangeNowPlayingInfo()
+            }
+            .store(in: &bag)
     }
     
-    @objc func didChangePlaybackState(notification: Notification) {
+    func didChangePlaybackState(notification: Notification) {
         DispatchQueue.main.async { [weak self] in
             self?.hasActiveMediaApp = self?.nowPlayingAppIdentifier() != nil
             guard self?.hasActiveMediaApp == true else { return }
@@ -127,7 +131,7 @@ private extension MediaPlayer.ViewModel {
         }
     }
     
-    @objc func didChangeNowPlayingInfo() {
+    func didChangeNowPlayingInfo() {
         //Update track info (Artwork, title, artist, etc..).
         MRMediaRemoteGetNowPlayingInfo(
             .main,

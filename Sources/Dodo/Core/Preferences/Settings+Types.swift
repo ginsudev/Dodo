@@ -58,4 +58,30 @@ extension Settings {
             }
         }
     }
+    
+    enum StatusItem: CaseIterable, Identifiable {
+        case lockIcon
+        case seconds
+        case chargingIcon
+        case alarms
+        case dnd
+        case vibration
+        case muted
+        case flashlight
+        
+        var id: Self { self }
+
+        var isEnabled: Bool {
+            switch self {
+            case .lockIcon: return PreferenceManager.shared.settings.hasLockIcon
+            case .seconds: return PreferenceManager.shared.settings.hasSecondsIcon
+            case .chargingIcon: return PreferenceManager.shared.settings.hasChargingIcon
+            case .alarms: return PreferenceManager.shared.settings.hasAlarmIcon
+            case .dnd: return PreferenceManager.shared.settings.hasDNDIcon
+            case .vibration: return PreferenceManager.shared.settings.hasVibrationIcon
+            case .muted: return PreferenceManager.shared.settings.hasMutedIcon
+            case .flashlight: return PreferenceManager.shared.settings.hasFlashlightIcon
+            }
+        }
+    }
 }

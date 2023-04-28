@@ -10,17 +10,6 @@ import SwiftUI
 // MARK: - Public
 
 struct StatusItemView<Content: View>: View {
-    enum StatusItem {
-        case lockIcon
-        case seconds
-        case chargingIcon
-        case alarms
-        case dnd
-        case vibration
-        case muted
-        case flashlight
-    }
-    
     let text: String?
     let tint: UIColor
     @ViewBuilder let content: Content

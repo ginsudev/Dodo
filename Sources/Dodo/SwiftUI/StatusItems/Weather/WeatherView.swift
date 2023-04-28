@@ -24,7 +24,7 @@ struct WeatherView: View {
                     viewModel.openWeatherApp()
                 }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .RefreshOnceContent)) { [weak viewModel] _ in
+        .onReceive(NotificationCenter.default.publisher(for: .refreshOnceContent)) { [weak viewModel] _ in
             viewModel?.updateWeather()
         }
     }
