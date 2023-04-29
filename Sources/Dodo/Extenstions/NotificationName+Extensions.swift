@@ -35,3 +35,8 @@ extension Notification.Name {
     /// Media info did change notification.
     static let didChangeNowPlayingInfo = Notification.Name("kMRMediaRemotePlayerNowPlayingInfoDidChangeNotification")
 }
+
+extension Notification {
+    /// A dummy notification to fake-emit a value to combine publishers before actual values are recieved.
+    static let prepended: Self = .init(name: Name("Dodo.Combine.Prepended"))
+}

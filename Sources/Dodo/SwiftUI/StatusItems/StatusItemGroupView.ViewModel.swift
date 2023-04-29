@@ -74,15 +74,19 @@ private extension StatusItemGroupView.ViewModel {
         // Charging
         if statusItems.contains(.chargingIcon) || PreferenceManager.shared.settings.hasChargingFlash {
             NotificationCenter.default.publisher(for: UIDevice.batteryStateDidChangeNotification)
+                .prepend(.init(name: Notification.Name("")))
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
+                    NSLog("[Dodo]: updateChargingStatus")
                     self?.updateChargingStatus()
                 }
                 .store(in: &bag)
             
             NotificationCenter.default.publisher(for: UIDevice.batteryLevelDidChangeNotification)
+                .prepend(.prepended)
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
+                    NSLog("[Dodo]: updateChargingVisuals")
                     self?.updateChargingVisuals()
                 }
                 .store(in: &bag)
@@ -91,6 +95,7 @@ private extension StatusItemGroupView.ViewModel {
         // Seconds
         if statusItems.contains(.seconds) {
             NotificationCenter.default.publisher(for: .refreshContent)
+                .prepend(.prepended)
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
                     self?.updateSeconds()
@@ -101,6 +106,7 @@ private extension StatusItemGroupView.ViewModel {
         // Ringer
         if statusItems.contains(.muted) || statusItems.contains(.vibration) {
             NotificationCenter.default.publisher(for: .didChangeRinger)
+                .prepend(.prepended)
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
                     self?.updateRingerState()
@@ -108,6 +114,7 @@ private extension StatusItemGroupView.ViewModel {
                 .store(in: &bag)
             
             NotificationCenter.default.publisher(for: .didChangeRingVibrate)
+                .prepend(.prepended)
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
                     self?.updateVibrationState()
@@ -115,6 +122,7 @@ private extension StatusItemGroupView.ViewModel {
                 .store(in: &bag)
             
             NotificationCenter.default.publisher(for: .didChangeSilentVibrate)
+                .prepend(.prepended)
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
                     self?.updateVibrationState()

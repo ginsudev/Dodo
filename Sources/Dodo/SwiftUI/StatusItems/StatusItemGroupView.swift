@@ -24,7 +24,6 @@ struct StatusItemGroupView: View {
             ForEach(viewModel.statusItems) {
                 createStatusItem(type: $0)
             }
-            // timer
             Spacer()
         }
         .frame(

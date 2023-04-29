@@ -21,18 +21,19 @@ final class DDBaseController: UIViewController {
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         addChild(hostingController)
         view.addSubview(hostingController.view)
+        hostingController.didMove(toParent: self)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupConstrains()
     }
     
     func setupConstrains() {
+        hostingController.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        hostingController.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        hostingController.view.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = !Dimensions.shared.isLandscape
-        hostingController.view.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
+        hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = !Dimensions.shared.isLandscape
         hostingController.view.updateConstraints()
     }
 }

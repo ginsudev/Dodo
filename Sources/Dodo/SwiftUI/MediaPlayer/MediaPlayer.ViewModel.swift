@@ -105,6 +105,7 @@ extension MediaPlayer.ViewModel {
 private extension MediaPlayer.ViewModel {
     func subscribe() {
         NotificationCenter.default.publisher(for: .didChangeIsPlaying)
+            .prepend(.prepended)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
                 self?.didChangePlaybackState(notification: notification)
@@ -112,6 +113,7 @@ private extension MediaPlayer.ViewModel {
             .store(in: &bag)
 
         NotificationCenter.default.publisher(for: .didChangeNowPlayingInfo)
+            .prepend(.prepended)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.didChangeNowPlayingInfo()

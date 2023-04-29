@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct TimeDateView: View {
-    @Environment(\.isVisibleLockScreen) var isVisibleLockScreen
-    
     @State private var timeString = "--:--"
     @State private var dateString = "--/--/--"
     
@@ -36,7 +34,7 @@ struct TimeDateView: View {
                 )
         }
         .lineLimit(1)
-        .onReceive(NotificationCenter.default.publisher(for: .refreshContent)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .refreshContent).prepend(.prepended)) { _ in
             refreshDates()
         }
     }
@@ -44,8 +42,6 @@ struct TimeDateView: View {
 
 private extension TimeDateView {
     func refreshDates() {
-        guard isVisibleLockScreen else { return }
-        
         if let time = PreferenceManager.shared.settings.timeTemplate.dateString() {
             timeString = time
         }

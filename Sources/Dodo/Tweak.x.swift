@@ -11,7 +11,7 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     typealias Group = Main
     
     @Property (.nonatomic, .retain) var dodoController: DDBaseController = .init()
-    @Property (.nonatomic, .retain) var widthConstraint = NSLayoutConstraint()
+    @Property (.nonatomic, .retain) var trailingConstraint = NSLayoutConstraint()
     
     func viewDidLoad() {
         orig.viewDidLoad()
@@ -21,8 +21,8 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
         target.addChild(dodoController)
         target.view.addSubview(dodoController.view)
         
-        // Create a reference to the width anchor because it changes depending on device orientation.
-        widthConstraint = dodoController.view.widthAnchor.constraint(equalTo: target.view.widthAnchor)
+        // Create a reference to the trailing anchor because it changes depending on device orientation.
+        trailingConstraint = dodoController.view.trailingAnchor.constraint(equalTo: target.view.trailingAnchor)
         
         // Activate these constraints once.
         NSLayoutConstraint.activate([
@@ -33,9 +33,12 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     
     func viewWillAppear(_ animated: Bool) {
         orig.viewWillAppear(animated)
+        
         let isLandscape = (UIScreen.main.bounds.width > UIScreen.main.bounds.height) && !UIDevice.currentIsIPad()
         Dimensions.shared.isLandscape = isLandscape
-        widthConstraint.isActive = !Dimensions.shared.isLandscape
+        
+        trailingConstraint.isActive = !Dimensions.shared.isLandscape
+        target.view.setNeedsLayout()
     }
     
     func _listViewDefaultContentInsets() -> UIEdgeInsets {
