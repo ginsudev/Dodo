@@ -10,9 +10,9 @@ import Foundation
 final class DNDViewModel: ObservableObject {
     static let shared = DNDViewModel()
     
-    @Published var isEnabled = PreferenceManager.shared.defaults.bool(forKey: "Dodo.isEnabledDND") {
+    @Published var isEnabled = PreferenceManager.shared.defaults.bool(forKey: Keys.isEnabledDND) {
         didSet {
-            PreferenceManager.shared.defaults.set(isEnabled, forKey: "Dodo.isEnabledDND")
+            PreferenceManager.shared.defaults.set(isEnabled, forKey: Keys.isEnabledDND)
         }
     }
 }

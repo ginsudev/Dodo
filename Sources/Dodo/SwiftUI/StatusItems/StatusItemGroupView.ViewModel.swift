@@ -8,6 +8,7 @@
 import Foundation
 import UIKit.UIDevice
 import Combine
+import DodoC
 
 // MARK: - Internal
 
@@ -20,7 +21,7 @@ extension StatusItemGroupView {
         @Published var secondsString = ""
         
         // Lock
-        @Published var lockImageName = "lock.fill"
+        @Published var isLocked = false
         
         // Charging
         @Published private(set) var isCharging: Bool = false
@@ -29,16 +30,24 @@ extension StatusItemGroupView {
         @Published private(set) var batteryPercentage: String = ""
         
         // Vibrate
-        @Published var isEnabledVibration = PreferenceManager.shared.defaults.bool(forKey: "Dodo.isActiveVibration") {
+        @Published var isEnabledVibration = PreferenceManager.shared.defaults.bool(forKey: Keys.isActiveVibration) {
             didSet {
-                PreferenceManager.shared.defaults.set(isEnabledVibration, forKey: "Dodo.isActiveVibration")
+                PreferenceManager.shared.defaults.set(isEnabledVibration, forKey: Keys.isActiveVibration)
             }
         }
         
         // Ringer
-        @Published var isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: "Dodo.isActiveMute") {
+        @Published var isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: Keys.isActiveMute) {
             didSet {
-                PreferenceManager.shared.defaults.set(isEnabledMute, forKey: "Dodo.isActiveMute")
+                PreferenceManager.shared.defaults.set(isEnabledMute, forKey: Keys.isActiveMute)
+            }
+        }
+        
+        // Flashlight
+        @Published var isActiveFlashlight = PreferenceManager.shared.defaults.bool(forKey: Keys.isActiveFlashlight) {
+            didSet {
+                toggleFlashlight(enabled: isActiveFlashlight)
+                PreferenceManager.shared.defaults.set(isActiveFlashlight, forKey: Keys.isActiveFlashlight)
             }
         }
         
@@ -117,12 +126,7 @@ private extension StatusItemGroupView.ViewModel {
     func didChangeLockStatus(notification: Notification) {
         if let info = notification.userInfo,
            let state = info["SBAggregateLockStateKey"] as? Int {
-            switch state {
-            case 0, 1:
-                self.lockImageName = "lock.open.fill"
-            default:
-                self.lockImageName = "lock.fill"
-            }
+            isLocked = !(0...1).contains(state)
         }
     }
     
@@ -148,14 +152,25 @@ private extension StatusItemGroupView.ViewModel {
     
     func updateRingerState() {
         // SBRingerMuted in SpringBoard stores ringer on/off state.
-        self.isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: "SBRingerMuted")
+        self.isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: Keys.sbRingerMuted)
     }
     
     func updateVibrationState() {
         // silent-vibrate in SpringBoard stores vibration on/off state for silent mode.
         // ring-vibrate in SpringBoard stores vibration on/off state for ring mode.
-        let silentVibrate = PreferenceManager.shared.defaults.bool(forKey: "silent-vibrate")
-        let ringVibrate = PreferenceManager.shared.defaults.bool(forKey: "ring-vibrate")
+        let silentVibrate = PreferenceManager.shared.defaults.bool(forKey: Keys.silentVibrate)
+        let ringVibrate = PreferenceManager.shared.defaults.bool(forKey: Keys.ringVibrate)
         self.isEnabledVibration = silentVibrate && ringVibrate
+    }
+    
+    func toggleFlashlight(enabled: Bool) {
+        // Only continue if device has a flashlight
+        guard AVFlashlight.hasFlashlight() else { return }
+        if enabled {
+            SBUIFlashlightController.sharedInstance().turnFlashlightOn(forReason: nil)
+        } else {
+            SBUIFlashlightController.sharedInstance().turnFlashlightOff(forReason: nil)
+        }
+        HapticManager.playHaptic(withIntensity: .custom(.medium))
     }
 }

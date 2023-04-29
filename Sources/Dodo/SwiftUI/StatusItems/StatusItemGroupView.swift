@@ -18,13 +18,11 @@ struct StatusItemGroupView: View {
     // TODO: - Merge these into the ViewModel and Combine-ify them.
     @StateObject private var alarmDataSource = AlarmTimerDataSource.shared
     @StateObject private var dndViewModel = DNDViewModel.shared
-    @StateObject private var flashlightViewModel = FlashlightViewModel()
     
     var body: some View {
         HStack(spacing: Dimensions.Padding.medium) {
             ForEach(viewModel.statusItems) {
                 createStatusItem(type: $0)
-                    .scaledToFit()
             }
             // timer
             Spacer()
@@ -46,7 +44,7 @@ private extension StatusItemGroupView {
     @ViewBuilder
     var lockIcon: some View {
         StatusItemView(tint: Colors.lockIconColor) {
-            Image(systemName: viewModel.lockImageName)
+            Image(systemName: viewModel.isLocked ? "lock.fill" : "lock.open.fill")
                 .resizable()
                 .renderingMode(.template)
         }
@@ -132,12 +130,12 @@ private extension StatusItemGroupView {
                 StatusItemView(
                     tint: Colors.flashlightIconColor,
                     content: {
-                        Image(systemName: flashlightViewModel.imageName)
+                        Image(systemName: viewModel.isActiveFlashlight ? "flashlight.on.fill" : "flashlight.off.fill")
                             .resizable()
                             .renderingMode(.template)
                     },
                     onTapAction: {
-                        flashlightViewModel.isActiveFlashlight.toggle()
+                        viewModel.isActiveFlashlight.toggle()
                     }
                 )
             }

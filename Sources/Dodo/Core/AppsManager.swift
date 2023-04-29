@@ -15,22 +15,10 @@ import GSCore
 final class AppsManager: ObservableObject {
     static let shared = AppsManager()
     
-    @Published var favouriteAppBundleIdentifiers = [String]()
-    
-    @Published var suggestedAppBundleIdentifier = "com.apple.camera" {
+    @Published var favouriteAppBundleIdentifiers: [String] = []
+    @Published var suggestedAppBundleIdentifier = PreferenceManager.shared.defaults.string(forKey: Keys.suggestedMediaApp) ?? "com.apple.camera" {
         didSet {
-            PreferenceManager.shared.defaults.set(
-                suggestedAppBundleIdentifier,
-                forKey: "Dodo.SuggestedMediaApp"
-            )
-        }
-    }
-    
-    init() {
-        if let identifier = PreferenceManager.shared.defaults.string(
-            forKey: "Dodo.SuggestedMediaApp"
-        ) {
-            suggestedAppBundleIdentifier = identifier
+            PreferenceManager.shared.defaults.set(suggestedAppBundleIdentifier, forKey: Keys.suggestedMediaApp)
         }
     }
 }

@@ -108,7 +108,7 @@ private extension Container {
         DispatchQueue.main.async {
             dimensions.dodoFrame = frame
             NotificationCenter.default.post(
-                name: NSNotification.Name("Dodo.didUpdateHeight"),
+                name: .didUpdateHeight,
                 object: nil
             )
         }

@@ -11,6 +11,7 @@ extension Notification.Name {
     // Refresh
     static let refreshContent = Notification.Name("Dodo.RefreshContent")
     static let refreshOnceContent = Notification.Name("Dodo.RefreshOnceContent")
+    static let didUpdateHeight = Notification.Name("Dodo.didUpdateHeight")
     
     // Ringer
     /// Vibration on ringer state changed notification.

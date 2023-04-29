@@ -131,7 +131,6 @@ class SBFLockScreenDateView_Hook: ClassHook<SBFLockScreenDateView> {
 
     func didMoveToWindow() {
         orig.didMoveToWindow()
-        
         guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
             return
         }
@@ -211,7 +210,7 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
         NotificationCenter.default.addObserver(
             target,
             selector: #selector(dodoSetupMask),
-            name: NSNotification.Name("Dodo.didUpdateHeight"),
+            name: .didUpdateHeight,
             object: nil
         )
         
