@@ -65,6 +65,14 @@
 @end
 
 #pragma mark - Fetching media data
+
+@interface CSAdjunctListItem : NSObject
+@property (readonly, nonatomic) NSString *identifier;
+@end
+
+@interface CSAdjunctListModel: NSObject
+@end
+
 @interface MRArtwork : NSObject
 @property (copy, nonatomic) NSData *imageData;
 @end

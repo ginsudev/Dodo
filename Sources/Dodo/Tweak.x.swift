@@ -3,6 +3,8 @@ import DodoC
 import GSCore
 
 struct Main: HookGroup {}
+struct MediaiOS15: HookGroup {}
+struct MediaiOS16: HookGroup {}
 
 //MARK: - Dodo view
 class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController> {
@@ -78,6 +80,7 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
 }
 
 //MARK: - Refresh media info on SpringBoard launch.
+
 class SpringBoard_Hook: ClassHook<SpringBoard> {
     typealias Group = Main
 
@@ -94,7 +97,35 @@ class SpringBoard_Hook: ClassHook<SpringBoard> {
     }
 }
 
+// MARK: - Media
+
+class CSAdjunctListModel_Hook: ClassHook<CSAdjunctListModel> {
+    typealias Group = MediaiOS16
+    
+    func addOrUpdateItem(_ item: AnyObject) {
+        // Never show the default ls media player
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time,
+              let _ = item as? CSAdjunctListItem,
+              item.identifier == "SBDashBoardNowPlayingAssertionIdentifier" else {
+            orig.addOrUpdateItem(item)
+            return
+        }
+    }
+}
+
+class CSAdjunctItemView_Hook: ClassHook<CSAdjunctItemView> {
+    typealias Group = MediaiOS15
+
+    func initWithFrame(_ frame: CGRect) -> Target? {
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
+            return orig.initWithFrame(frame)
+        }
+        return nil
+    }
+}
+
 //MARK: - Misc
+
 class SBFLockScreenDateView_Hook: ClassHook<SBFLockScreenDateView> {
     typealias Group = Main
 
@@ -124,17 +155,6 @@ class CSTeachableMomentsContainerView_Hook: ClassHook<CSTeachableMomentsContaine
     func didMoveToWindow() {
         orig.didMoveToWindow()
         target.removeFromSuperview()
-    }
-}
-
-class CSAdjunctItemView_Hook: ClassHook<CSAdjunctItemView> {
-    typealias Group = Main
-
-    func initWithFrame(_ frame: CGRect) -> Target? {
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
-            return orig.initWithFrame(frame)
-        }
-        return nil
     }
 }
 
@@ -259,6 +279,12 @@ struct Dodo: Tweak {
         if readPrefs(),
            PreferenceManager.shared.settings.isEnabled {
             Main().activate()
+            
+            if #available(iOS 16, *) {
+                MediaiOS16().activate()
+            } else {
+                MediaiOS15().activate()
+            }
         }
     }
 }

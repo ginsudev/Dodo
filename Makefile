@@ -24,7 +24,7 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = Dodo
 
-Dodo_PRIVATE_FRAMEWORKS = SpringBoard SpringBoardServices SpringBoardFoundation MediaRemote MobileTimer SpringBoardUI
+Dodo_PRIVATE_FRAMEWORKS = SpringBoard SpringBoardServices SpringBoardFoundation MediaRemote MobileTimer SpringBoardUI CoverSheet
 Dodo_FILES = $(shell find Sources/Dodo -name '*.swift') $(shell find Sources/DodoC -name '*.m' -o -name '*.c' -o -name '*.mm' -o -name '*.cpp')
 Dodo_CFLAGS = -fobjc-arc -ISources/DodoC/include
 
