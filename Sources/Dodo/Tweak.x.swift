@@ -10,14 +10,13 @@ struct MediaiOS16: HookGroup {}
 class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController> {
     typealias Group = Main
     
-    @Property (.nonatomic, .retain) var dodoController = DDBaseController()
+    @Property (.nonatomic, .retain) var dodoController: DDBaseController = .init()
     @Property (.nonatomic, .retain) var widthConstraint = NSLayoutConstraint()
     
     func viewDidLoad() {
         orig.viewDidLoad()
         
         // Init Dodo base controller
-        dodoController = DDBaseController()
         dodoController.view.translatesAutoresizingMaskIntoConstraints = false
         target.addChild(dodoController)
         target.view.addSubview(dodoController.view)
@@ -28,7 +27,7 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
         // Activate these constraints once.
         NSLayoutConstraint.activate([
             dodoController.view.bottomAnchor.constraint(equalTo: target.view.bottomAnchor),
-            dodoController.view.leftAnchor.constraint(equalTo: target.view.leftAnchor),
+            dodoController.view.leadingAnchor.constraint(equalTo: target.view.leadingAnchor)
         ])
     }
     
@@ -54,20 +53,6 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
         
         insets.top -= dodoNotificationVerticalOffset()
         return insets
-    }
-    
-    func _minInsetsToPushDateOffScreen() -> Double {
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
-            return orig._minInsetsToPushDateOffScreen()
-        }
-        
-        guard !Dimensions.shared.isLandscape || UIDevice.currentIsIPad() else {
-            return orig._minInsetsToPushDateOffScreen()
-        }
-        
-        let offset = orig._minInsetsToPushDateOffScreen()
-        let newOffset = offset - dodoNotificationVerticalOffset()
-        return newOffset
     }
     
     //orion: new

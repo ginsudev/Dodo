@@ -10,8 +10,8 @@ import SwiftUI
 struct TimeDateView: View {
     @Environment(\.isVisibleLockScreen) var isVisibleLockScreen
     
-    @State private var timeString = ""
-    @State private var dateString = ""
+    @State private var timeString = "--:--"
+    @State private var dateString = "--/--/--"
     
     var body: some View {
         VStack(

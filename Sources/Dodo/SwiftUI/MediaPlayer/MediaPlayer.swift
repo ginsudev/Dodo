@@ -110,7 +110,7 @@ private extension MediaPlayer {
             VStack(alignment: .leading, spacing: 0.0) {
                 MarqueeText(
                     text: mediaModel.trackName,
-                    color: .white,
+                    color: mediaModel.foregroundColour,
                     font: .systemFont(ofSize: 15),
                     rate: 50,
                     fadeLength: 10.0,
@@ -118,7 +118,7 @@ private extension MediaPlayer {
                 )
                 MarqueeText(
                     text: mediaModel.artistName,
-                    color: .white,
+                    color: mediaModel.foregroundColour,
                     font: .systemFont(ofSize: 12),
                     rate: 60,
                     fadeLength: 20.0,

@@ -16,17 +16,14 @@ struct Container: View {
     @StateObject private var appsManager = AppsManager.shared
     
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            gradient
-            mainContent
-                .environmentObject(dimensions)
-                .environmentObject(appsManager)
-        }
-        .background(Color.clear)
-        .readFrame(for: { frame in
-            updateFrame(frame)
-        })
-        .environment(\.isVisibleLockScreen, dimensions.isVisibleLockScreen)
+        mainContent
+            .background(gradient)
+            .environmentObject(dimensions)
+            .environmentObject(appsManager)
+            .environment(\.isVisibleLockScreen, dimensions.isVisibleLockScreen)
+            .readFrame(for: { frame in
+                updateFrame(frame)
+            })
     }
 }
 
