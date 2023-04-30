@@ -128,6 +128,9 @@
 @end
 
 // MARK: - Timer
+@interface SBUIPreciseClockTimer : NSObject
+@end
+
 @interface MTMetrics : NSObject
 + (instancetype)_sharedPublicMetrics;
 @end

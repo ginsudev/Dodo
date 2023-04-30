@@ -4,7 +4,7 @@ import GSCore
 
 struct Main: HookGroup {}
 struct MediaiOS15: HookGroup {}
-struct MediaiOS16: HookGroup {}
+struct MediaiOS14: HookGroup {}
 
 //MARK: - Dodo view
 class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController> {
@@ -88,7 +88,7 @@ class SpringBoard_Hook: ClassHook<SpringBoard> {
 // MARK: - Media
 
 class CSAdjunctListModel_Hook: ClassHook<CSAdjunctListModel> {
-    typealias Group = MediaiOS16
+    typealias Group = MediaiOS15
     
     func addOrUpdateItem(_ item: AnyObject) {
         // Never show the default ls media player
@@ -102,13 +102,32 @@ class CSAdjunctListModel_Hook: ClassHook<CSAdjunctListModel> {
 }
 
 class CSAdjunctItemView_Hook: ClassHook<CSAdjunctItemView> {
-    typealias Group = MediaiOS15
+    typealias Group = MediaiOS14
 
     func initWithFrame(_ frame: CGRect) -> Target? {
         guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
             return orig.initWithFrame(frame)
         }
         return nil
+    }
+}
+
+// MARK: - Content refresh
+
+class SBUIPreciseClockTimer_Hook: ClassHook<SBUIPreciseClockTimer> {
+    func _handleTimePassed() {
+        orig._handleTimePassed()
+        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else { return }
+        NotificationCenter.default.post(name: .refreshContent, object: nil)
+    }
+}
+
+class SBLockScreenPluginManager_Hook: ClassHook<NSObject> {
+    static var targetName: String = "SBLockScreenPluginManager"
+    
+    func setEnabled(_ enabled: Bool) {
+        orig.setEnabled(enabled)
+        Dimensions.shared.isVisibleLockScreen = enabled
     }
 }
 
@@ -267,10 +286,10 @@ struct Dodo: Tweak {
            PreferenceManager.shared.settings.isEnabled {
             Main().activate()
             
-            if #available(iOS 16, *) {
-                MediaiOS16().activate()
-            } else {
+            if #available(iOS 15, *) {
                 MediaiOS15().activate()
+            } else {
+                MediaiOS14().activate()
             }
         }
     }
