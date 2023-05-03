@@ -19,6 +19,21 @@ struct MediaPlayer: View {
     }
 
     var body: some View {
+        contentView
+            .onReceive(NotificationCenter.default.publisher(for: .didChangeIsPlaying)) { [weak mediaModel] notification in
+                mediaModel?.didChangePlaybackState(notification: notification)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .didChangeNowPlayingInfo)) { [weak mediaModel] _ in
+                mediaModel?.didChangeNowPlayingInfo()
+            }
+    }
+}
+
+//MARK: - Private
+
+private extension MediaPlayer {
+    @ViewBuilder
+    var contentView: some View {
         switch style {
         case .modular:
             playerView
@@ -28,11 +43,7 @@ struct MediaPlayer: View {
             playerView
         }
     }
-}
-
-//MARK: - Private
-
-private extension MediaPlayer {
+    
     var playerView: some View {
         Group {
             switch (mediaModel.hasActiveMediaApp,
