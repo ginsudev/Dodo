@@ -124,7 +124,6 @@ class SBUIPreciseClockTimer_Hook: ClassHook<SBUIPreciseClockTimer> {
 
 class SBLockScreenPluginManager_Hook: ClassHook<NSObject> {
     static var targetName: String = "SBLockScreenPluginManager"
-    
     func setEnabled(_ enabled: Bool) {
         orig.setEnabled(enabled)
         Dimensions.shared.isVisibleLockScreen = enabled

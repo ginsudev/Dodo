@@ -41,8 +41,8 @@ final class PreferenceStorage: ObservableObject {
     // Fonts
     @Published(key: "selectedFont", registry: registry) var selectedFont = 0
     @Published(key: "timeFontSize", registry: registry) var timeFontSize = 50.0
-    @Published(key: "weatherFontSize", registry: registry) var dateFontSize = 15.0
-    @Published(key: "dateFontSize", registry: registry) var weatherFontSize = 15.0
+    @Published(key: "dateFontSize", registry: registry) var dateFontSize = 15.0
+    @Published(key: "weatherFontSize", registry: registry) var weatherFontSize = 15.0
 
     // MARK: - Favourite apps
     @Published(key: "hasFavouriteApps", registry: registry) var hasFavouriteApps = true
