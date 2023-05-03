@@ -35,22 +35,22 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
         orig.viewWillAppear(animated)
         
         let isLandscape = (UIScreen.main.bounds.width > UIScreen.main.bounds.height) && !UIDevice.currentIsIPad()
-        Dimensions.shared.isLandscape = isLandscape
+        GlobalState.shared.isLandscape = isLandscape
         
-        trailingConstraint.isActive = !Dimensions.shared.isLandscape
+        trailingConstraint.isActive = !GlobalState.shared.isLandscape
         target.view.setNeedsLayout()
     }
     
     func _listViewDefaultContentInsets() -> UIEdgeInsets {
         var insets = orig._listViewDefaultContentInsets()
         
-        guard !Dimensions.shared.isLandscape || UIDevice.currentIsIPad() else {
+        guard !GlobalState.shared.isLandscape || UIDevice.currentIsIPad() else {
             return insets
         }
         
-        insets.bottom = Dimensions.shared.dodoFrame.height + 50
+        insets.bottom = GlobalState.shared.dodoFrame.height + 50
         
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.mediaPlayer?.timeMediaPlayerStyle != .mediaPlayer else {
             return insets
         }
         
@@ -60,10 +60,10 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     
     //orion: new
     func dodoNotificationVerticalOffset() -> Double {
-        guard !Dimensions.shared.isLandscape || UIDevice.currentIsIPad() else {
+        guard !GlobalState.shared.isLandscape || UIDevice.currentIsIPad() else {
             return 0
         }
-        return PreferenceManager.shared.settings.notificationVerticalOffset
+        return PreferenceManager.shared.settings.dimensions.notificationVerticalOffset
     }
 }
 
@@ -75,7 +75,7 @@ class SpringBoard_Hook: ClassHook<SpringBoard> {
     func applicationDidFinishLaunching(_ application: AnyObject) {
         orig.applicationDidFinishLaunching(application)
         
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
+        guard PreferenceManager.shared.settings.mediaPlayer?.timeMediaPlayerStyle != .time else {
             return
         }
         
@@ -92,7 +92,7 @@ class CSAdjunctListModel_Hook: ClassHook<CSAdjunctListModel> {
     
     func addOrUpdateItem(_ item: AnyObject) {
         // Never show the default ls media player
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time,
+        guard PreferenceManager.shared.settings.mediaPlayer?.timeMediaPlayerStyle != .time,
               let _ = item as? CSAdjunctListItem,
               item.identifier == "SBDashBoardNowPlayingAssertionIdentifier" else {
             orig.addOrUpdateItem(item)
@@ -105,7 +105,7 @@ class CSAdjunctItemView_Hook: ClassHook<CSAdjunctItemView> {
     typealias Group = MediaiOS14
 
     func initWithFrame(_ frame: CGRect) -> Target? {
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
+        guard PreferenceManager.shared.settings.mediaPlayer?.timeMediaPlayerStyle != .time else {
             return orig.initWithFrame(frame)
         }
         return nil
@@ -117,7 +117,7 @@ class CSAdjunctItemView_Hook: ClassHook<CSAdjunctItemView> {
 class SBUIPreciseClockTimer_Hook: ClassHook<SBUIPreciseClockTimer> {
     func _handleTimePassed() {
         orig._handleTimePassed()
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else { return }
+        guard PreferenceManager.shared.settings.mediaPlayer?.timeMediaPlayerStyle != .mediaPlayer else { return }
         NotificationCenter.default.post(name: .refreshContent, object: nil)
     }
 }
@@ -127,18 +127,18 @@ class SBLockScreenPluginManager_Hook: ClassHook<NSObject> {
     
     func setEnabled(_ enabled: Bool) {
         orig.setEnabled(enabled)
-        Dimensions.shared.isVisibleLockScreen = enabled
+        GlobalState.shared.isVisibleLockScreen = enabled
     }
 }
 
-//MARK: - Misc
+// MARK: - Misc
 
 class SBFLockScreenDateView_Hook: ClassHook<SBFLockScreenDateView> {
     typealias Group = Main
 
     func didMoveToWindow() {
         orig.didMoveToWindow()
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.mediaPlayer?.timeMediaPlayerStyle != .mediaPlayer else {
             return
         }
         
@@ -170,7 +170,7 @@ class SBUIProudLockIconView_Hook: ClassHook<SBUIProudLockIconView> {
     func didMoveToWindow() {
         orig.didMoveToWindow()
         
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.mediaPlayer?.timeMediaPlayerStyle != .mediaPlayer else {
             return
         }
         
@@ -228,7 +228,7 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
     
     func viewDidAppear(_ animated: Bool) {
         orig.viewDidAppear(animated)
-        guard !Dimensions.shared.isLandscape || UIDevice.currentIsIPad() else {
+        guard !GlobalState.shared.isLandscape || UIDevice.currentIsIPad() else {
             target.view.layer.mask = nil
             return
         }
@@ -240,8 +240,9 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
         target.view.layer.mask = cropFrame
                 
         let screenHeight = target.view.bounds.maxY
-        let startY: CGFloat = (Dimensions.shared.dodoFrame.minY - Dimensions.shared.androBarHeight - 50) / screenHeight
-        let endY: CGFloat = (Dimensions.shared.dodoFrame.minY - Dimensions.shared.androBarHeight) / screenHeight
+        let androBarHeight = PreferenceManager.shared.settings.dimensions.androBarHeight
+        let startY: CGFloat = (GlobalState.shared.dodoFrame.minY - androBarHeight - 50) / screenHeight
+        let endY: CGFloat = (GlobalState.shared.dodoFrame.minY - androBarHeight) / screenHeight
         
         cropFrame.startPoint = CGPoint(
             x: 0.5,

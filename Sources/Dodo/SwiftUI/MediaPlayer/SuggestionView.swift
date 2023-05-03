@@ -11,7 +11,7 @@ import DodoC
 //MARK: - Public
 
 struct SuggestionView: View {
-    @EnvironmentObject var dimensions: Dimensions
+    @Environment(\.isLandscape) var isLandscape
     @EnvironmentObject var appsManager: AppsManager
     private let viewModel = ViewModel()
     
@@ -44,66 +44,79 @@ private extension SuggestionView {
         }
     }
     
+    @ViewBuilder
     var openAppButtonText: some View {
-        VStack(alignment: .leading) {
-            Text(LocalisedText.recommended.text)
-                .foregroundColor(.white)
-                .font(
-                    .system(
-                        size: 15.0,
-                        design: PreferenceManager.shared.settings.selectedFont.representedFont
+        if let appearance = viewModel.settings.appearance {
+            VStack(alignment: .leading) {
+                Text(LocalisedText.recommended.text)
+                    .foregroundColor(.white)
+                    .font(
+                        .system(
+                            size: 15.0,
+                            design: appearance.selectedFont.representedFont
+                        )
                     )
-                )
-            Text(LocalisedText.tap.text)
-                .foregroundColor(Color(UIColor.lightText))
-                .font(
-                    .system(
-                        size: 13.0,
-                        design: PreferenceManager.shared.settings.selectedFont.representedFont
+                Text(LocalisedText.tap.text)
+                    .foregroundColor(Color(UIColor.lightText))
+                    .font(
+                        .system(
+                            size: 13.0,
+                            design: appearance.selectedFont.representedFont
+                        )
                     )
-                )
+            }
+            .multilineTextAlignment(.leading)
+            
         }
-        .multilineTextAlignment(.leading)
     }
     
     var bluetoothButton: some View {
         Button {
             AVRoutePickerView()._routePickerButtonTapped(nil)
         } label: {
-            if bluetoothButtonType == .icon {
-                Image(systemName: "airplayaudio")
-                    .foregroundColor(Color(viewModel.bluetoothColor.suitableForegroundColour()))
-                    .padding(Dimensions.Padding.medium)
-                    .background(Color(viewModel.bluetoothColor))
-                    .clipShape(Circle())
-            } else {
-                Text("\(Image(systemName: "airplayaudio")) \(LocalisedText.bluetooth.text)")
-                    .font(
-                        .system(
-                            size: 13.0,
-                            design: PreferenceManager.shared.settings.selectedFont.representedFont
-                        )
-                    )
-                    .padding(
-                        EdgeInsets(
-                            top: 10,
-                            leading: 15,
-                            bottom: 10,
-                            trailing: 15
-                        )
-                    )
-                    .foregroundColor(Color(viewModel.bluetoothColor.suitableForegroundColour()))
-                    .background(Color(viewModel.bluetoothColor))
-                    .clipShape(Capsule())
-            }
+            bluetoothButtonLabel
         }
     }
     
     var bluetoothButtonType: BluetoothButtonType  {
-        if (UIDevice._hasHomeButton() || dimensions.isLandscape) && !UIDevice.currentIsIPad() {
+        if (UIDevice._hasHomeButton() || isLandscape) && !UIDevice.currentIsIPad() {
             return .icon
         } else {
             return .iconWithText
         }
     }
+    
+    @ViewBuilder
+    var bluetoothButtonLabel: some View {
+        let foregroundColor = Color(viewModel.bluetoothColor.suitableForegroundColour())
+        let backgroundColor = Color(viewModel.bluetoothColor)
+        
+        if bluetoothButtonType == .iconWithText, let appearance = viewModel.settings.appearance {
+            Text("\(Image(systemName: "airplayaudio")) \(LocalisedText.bluetooth.text)")
+                .font(
+                    .system(
+                        size: 13.0,
+                        design: appearance.selectedFont.representedFont
+                    )
+                )
+                .padding(
+                    EdgeInsets(
+                        top: 10,
+                        leading: 15,
+                        bottom: 10,
+                        trailing: 15
+                    )
+                )
+                .foregroundColor(foregroundColor)
+                .background(backgroundColor)
+                .clipShape(Capsule())
+        } else {
+            Image(systemName: "airplayaudio")
+                .foregroundColor(foregroundColor)
+                .padding(Padding.medium)
+                .background(backgroundColor)
+                .clipShape(Circle())
+        }
+    }
 }
+

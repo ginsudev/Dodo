@@ -14,14 +14,14 @@ extension View {
 }
 
 struct StatusItemModifier: ViewModifier {
-    @EnvironmentObject var dimensions: Dimensions
-
     func body(content: Content) -> some View {
+        let size = PreferenceManager.shared.settings.statusItems.statusItemSize
+        
         content
             .aspectRatio(contentMode: .fit)
             .frame(
-                width: dimensions.statusItemSize.width,
-                height: dimensions.statusItemSize.height
+                width: size.width,
+                height: size.height
             )
     }
 }

@@ -11,7 +11,9 @@ import DodoC
 import Orion
 
 final class DataRefresher {
+    private let settings = PreferenceManager.shared.settings
     private var bag = Set<AnyCancellable>()
+    
     private lazy var alarmCache: MTAlarmCache? = {
         if let observer = SBScheduledAlarmObserver.sharedInstance() {
             let manager = Ivars<MTAlarmManager>(observer)._alarmManager
@@ -22,7 +24,7 @@ final class DataRefresher {
     }()
     
     init() {
-        Dimensions.shared.$isVisibleLockScreen
+        GlobalState.shared.$isVisibleLockScreen
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isVisibleLockScreen in
                 guard let self, isVisibleLockScreen else { return }
@@ -37,32 +39,19 @@ final class DataRefresher {
 private extension DataRefresher {
     func refreshOnce() {
         // Update the weather
-        if PreferenceManager.shared.settings.showWeather,
-           PreferenceManager.shared.settings.isActiveWeatherAutomaticRefresh {
+        if settings.weather.showWeather,
+           settings.weather.showWeather.isActiveWeatherAutomaticRefresh {
             NotificationCenter.default.post(name: .refreshOnceContent, object: nil)
-        }
-        
-        // Charging indication
-        if PreferenceManager.shared.settings.hasChargingFlash,
-           UIDevice.current.batteryState != .unplugged {
-            chargingIndication()
         }
         // Alarms
         updateAlarms()
-    }
-    
-    func chargingIndication() {
-        let chargeColor = UIDevice.current.batteryLevelColorRepresentation
-        MediaPlayer.ViewModel.shared.temporarilySwapColor(chargeColor)
     }
     
     func updateAlarms() {
         if let cache = self.alarmCache,
            let orderedAlarms = cache.orderedAlarms as? [MTAlarm] {
             let alarms = orderedAlarms.compactMap { self.convertMobileAlarm($0) }
-            DispatchQueue.main.async {
-                AlarmTimerDataSource.shared.alarms = alarms
-            }
+            AlarmTimerDataSource.shared.alarms = alarms
         }
     }
     

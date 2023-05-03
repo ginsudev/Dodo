@@ -15,6 +15,8 @@ import DodoC
 extension StatusItemGroupView {
     final class ViewModel: ObservableObject {
         private var bag = Set<AnyCancellable>()
+        let settings = PreferenceManager.shared.settings.statusItems
+
         let statusItems: [Settings.StatusItem] = Settings.StatusItem.allCases.filter(\.isEnabled)
 
         // Seconds
@@ -72,12 +74,11 @@ private extension StatusItemGroupView.ViewModel {
         }
         
         // Charging
-        if statusItems.contains(.chargingIcon) || PreferenceManager.shared.settings.hasChargingFlash {
+        if statusItems.contains(.chargingIcon) || PreferenceManager.shared.settings.appearance?.hasChargingFlash == true {
             NotificationCenter.default.publisher(for: UIDevice.batteryStateDidChangeNotification)
-                .prepend(.init(name: Notification.Name("")))
+                .prepend(.prepended)
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
-                    NSLog("[Dodo]: updateChargingStatus")
                     self?.updateChargingStatus()
                 }
                 .store(in: &bag)
@@ -86,7 +87,6 @@ private extension StatusItemGroupView.ViewModel {
                 .prepend(.prepended)
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
-                    NSLog("[Dodo]: updateChargingVisuals")
                     self?.updateChargingVisuals()
                 }
                 .store(in: &bag)

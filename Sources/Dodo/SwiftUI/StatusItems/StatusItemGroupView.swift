@@ -11,7 +11,6 @@ import DodoC
 // MARK: - Public
 
 struct StatusItemGroupView: View {
-    @EnvironmentObject var dimensions: Dimensions
     @EnvironmentObject var appsManager: AppsManager
     @StateObject private var viewModel = ViewModel()
     
@@ -20,7 +19,7 @@ struct StatusItemGroupView: View {
     @StateObject private var dndViewModel = DNDViewModel.shared
     
     var body: some View {
-        HStack(spacing: Dimensions.Padding.medium) {
+        HStack(spacing: Padding.medium) {
             ForEach(viewModel.statusItems) {
                 createStatusItem(type: $0)
             }
@@ -28,7 +27,7 @@ struct StatusItemGroupView: View {
         }
         .frame(
             maxWidth: .infinity,
-            idealHeight: dimensions.statusItemSize.height
+            idealHeight: viewModel.settings.statusItemSize.height
         )
         .fixedSize(
             horizontal: false,

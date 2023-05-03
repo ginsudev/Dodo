@@ -8,31 +8,35 @@
 import SwiftUI
 import DodoC
 
-//MARK: - Public
+// MARK: - Public
 
 struct Container: View {
-    @StateObject private var mediaModel = MediaPlayer.ViewModel.shared
-    @StateObject private var dimensions = Dimensions.shared
+    @StateObject private var mediaModel = MediaPlayer.ViewModel()
+    @StateObject private var globalState = GlobalState.shared
     @StateObject private var appsManager = AppsManager.shared
     
+    private let settings = PreferenceManager.shared.settings
+    
     var body: some View {
-        mainContent
-            .background(gradient)
-            .environmentObject(dimensions)
-            .environmentObject(appsManager)
-            .environment(\.isVisibleLockScreen, dimensions.isVisibleLockScreen)
-            .readFrame(for: { frame in
-                updateFrame(frame)
-            })
+        ZStack {
+            gradient
+            mainContent
+                .environment(\.isVisibleLockScreen, globalState.isVisibleLockScreen)
+                .environment(\.isLandscape, globalState.isLandscape)
+                .environmentObject(appsManager)
+                .readFrame(for: { frame in
+                    updateFrame(frame)
+                })
+        }
     }
 }
 
-//MARK: - Private
+// MARK: - Private
 
 private extension Container {
     @ViewBuilder
     var gradient: some View {
-        if !dimensions.isLandscape {
+        if !globalState.isLandscape {
             LinearGradient(
                 colors: [
                     Color.white.opacity(0.0),
@@ -49,18 +53,23 @@ private extension Container {
     
     @ViewBuilder
     var mediaPlayer: some View {
-        VStack(spacing: 10) {
-            divider
-            MediaPlayer(style: PreferenceManager.shared.settings.playerStyle)
-                .environmentObject(mediaModel)
+        if let mediaPlayer = settings?.mediaPlayer {
+            VStack(spacing: 10) {
+                divider
+                MediaPlayer(
+                    viewModel: mediaModel,
+                    style: mediaPlayer.playerStyle
+                )
+            }
         }
     }
     
     @ViewBuilder
     var divider: some View {
-        if PreferenceManager.shared.settings.showDivider,
-           !dimensions.isLandscape,
-           (PreferenceManager.shared.settings.showSuggestions || mediaModel.hasActiveMediaApp) {
+        if let mediaPlayer = settings?.mediaPlayer,
+           mediaPlayer.showDivider,
+           !globalState.isLandscape,
+           (mediaPlayer.showSuggestions || mediaModel.hasActiveMediaApp) {
             Divider()
                 .overlay(Color(Colors.dividerColor).opacity(0.5))
         }
@@ -68,7 +77,9 @@ private extension Container {
     
     @ViewBuilder
     var favouriteApps: some View {
-        if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
+        if let favouriteApps = settings?.favouriteApps,
+           favouriteApps.hasFavouriteApps,
+           !globalState.isLandscape {
             AppView()
                 .frame(
                     height: 80,
@@ -82,28 +93,31 @@ private extension Container {
             alignment: .leading,
             spacing: 10.0
         ) {
-            if PreferenceManager.shared.settings.hasStatusItems {
+            if settings.statusItems.hasStatusItems {
                 StatusItemGroupView()
             }
-            switch PreferenceManager.shared.settings.timeMediaPlayerStyle {
-            case .time:
-                MainContent()
-            case .mediaPlayer:
-                favouriteApps
-                mediaPlayer
-            case .both:
-                MainContent()
-                mediaPlayer
+            
+            if let mediaPlayer = settings?.mediaPlayer {
+                switch mediaPlayer.timeMediaPlayerStyle {
+                case .time:
+                    MainContent()
+                case .mediaPlayer:
+                    favouriteApps
+                    mediaPlayer
+                case .both:
+                    MainContent()
+                    mediaPlayer
+                }
             }
         }
-        .padding(.horizontal, Dimensions.Padding.system)
-        .padding(.bottom, UIDevice._hasHomeButton() ? Dimensions.Padding.system : Dimensions.Padding.small)
-        .padding(.bottom, dimensions.androBarHeight)
+        .padding(.horizontal, Padding.system)
+        .padding(.bottom, UIDevice._hasHomeButton() ? Padding.system : Padding.small)
+        .padding(.bottom, settings.dimensions.androBarHeight)
     }
     
     func updateFrame(_ frame: CGRect) {
         DispatchQueue.main.async {
-            dimensions.dodoFrame = frame
+            globalState.dodoFrame = frame
             NotificationCenter.default.post(
                 name: .didUpdateHeight,
                 object: nil

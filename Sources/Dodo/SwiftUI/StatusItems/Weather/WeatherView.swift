@@ -12,6 +12,7 @@ import DodoC
 
 struct WeatherView: View {
     @StateObject private var viewModel = ViewModel()
+    private let settings = PreferenceManager.shared.settings
     
     var body: some View {
         Button { } label: {
@@ -33,21 +34,24 @@ struct WeatherView: View {
 //MARK: - Private
 
 private extension WeatherView {
+    @ViewBuilder
     var weatherInfo: some View {
-        HStack {
-            Image(uiImage: viewModel.conditionImage)
-                .resizable()
-                .renderingMode(.original)
-                .statusItem()
-            Text("\(viewModel.locationName) | \(viewModel.temperature)")
-                .font(
-                    .system(
-                        size: PreferenceManager.shared.settings.weatherFontSize,
-                        design: PreferenceManager.shared.settings.selectedFont.representedFont
+        if let appearance = settings?.appearance {
+            HStack {
+                Image(uiImage: viewModel.conditionImage)
+                    .resizable()
+                    .renderingMode(.original)
+                    .statusItem()
+                Text("\(viewModel.locationName) | \(viewModel.temperature)")
+                    .font(
+                        .system(
+                            size: appearance.weatherFontSize,
+                            design: appearance.selectedFont.representedFont
+                        )
                     )
-                )
-                .lineLimit(1)
-                .foregroundColor(Color(Colors.weatherColor))
+                    .lineLimit(1)
+                    .foregroundColor(Color(settings.colors.weatherColor))
+            }
         }
     }
 }

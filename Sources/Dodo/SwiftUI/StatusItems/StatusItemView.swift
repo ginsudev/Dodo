@@ -10,13 +10,14 @@ import SwiftUI
 // MARK: - Public
 
 struct StatusItemView<Content: View>: View {
+    private let settings = PreferenceManager.shared.settings.statusItems
+    
     let text: String?
     let tint: UIColor
     @ViewBuilder let content: Content
     let onTapAction: (() -> Void)?
     let onLongHoldAction: (() -> Void)?
     
-    @EnvironmentObject var dimensions: Dimensions
     @Namespace private var namespace
     @State private var isExpanded = false
     
@@ -76,7 +77,7 @@ private extension StatusItemView {
                     }
                 }
         }
-        .frame(height: dimensions.statusItemSize.height)
+        .frame(height: settings.statusItemSize.height)
     }
     
     var buttonLabel: some View {
@@ -103,13 +104,15 @@ private extension StatusItemView {
     
     @ViewBuilder
     var textView: some View {
-        if let text, isExpanded {
+        if let appearance = PreferenceManager.shared.settings.appearance,
+           let text,
+           isExpanded {
             Text(text)
                 .foregroundColor(Color(tint.suitableForegroundColour()))
                 .font(
                     .system(
                         size: 12.0,
-                        design: PreferenceManager.shared.settings.selectedFont.representedFont
+                        design: appearance.selectedFont.representedFont
                     )
                 )
         }

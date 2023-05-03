@@ -12,17 +12,19 @@ import GSCore
 //MARK: - Public
 
 struct AppView: View {
+    private let settings = PreferenceManager.shared.settings.favouriteApps
     @EnvironmentObject private var appsManager: AppsManager
-
+    
     private var installedApplications: [String] {
-        appsManager.favouriteAppBundleIdentifiers.filter {
-            appsManager.isInstalled(app: .custom($0))
-        }
+        settings?.favouriteAppBundleIdentifiers
+            .compactMap {
+                appsManager.isInstalled(app: .custom($0)) 
+            }
     }
     
     var body: some View {
         ScrollView(.vertical) {
-            if case .adaptive = Dimensions.shared.favouriteAppsGridSizeType {
+            if case .adaptive = settings.favouriteAppsGridSizeType {
                 gridView
                     // For some reason we need this in adaptive mode. Otherwise the apps will be on the leading edge.
                     .environment(\.layoutDirection, .rightToLeft)
@@ -61,9 +63,9 @@ private extension AppView {
     var mask: some View {
         VStack(spacing: 0) {
             Color.black
-            if PreferenceManager.shared.settings.isVisibleFavouriteAppsFade {
+            if settings.isVisibleFavouriteAppsFade {
                 LinearGradient(gradient: Gradient(
-                    colors: [.black,.black.opacity(0)]),
+                    colors: [.black, .black.opacity(0)]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -73,25 +75,25 @@ private extension AppView {
     }
     
     var columns: [GridItem] {
-        switch Dimensions.shared.favouriteAppsGridSizeType {
+        switch settings.favouriteAppsGridSizeType {
         case .flexible:
             return [GridItem](
                 repeating: GridItem(
                     .flexible(
                         minimum: 0,
-                        maximum: Dimensions.shared.favouriteAppsFlexibleGridItemSize
+                        maximum: settings.favouriteAppsFlexibleGridItemSize
                     ),
                     alignment: .trailing
                 ),
-                count: Dimensions.shared.favouriteAppsFlexibleGridColumnAmount
+                count: settings.favouriteAppsFlexibleGridColumnAmount
             )
         case .fixed:
             return [GridItem](
                 repeating: GridItem(
-                    .fixed(Dimensions.shared.favouriteAppsFixedGridItemSize),
+                    .fixed(settings.favouriteAppsFixedGridItemSize),
                     alignment: .trailing
                 ),
-                count: Dimensions.shared.favouriteAppsFixedGridColumnAmount
+                count: settings.favouriteAppsFixedGridColumnAmount
             )
         case .adaptive:
             return [GridItem(

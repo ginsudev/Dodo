@@ -16,6 +16,8 @@ extension SuggestionView {
     }
     
     struct ViewModel {
+        let settings = PreferenceManager.shared.settings
+        
         var suggestedAppIcon: UIImage {
             if let image = UIImage.icon(bundleIdentifier: AppsManager.shared.suggestedAppBundleIdentifier) {
                 return image
@@ -29,7 +31,7 @@ extension SuggestionView {
         }
         
         var bluetoothColor: UIColor {
-            if PreferenceManager.shared.settings.playerStyle == .classic {
+            if settings.mediaPlayer.playerStyle == .classic {
                return suggestedAppIcon.dominantColour().withAlphaComponent(0.3)
             } else {
                 return .white

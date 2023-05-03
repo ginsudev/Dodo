@@ -17,7 +17,7 @@ struct Formatters {
     static let date = createFormatter(format: "EEEE, MMMM d")
     
     static let customTimeFormatter: DateFormatter? = {
-        if case let .timeCustom(format) = PreferenceManager.shared.settings.timeTemplate {
+        if case let .timeCustom(format) = PreferenceManager.shared.settings.timeDate.timeTemplate {
             return createFormatter(format: format)
         } else {
             return nil
@@ -25,7 +25,7 @@ struct Formatters {
     }()
     
     static let customDateFormatter: DateFormatter? = {
-        if case let .dateCustom(format) = PreferenceManager.shared.settings.dateTemplate {
+        if case let .dateCustom(format) = PreferenceManager.shared.settings.timeDate.dateTemplate {
             return createFormatter(format: format)
         } else {
             return nil
@@ -58,7 +58,7 @@ struct Formatters {
 
 extension String {
     var twentyFourHourized: Self {
-        if PreferenceManager.shared.settings.isEnabled24HourMode {
+        if PreferenceManager.shared.settings.timeDate.isEnabled24HourMode {
             return replacingOccurrences(of: "h:", with: "HH:")
         } else { return self }
     }
