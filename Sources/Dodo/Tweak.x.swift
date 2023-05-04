@@ -75,13 +75,13 @@ class SpringBoard_Hook: ClassHook<SpringBoard> {
     func applicationDidFinishLaunching(_ application: AnyObject) {
         orig.applicationDidFinishLaunching(application)
         
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
-            return
+        if PreferenceManager.shared.settings.timeMediaPlayerStyle != .time {
+            /* If media plays through a respring, we need this code to update the media info when SpringBoard
+             launches so that the play/pause button shows the correct image. */
+            SBMediaController.sharedInstance().setNowPlayingInfo(0)
         }
         
-        /* If media plays through a respring, we need this code to update the media info when SpringBoard
-         launches so that the play/pause button shows the correct image. */
-        SBMediaController.sharedInstance().setNowPlayingInfo(0)
+        NotificationCenter.default.post(name: .didAppearLockScreen, object: nil)
     }
 }
 
@@ -264,25 +264,10 @@ class DNDNotificationsService_Hook: ClassHook<DNDNotificationsService> {
 }
 
 // MARK: - Preferences
-private func prefsDict() -> [String : Any]? {
-    let path = "/var/mobile/Library/Preferences/com.ginsu.dodo.plist"
-    let plistURL = URL(fileURLWithPath: path)
-    return plistURL.plistDict()
-}
-
-private func readPrefs() -> Bool {
-    if let dict = prefsDict() {
-        PreferenceManager.shared.loadSettings(withDictionary: dict)
-        return true
-    } else {
-        return false
-    }
-}
 
 struct Dodo: Tweak {
     init() {
-        if readPrefs(),
-           PreferenceManager.shared.settings.isEnabled {
+        if readPrefs(), PreferenceManager.shared.settings.isEnabled {
             Main().activate()
             
             if #available(iOS 15, *) {
@@ -290,6 +275,21 @@ struct Dodo: Tweak {
             } else {
                 MediaiOS14().activate()
             }
+        }
+    }
+    
+    private func prefsDict() -> [String : Any]? {
+        let path = "/var/mobile/Library/Preferences/com.ginsu.dodo.plist"
+        let plistURL = URL(fileURLWithPath: path)
+        return plistURL.plistDict()
+    }
+
+    private func readPrefs() -> Bool {
+        if let dict = prefsDict() {
+            PreferenceManager.shared.loadSettings(withDictionary: dict)
+            return true
+        } else {
+            return false
         }
     }
 }

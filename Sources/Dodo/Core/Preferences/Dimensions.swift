@@ -12,8 +12,8 @@ import GSCore
 final class Dimensions: ObservableObject {
     static let shared = Dimensions()
     @Published var isLandscape = false
-    @Published var isVisibleLockScreen = false
-    
+    @Published var isVisibleLockScreen = true
+
     var dodoFrame: CGRect = .zero
     
     var androBarHeight = AndroBar().barHeight
