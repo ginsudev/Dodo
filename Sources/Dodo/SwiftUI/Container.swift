@@ -15,15 +15,26 @@ struct Container: View {
     @StateObject private var dimensions = Dimensions.shared
     @StateObject private var appsManager = AppsManager.shared
     
+    @State private var isVisibleLockScreen = true
+    
     var body: some View {
-        mainContent
-            .background(gradient)
-            .environmentObject(dimensions)
-            .environmentObject(appsManager)
-            .environment(\.isVisibleLockScreen, dimensions.isVisibleLockScreen)
-            .readFrame(for: { frame in
-                updateFrame(frame)
-            })
+        ZStack(alignment: .bottomLeading) {
+            gradient
+            mainContent
+                .environmentObject(dimensions)
+                .environmentObject(appsManager)
+        }
+        .background(Color.clear)
+        .readFrame(for: { frame in
+            updateFrame(frame)
+        })
+        .environment(\.isVisibleLockScreen, !dimensions.isScreenOff && isVisibleLockScreen)
+        .onAppear {
+            isVisibleLockScreen = true
+        }
+        .onDisappear {
+            isVisibleLockScreen = false
+        }
     }
 }
 

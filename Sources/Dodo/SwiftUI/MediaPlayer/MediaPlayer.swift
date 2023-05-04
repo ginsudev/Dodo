@@ -10,6 +10,7 @@ import SwiftUI
 //MARK: Public
 
 struct MediaPlayer: View {
+    @Environment(\.isVisibleLockScreen) var isVisibleLockScreen
     @EnvironmentObject var mediaModel: ViewModel
     @EnvironmentObject var dimensions: Dimensions
     private let style: Settings.MediaPlayerStyle
@@ -19,6 +20,21 @@ struct MediaPlayer: View {
     }
 
     var body: some View {
+        contentView
+            .onReceive(NotificationCenter.default.publisher(for: .didChangeIsPlaying)) { [weak mediaModel] notification in
+                mediaModel?.didChangePlaybackState(notification: notification)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .didChangeNowPlayingInfo)) { [weak mediaModel] _ in
+                mediaModel?.didChangeNowPlayingInfo()
+            }
+    }
+}
+
+//MARK: - Private
+
+private extension MediaPlayer {
+    @ViewBuilder
+    var contentView: some View {
         switch style {
         case .modular:
             playerView
@@ -28,11 +44,7 @@ struct MediaPlayer: View {
             playerView
         }
     }
-}
-
-//MARK: - Private
-
-private extension MediaPlayer {
+    
     var playerView: some View {
         Group {
             switch (mediaModel.hasActiveMediaApp,
@@ -114,7 +126,7 @@ private extension MediaPlayer {
                     font: .systemFont(ofSize: 15),
                     rate: 50,
                     fadeLength: 10.0,
-                    isScrollable: dimensions.isVisibleLockScreen
+                    isScrollable: isVisibleLockScreen
                 )
                 MarqueeText(
                     text: mediaModel.artistName,
@@ -122,7 +134,7 @@ private extension MediaPlayer {
                     font: .systemFont(ofSize: 12),
                     rate: 60,
                     fadeLength: 20.0,
-                    isScrollable: dimensions.isVisibleLockScreen
+                    isScrollable: isVisibleLockScreen
                 )
             }
         } else {

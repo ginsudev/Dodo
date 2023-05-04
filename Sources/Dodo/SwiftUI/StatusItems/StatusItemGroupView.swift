@@ -72,8 +72,8 @@ private extension StatusItemGroupView {
                     Image(systemName: "alarm.fill")
                         .resizable()
                         .renderingMode(.template)
-                } onLongHoldAction: {
-                    appsManager.open(app: .defined(.clock))
+                } onLongHoldAction: { [weak appsManager] in
+                    appsManager?.open(app: .defined(.clock))
                     HapticManager.playHaptic(withIntensity: .custom(.medium))
                 }
         }
@@ -133,8 +133,8 @@ private extension StatusItemGroupView {
                             .resizable()
                             .renderingMode(.template)
                     },
-                    onTapAction: {
-                        viewModel.isActiveFlashlight.toggle()
+                    onTapAction: { [weak viewModel] in
+                        viewModel?.isActiveFlashlight.toggle()
                     }
                 )
             }
@@ -159,14 +159,43 @@ private extension StatusItemGroupView {
     @ViewBuilder
     func createStatusItem(type: Settings.StatusItem) -> some View {
         switch type {
-        case .lockIcon: lockIcon
-        case .chargingIcon: chargingIcon
-        case .alarms: alarms
-        case .dnd: dnd
-        case .vibration: vibration
-        case .muted: muted
-        case .flashlight: flashlight
-        case .seconds: seconds
+        case .lockIcon:
+            lockIcon
+                .onReceive(NotificationCenter.default.publisher(for: .didChangeLockState)) { [weak viewModel] notification in
+                    viewModel?.didChangeLockStatus(notification: notification)
+                }
+        case .chargingIcon:
+            chargingIcon
+                .onReceive(NotificationCenter.default.publisher(for: UIDevice.batteryStateDidChangeNotification)) { [weak viewModel] _ in
+                    viewModel?.updateChargingStatus()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIDevice.batteryLevelDidChangeNotification)) { [weak viewModel] _ in
+                    viewModel?.updateChargingVisuals()
+                }
+        case .alarms:
+            alarms
+        case .dnd:
+            dnd
+        case .vibration:
+            vibration
+                .onReceive(NotificationCenter.default.publisher(for: .didChangeRingVibrate)) { [weak viewModel] _ in
+                    viewModel?.updateVibrationState()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .didChangeSilentVibrate)) { [weak viewModel] _ in
+                    viewModel?.updateVibrationState()
+                }
+        case .muted:
+            muted
+                .onReceive(NotificationCenter.default.publisher(for: .didChangeRinger)) { [weak viewModel] _ in
+                    viewModel?.updateRingerState()
+                }
+        case .flashlight:
+            flashlight
+        case .seconds:
+            seconds
+                .onReceive(NotificationCenter.default.publisher(for: .refreshContent)) { [weak viewModel] _ in
+                    viewModel?.updateSeconds()
+                }
         }
     }
 }

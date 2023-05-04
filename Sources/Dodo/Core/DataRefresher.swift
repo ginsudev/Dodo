@@ -6,12 +6,10 @@
 //
 
 import UIKit.UIDevice
-import Combine
 import DodoC
 import Orion
 
 final class DataRefresher {
-    private var bag = Set<AnyCancellable>()
     private lazy var alarmCache: MTAlarmCache? = {
         if let observer = SBScheduledAlarmObserver.sharedInstance() {
             let manager = Ivars<MTAlarmManager>(observer)._alarmManager
@@ -20,16 +18,6 @@ final class DataRefresher {
             return nil
         }
     }()
-    
-    init() {
-        Dimensions.shared.$isVisibleLockScreen
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isVisibleLockScreen in
-                guard let self, isVisibleLockScreen else { return }
-                refreshOnce()
-            }
-            .store(in: &bag)
-    }
 }
 
 // MARK: - Private

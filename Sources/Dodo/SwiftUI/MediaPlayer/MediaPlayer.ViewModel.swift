@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 import DodoC
 import GSCore
 
@@ -16,9 +15,7 @@ extension MediaPlayer {
     final class ViewModel: ObservableObject {
         static let shared = ViewModel()
         static let themePath: String = "/Library/Application Support/Dodo/Themes/\(PreferenceManager.shared.settings.themeName)/".rootify
-        
-        private var bag = Set<AnyCancellable>()
-        
+                
         var modularBackgroundColorMultiply: UIColor {
             if !hasActiveMediaApp,
                let image = UIImage.icon(bundleIdentifier: AppsManager.shared.suggestedAppBundleIdentifier) {
@@ -59,14 +56,6 @@ extension MediaPlayer {
         @Published var artistName = ""
         @Published var playPauseIcon = UIImage(named: MediaPlayer.ViewModel.themePath + "pause.png")
         @Published var foregroundColour: UIColor = .white
-        
-        init() {
-            subscribe()
-        }
-        
-        deinit {
-            NotificationCenter.default.removeObserver(self)
-        }
     }
 }
 
@@ -97,28 +86,6 @@ extension MediaPlayer.ViewModel {
         if let nowPlayingIdentifier = nowPlayingAppIdentifier() {
             AppsManager.shared.open(app: .custom(nowPlayingIdentifier))
         }
-    }
-}
-
-// MARK: - Private
-
-private extension MediaPlayer.ViewModel {
-    func subscribe() {
-        NotificationCenter.default.publisher(for: .didChangeIsPlaying)
-            .prepend(.prepended)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                self?.didChangePlaybackState(notification: notification)
-            }
-            .store(in: &bag)
-
-        NotificationCenter.default.publisher(for: .didChangeNowPlayingInfo)
-            .prepend(.prepended)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.didChangeNowPlayingInfo()
-            }
-            .store(in: &bag)
     }
     
     func didChangePlaybackState(notification: Notification) {

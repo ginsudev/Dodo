@@ -34,7 +34,7 @@ struct TimeDateView: View {
                 )
         }
         .lineLimit(1)
-        .onReceive(NotificationCenter.default.publisher(for: .refreshContent).prepend(.prepended)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .refreshContent)) { _ in
             refreshDates()
         }
     }

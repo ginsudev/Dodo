@@ -7,14 +7,12 @@
 
 import Foundation
 import UIKit.UIDevice
-import Combine
 import DodoC
 
 // MARK: - Internal
 
 extension StatusItemGroupView {
     final class ViewModel: ObservableObject {
-        private var bag = Set<AnyCancellable>()
         let statusItems: [Settings.StatusItem] = Settings.StatusItem.allCases.filter(\.isEnabled)
 
         // Seconds
@@ -51,134 +49,55 @@ extension StatusItemGroupView {
             }
         }
         
-        init() {
-            subscribe()
-        }
-    }
-}
-
-// MARK: - Private
-
-private extension StatusItemGroupView.ViewModel {
-    func subscribe() {
-        // Lock status
-        if statusItems.contains(.lockIcon) {
-            NotificationCenter.default.publisher(for: .didChangeLockState)
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] notification in
-                    self?.didChangeLockStatus(notification: notification)
-                }
-                .store(in: &bag)
+        func didChangeLockStatus(notification: Notification) {
+            if let info = notification.userInfo,
+               let state = info["SBAggregateLockStateKey"] as? Int {
+                isLocked = !(0...1).contains(state)
+            }
         }
         
-        // Charging
-        if statusItems.contains(.chargingIcon) || PreferenceManager.shared.settings.hasChargingFlash {
-            NotificationCenter.default.publisher(for: UIDevice.batteryStateDidChangeNotification)
-                .prepend(.init(name: Notification.Name("")))
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] _ in
-                    NSLog("[Dodo]: updateChargingStatus")
-                    self?.updateChargingStatus()
-                }
-                .store(in: &bag)
-            
-            NotificationCenter.default.publisher(for: UIDevice.batteryLevelDidChangeNotification)
-                .prepend(.prepended)
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] _ in
-                    NSLog("[Dodo]: updateChargingVisuals")
-                    self?.updateChargingVisuals()
-                }
-                .store(in: &bag)
+        func updateChargingStatus() {
+            self.isCharging = UIDevice.current.batteryState != .unplugged
         }
         
-        // Seconds
-        if statusItems.contains(.seconds) {
-            NotificationCenter.default.publisher(for: .refreshContent)
-                .prepend(.prepended)
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] _ in
-                    self?.updateSeconds()
-                }
-                .store(in: &bag)
+        func updateChargingVisuals() {
+            let batteryLevel = UIDevice.current.batteryLevel * 100
+            self.chargingIndicationColor = UIDevice.current.batteryLevelColorRepresentation
+            self.batteryPercentage = "\(Int(batteryLevel))%"
+            switch batteryLevel {
+            case 0..<100:
+                self.chargingImageName = "bolt.circle.fill"
+            default:
+                self.chargingImageName = "bolt.slash.circle.fill"
+            }
         }
         
-        // Ringer
-        if statusItems.contains(.muted) || statusItems.contains(.vibration) {
-            NotificationCenter.default.publisher(for: .didChangeRinger)
-                .prepend(.prepended)
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] _ in
-                    self?.updateRingerState()
-                }
-                .store(in: &bag)
-            
-            NotificationCenter.default.publisher(for: .didChangeRingVibrate)
-                .prepend(.prepended)
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] _ in
-                    self?.updateVibrationState()
-                }
-                .store(in: &bag)
-            
-            NotificationCenter.default.publisher(for: .didChangeSilentVibrate)
-                .prepend(.prepended)
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] _ in
-                    self?.updateVibrationState()
-                }
-                .store(in: &bag)
+        func updateSeconds() {
+            self.secondsString = Formatters.seconds.string(from: Date())
         }
-    }
-    
-    func didChangeLockStatus(notification: Notification) {
-        if let info = notification.userInfo,
-           let state = info["SBAggregateLockStateKey"] as? Int {
-            isLocked = !(0...1).contains(state)
+        
+        func updateRingerState() {
+            // SBRingerMuted in SpringBoard stores ringer on/off state.
+            self.isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: Keys.sbRingerMuted)
         }
-    }
-    
-    func updateChargingStatus() {
-        self.isCharging = UIDevice.current.batteryState != .unplugged
-    }
-    
-    func updateChargingVisuals() {
-        let batteryLevel = UIDevice.current.batteryLevel * 100
-        self.chargingIndicationColor = UIDevice.current.batteryLevelColorRepresentation
-        self.batteryPercentage = "\(Int(batteryLevel))%"
-        switch batteryLevel {
-        case 0..<100:
-            self.chargingImageName = "bolt.circle.fill"
-        default:
-            self.chargingImageName = "bolt.slash.circle.fill"
+        
+        func updateVibrationState() {
+            // silent-vibrate in SpringBoard stores vibration on/off state for silent mode.
+            // ring-vibrate in SpringBoard stores vibration on/off state for ring mode.
+            let silentVibrate = PreferenceManager.shared.defaults.bool(forKey: Keys.silentVibrate)
+            let ringVibrate = PreferenceManager.shared.defaults.bool(forKey: Keys.ringVibrate)
+            self.isEnabledVibration = silentVibrate && ringVibrate
         }
-    }
-    
-    func updateSeconds() {
-        self.secondsString = Formatters.seconds.string(from: Date())
-    }
-    
-    func updateRingerState() {
-        // SBRingerMuted in SpringBoard stores ringer on/off state.
-        self.isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: Keys.sbRingerMuted)
-    }
-    
-    func updateVibrationState() {
-        // silent-vibrate in SpringBoard stores vibration on/off state for silent mode.
-        // ring-vibrate in SpringBoard stores vibration on/off state for ring mode.
-        let silentVibrate = PreferenceManager.shared.defaults.bool(forKey: Keys.silentVibrate)
-        let ringVibrate = PreferenceManager.shared.defaults.bool(forKey: Keys.ringVibrate)
-        self.isEnabledVibration = silentVibrate && ringVibrate
-    }
-    
-    func toggleFlashlight(enabled: Bool) {
-        // Only continue if device has a flashlight
-        guard AVFlashlight.hasFlashlight() else { return }
-        if enabled {
-            SBUIFlashlightController.sharedInstance().turnFlashlightOn(forReason: nil)
-        } else {
-            SBUIFlashlightController.sharedInstance().turnFlashlightOff(forReason: nil)
+        
+        func toggleFlashlight(enabled: Bool) {
+            // Only continue if device has a flashlight
+            guard AVFlashlight.hasFlashlight() else { return }
+            if enabled {
+                SBUIFlashlightController.sharedInstance().turnFlashlightOn(forReason: nil)
+            } else {
+                SBUIFlashlightController.sharedInstance().turnFlashlightOff(forReason: nil)
+            }
+            HapticManager.playHaptic(withIntensity: .custom(.medium))
         }
-        HapticManager.playHaptic(withIntensity: .custom(.medium))
     }
 }
