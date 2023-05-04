@@ -122,14 +122,6 @@ class SBUIPreciseClockTimer_Hook: ClassHook<SBUIPreciseClockTimer> {
     }
 }
 
-class SBLockScreenPluginManager_Hook: ClassHook<NSObject> {
-    static var targetName: String = "SBLockScreenPluginManager"
-    func setEnabled(_ enabled: Bool) {
-        orig.setEnabled(enabled)
-        Dimensions.shared.isVisibleLockScreen = enabled
-    }
-}
-
 //MARK: - Misc
 
 class SBFLockScreenDateView_Hook: ClassHook<SBFLockScreenDateView> {
@@ -202,6 +194,11 @@ class CSCoverSheetViewController_Hook: ClassHook<CSCoverSheetViewController> {
             showBattery: false,
             animated: false
         )
+    }
+    
+    func setInScreenOffMode(_ isScreenOff: Bool, forAutoUnlock autoUnlock: Bool, fromUnlockSource unlockSource: Int) {
+        orig.setInScreenOffMode(isScreenOff, forAutoUnlock: autoUnlock, fromUnlockSource: unlockSource)
+        Dimensions.shared.isScreenOff = isScreenOff
     }
 }
 

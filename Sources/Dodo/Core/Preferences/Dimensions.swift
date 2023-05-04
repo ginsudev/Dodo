@@ -12,7 +12,7 @@ import GSCore
 final class Dimensions: ObservableObject {
     static let shared = Dimensions()
     @Published var isLandscape = false
-    @Published var isVisibleLockScreen = true
+    @Published var isScreenOff = false
 
     var dodoFrame: CGRect = .zero
     

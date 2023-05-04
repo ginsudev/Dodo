@@ -15,6 +15,8 @@ struct Container: View {
     @StateObject private var dimensions = Dimensions.shared
     @StateObject private var appsManager = AppsManager.shared
     
+    @State private var isVisibleLockScreen = true
+    
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             gradient
@@ -26,7 +28,13 @@ struct Container: View {
         .readFrame(for: { frame in
             updateFrame(frame)
         })
-        .environment(\.isVisibleLockScreen, dimensions.isVisibleLockScreen)
+        .environment(\.isVisibleLockScreen, !dimensions.isScreenOff && isVisibleLockScreen)
+        .onAppear {
+            isVisibleLockScreen = true
+        }
+        .onDisappear {
+            isVisibleLockScreen = false
+        }
     }
 }
 
