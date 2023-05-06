@@ -29,7 +29,7 @@ struct ThemePickerView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .navigationTitle("Player button theme")
+        .navigationTitle(Copy.playerButtonTheme)
     }
     
     @ViewBuilder

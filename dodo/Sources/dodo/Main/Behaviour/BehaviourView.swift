@@ -25,7 +25,7 @@ struct BehaviourView: View {
             dimensionsSection
             chargingSection
         }
-        .navigationTitle("Behaviour")
+        .navigationTitle(Copy.behaviour)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 AlertRespringButton()
@@ -42,7 +42,7 @@ private extension BehaviourView {
             Text(formattedTimeString)
                 .foregroundColor(.secondary)
             Picker(
-                "Time format",
+                Copy.timeFormat,
                 selection: $preferenceStorage.selectedTimeTemplate.animation()) {
                     ForEach(TimeTemplate.allCases, id: \.rawValue) {
                         Text($0.title)
@@ -53,10 +53,10 @@ private extension BehaviourView {
             if TimeTemplate(rawValue: preferenceStorage.selectedTimeTemplate) == .custom {
                 TextField("h:mm", text: $preferenceStorage.timeTemplateCustomFormat)
             } else {
-                Toggle("24 Hour mode", isOn: $preferenceStorage.isEnabled24HourMode)
+                Toggle(Copy.twentyFourHourMode, isOn: $preferenceStorage.isEnabled24HourMode)
             }
         } header: {
-            Text("Time formatting")
+            Text(Copy.timeFormatting)
         }
     }
     
@@ -65,7 +65,7 @@ private extension BehaviourView {
             Text(formattedDateString)
                 .foregroundColor(.secondary)
             Picker(
-                "Date format",
+                Copy.dateFormat,
                 selection: $preferenceStorage.selectedDateTemplate.animation()) {
                     ForEach(DateTemplate.allCases, id: \.rawValue) {
                         Text($0.title)
@@ -77,40 +77,40 @@ private extension BehaviourView {
                 TextField("EEEE, MMMM d", text: $preferenceStorage.dateTemplateCustomFormat)
             }
         } header: {
-            Text("Date formatting")
+            Text(Copy.dateFormatting)
         }
     }
     
     var favouriteAppsSection: some View {
         Section {
-            NavigationLink("Favourite apps") {
+            NavigationLink(Copy.favouriteApps) {
                 FavouriteAppsView()
                     .environmentObject(preferenceStorage)
             }
         } footer: {
-            Text("Choose your favourite apps to display on the lock screen.")
+            Text(Copy.favouriteAppsDesc)
         }
     }
     
     var statusIndicatorsSection: some View {
         Section {
-            NavigationLink("Status indicators") {
+            NavigationLink(Copy.statusIndicators) {
                 StatusIndicatorsView()
                     .environmentObject(preferenceStorage)
             }
         } footer: {
-            Text("Add indicators for various system statuses.")
+            Text(Copy.statusIndicatorsDesc)
         }
     }
     
     var weatherSection: some View {
         Section {
-            NavigationLink("Weather") {
+            NavigationLink(Copy.weather) {
                 WeatherView()
                     .environmentObject(preferenceStorage)
             }
         } footer: {
-            Text("Configure weather options.")
+            Text(Copy.weatherDesc)
         }
     }
     
@@ -119,10 +119,10 @@ private extension BehaviourView {
             DetailedSlider(
                 value: $preferenceStorage.notificationVerticalOffset,
                 range: 0...1000,
-                title: "Notification Y offset"
+                title: Copy.notificationVerticalOffset
             )
         } header: {
-            Text("Dimensions")
+            Text(Copy.dimensions)
         }
     }
     
@@ -130,23 +130,23 @@ private extension BehaviourView {
         Section {
             Toggle(isOn: $preferenceStorage.hasChargingFlash) {
                 SubtitleText(
-                    title: "Charging flash",
-                    subtitle: "Flash screen green while charging"
+                    title: Copy.chargingFlash,
+                    subtitle: Copy.chargingFlashDesc
                 )
             }
         } header: {
-            Text("Misc")
+            Text(Copy.misc)
         }
     }
     
     var formattedDateString: String {
         let format = DateTemplate(rawValue: preferenceStorage.selectedDateTemplate)?.format ?? preferenceStorage.dateTemplateCustomFormat
-        return format.isEmpty ? "Preview" :  viewModel.formattedDate(format: format)
+        return format.isEmpty ? Copy.preview :  viewModel.formattedDate(format: format)
     }
     
     var formattedTimeString: String {
         let format = TimeTemplate(rawValue: preferenceStorage.selectedTimeTemplate)?.format ?? preferenceStorage.timeTemplateCustomFormat
-        return format.isEmpty ? "Preview" : viewModel.formattedDate(format: format)
+        return format.isEmpty ? Copy.preview : viewModel.formattedDate(format: format)
     }
 }
 

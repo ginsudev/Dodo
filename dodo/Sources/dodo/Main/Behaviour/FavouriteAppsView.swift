@@ -17,31 +17,31 @@ struct FavouriteAppsView: View {
     var body: some View {
         Form {
             Section {
-                Toggle("Enabled", isOn: $preferenceStorage.hasFavouriteApps)
+                Toggle(Copy.enabled, isOn: $preferenceStorage.hasFavouriteApps)
             } footer: {
-                Text("Show your favourite apps on the lock screen.")
+                Text(Copy.favouriteAppsOnLS)
             }
 
             Group {
                 Section {
-                    AppPicker(selectedAppIdentifiers: $preferenceStorage.selectedFavouriteApps, title: "Apps", visibleApplicationGroup: .all)
+                    AppPicker(selectedAppIdentifiers: $preferenceStorage.selectedFavouriteApps, title: Copy.apps, visibleApplicationGroup: .all)
                 } footer: {
-                    Text("Select your apps")
+                    Text(Copy.selectYourApps)
                 }
                 
                 layoutSection
                 
                 Section {
                     Toggle(isOn: $preferenceStorage.isVisibleFavouriteAppsFade) {
-                        SubtitleText(title: "Show fade", subtitle: "Adds a subtle fade to the bottom of the app grid.")
+                        SubtitleText(title: Copy.showFade, subtitle: Copy.showFadeDesc)
                     }
                 } header: {
-                    Text("Misc")
+                    Text(Copy.misc)
                 }
             }
             .disabled(!preferenceStorage.hasFavouriteApps)
         }
-        .navigationTitle("Favourite apps")
+        .navigationTitle(Copy.favouriteApps)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 AlertRespringButton()
@@ -55,7 +55,7 @@ struct FavouriteAppsView: View {
 private extension FavouriteAppsView {
     var layoutSection: some View {
         Section {
-            Picker("Grid type", selection: $preferenceStorage.favouriteAppsGridSizeType.animation()) {
+            Picker(Copy.gridType, selection: $preferenceStorage.favouriteAppsGridSizeType.animation()) {
                 ForEach(GridSizeType.allCases, id: \.rawValue) {
                     Text($0.title)
                         .tag($0.rawValue)
@@ -66,14 +66,14 @@ private extension FavouriteAppsView {
             if GridSizeType(rawValue: preferenceStorage.favouriteAppsGridSizeType) == .flexible {
                 Stepper(value: $preferenceStorage.favouriteAppsFlexibleGridItemSize, in: 10.0...100.0) {
                     SubtitleText(
-                        title: "Flexible item size",
+                        title: Copy.flexibleItemSize,
                         subtitle: "\(preferenceStorage.favouriteAppsFlexibleGridItemSize)"
                     )
                 }
             } else if GridSizeType(rawValue: preferenceStorage.favouriteAppsGridSizeType) == .fixed {
                 Stepper(value: $preferenceStorage.favouriteAppsFixedGridItemSize, in: 10.0...60.0) {
                     SubtitleText(
-                        title: "Fixed item size",
+                        title: Copy.fixedItemSize,
                         subtitle: "\(preferenceStorage.favouriteAppsFixedGridItemSize)"
                     )
                 }
@@ -82,22 +82,22 @@ private extension FavouriteAppsView {
             if GridSizeType(rawValue: preferenceStorage.favouriteAppsGridSizeType) == .flexible {
                 Stepper(value: $preferenceStorage.favouriteAppsFlexibleGridColumnAmount, in: 1...8) {
                     SubtitleText(
-                        title: "Flexible column amount",
+                        title: Copy.flexibleColumnAmount,
                         subtitle: "\(preferenceStorage.favouriteAppsFlexibleGridColumnAmount)"
                     )
                 }
             } else if GridSizeType(rawValue: preferenceStorage.favouriteAppsGridSizeType) == .fixed {
                 Stepper(value: $preferenceStorage.favouriteAppsFixedGridColumnAmount, in: 1...3) {
                     SubtitleText(
-                        title: "Fixed column amount",
+                        title: Copy.fixedColumnAmount,
                         subtitle: "\(preferenceStorage.favouriteAppsFixedGridColumnAmount)"
                     )
                 }
             }
         } header: {
-            Text("Layout")
+            Text(Copy.layout)
         } footer: {
-            Text("Configure sizing, dimensions, row and column count.")
+            Text(Copy.layoutFooter)
         }
     }
 }

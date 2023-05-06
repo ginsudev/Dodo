@@ -17,33 +17,33 @@ struct StatusIndicatorsView: View {
     var body: some View {
         Form {
             Section {
-                Toggle("Enabled", isOn: $preferenceStorage.hasStatusItems)
+                Toggle(Copy.enabled, isOn: $preferenceStorage.hasStatusItems)
             } footer: {
-                Text("Display indicators for various system components above Dodo's clock.")
+                Text(Copy.displayIndicators)
             }
             
             Section {
                 Toggle(isOn: $preferenceStorage.isVisibleWhenDisabled) {
                     SubtitleText(
-                        title: "Show when disabled",
-                        subtitle: "Show a disabled version of the indication instead of removing it."
+                        title: Copy.showWhenDisabled,
+                        subtitle: Copy.showWhenDisabledDesc
                     )
                 }
                 Stepper(value: $preferenceStorage.indicatorSize, in: 13.0...30.0) {
                     SubtitleText(
-                        title: "Indicator size",
+                        title: Copy.indicatorSize,
                         subtitle: "\(preferenceStorage.indicatorSize)"
                     )
                 }
             } header: {
-                Text("Size")
+                Text(Copy.size)
             }
             .disabled(!preferenceStorage.hasStatusItems)
             
             indicatorsSection
                 .disabled(!preferenceStorage.hasStatusItems)
         }
-        .navigationTitle("Status indicators")
+        .navigationTitle(Copy.statusIndicators)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 AlertRespringButton()
@@ -58,9 +58,9 @@ private extension StatusIndicatorsView {
     var indicatorsSection: some View {
         ForEach(inidicatorOptions, id: \.name) { option in
             Section {
-                Toggle("\(option.name) indicator", isOn: option.isEnabled)
+                Toggle(Copy.indicator(option.name), isOn: option.isEnabled)
                 if let color = option.color, option.isEnabled.wrappedValue {
-                    HexColorPicker(selectedColorHex: color, title: "Color")
+                    HexColorPicker(selectedColorHex: color, title: Copy.color)
                 }
             } header: {
                 Text(option.name)
@@ -70,14 +70,14 @@ private extension StatusIndicatorsView {
     
     var inidicatorOptions: [(isEnabled: Binding<Bool>, color: Binding<String>?, name: String)] {
         [
-            ($preferenceStorage.hasLockIcon, $preferenceStorage.lockIconColor, "Lock"),
-            ($preferenceStorage.hasChargingIcon, nil, "Charging"),
-            ($preferenceStorage.hasAlarmIcon, $preferenceStorage.alarmIconColor, "Alarm"),
-            ($preferenceStorage.hasDNDIcon, $preferenceStorage.dndIconColor, "DND"),
-            ($preferenceStorage.hasFlashlightIcon, $preferenceStorage.flashlightIconColor, "Flashlight"),
-            ($preferenceStorage.hasVibrationIcon, $preferenceStorage.vibrationIconColor, "Vibration"),
-            ($preferenceStorage.hasMutedIcon, $preferenceStorage.mutedIconColor, "Muted"),
-            ($preferenceStorage.hasSecondsIcon, $preferenceStorage.secondsIconColor, "Seconds"),
+            ($preferenceStorage.hasLockIcon, $preferenceStorage.lockIconColor, Copy.lock),
+            ($preferenceStorage.hasChargingIcon, nil, Copy.charging),
+            ($preferenceStorage.hasAlarmIcon, $preferenceStorage.alarmIconColor, Copy.alarm),
+            ($preferenceStorage.hasDNDIcon, $preferenceStorage.dndIconColor, Copy.dnd),
+            ($preferenceStorage.hasFlashlightIcon, $preferenceStorage.flashlightIconColor, Copy.flashlight),
+            ($preferenceStorage.hasVibrationIcon, $preferenceStorage.vibrationIconColor, Copy.vibration),
+            ($preferenceStorage.hasMutedIcon, $preferenceStorage.mutedIconColor, Copy.muted),
+            ($preferenceStorage.hasSecondsIcon, $preferenceStorage.secondsIconColor, Copy.seconds),
         ]
     }
 }

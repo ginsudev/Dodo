@@ -15,9 +15,9 @@ extension AppearanceView {
         
         var title: String {
             switch self {
-            case .time: return "Time"
-            case .mediaPlayer: return "Media player"
-            case .both: return "Both"
+            case .time: return Copy.time
+            case .mediaPlayer: return Copy.mediaPlayer
+            case .both: return Copy.bothTimeAndMediaPlayer
             }
         }
     }
@@ -28,8 +28,8 @@ extension AppearanceView {
         
         var title: String {
             switch self {
-            case .default: return "Default"
-            case .custom: return "Custom"
+            case .default: return Copy.default
+            case .custom: return Copy.custom
             }
         }
         
@@ -49,10 +49,10 @@ extension AppearanceView {
         
         var title: String {
             switch self {
-            case .default: return "Default"
-            case .monospaced: return "Monospaced"
-            case .rounded: return "Rounded"
-            case .serif: return "Serif"
+            case .default: return Copy.default
+            case .monospaced: return Copy.monospaced
+            case .rounded: return Copy.rounded
+            case .serif: return Copy.serif
             }
         }
     }

@@ -19,7 +19,7 @@ struct AppearanceView: View {
             playerButtonThemeSection
             fontSection
         }
-        .navigationTitle("Appearance")
+        .navigationTitle(Copy.appearance)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 AlertRespringButton()
@@ -31,7 +31,7 @@ struct AppearanceView: View {
 private extension AppearanceView {
     var timeMediaSection: some View {
         Section {
-            Picker("Time & media style", selection: $preferenceStorage.timeMediaPlayerStyle) {
+            Picker(Copy.timeAndMediaStyle, selection: $preferenceStorage.timeMediaPlayerStyle) {
                 ForEach(TimeMediaPlayerStyle.allCases, id: \.rawValue) {
                     Text($0.title)
                         .tag($0.rawValue)
@@ -45,43 +45,43 @@ private extension AppearanceView {
                     viewModels: [
                         .init(
                             imagePath: "/Library/PreferenceBundles/dodo.bundle/modular.png".rootify,
-                            title: "Modular"
+                            title: Copy.modular
                         ),
                         .init(
                             imagePath: "/Library/PreferenceBundles/dodo.bundle/classic.png".rootify,
-                            title: "Classic"
+                            title: Copy.classic
                         )
                     ]
                 )
                 Toggle(isOn: $preferenceStorage.showDivider) {
                     SubtitleText(
-                        title: "Show divider",
-                        subtitle: "Show bar between time and media player"
+                        title: Copy.showDivider,
+                        subtitle: Copy.showDividerDesc
                     )
                 }
                 Toggle(isOn: $preferenceStorage.showSuggestions) {
                     SubtitleText(
-                        title: "Show suggestions",
-                        subtitle: "Suggest media apps based on recent listening"
+                        title: Copy.showSuggestions,
+                        subtitle: Copy.showSuggestionsDesc
                     )
                 }
                 Toggle(isOn: $preferenceStorage.isMarqueeLabels) {
                     SubtitleText(
-                        title: "Marquee labels",
-                        subtitle: "Scrolls text if long enough"
+                        title: Copy.marqueeLabels,
+                        subtitle: Copy.marqueeLabelsDesc
                     )
                 }
             }
         } header: {
-            Text("Time and media player")
+            Text(Copy.timeAndMediaPlayer)
         } footer: {
             VStack(alignment: .leading, spacing: 20.0) {
-                Text("Choose an overall appearance for Dodo")
+                Text(Copy.chooseOverallAppearance)
                 Text(
                     """
-                    - Time: Only shows Dodo's time.
-                    - Media player: Only shows Dodo's media player.
-                    - Both: Shows Dodo's time and media player.
+                    - \(Copy.time): \(Copy.onlyShowTime).
+                    - \(Copy.mediaPlayer): \(Copy.onlyShowMediaPlayer).
+                    - \(Copy.bothTimeAndMediaPlayer): \(Copy.showTimeAndMediaPlayer).
                     """
                 )
             }
@@ -91,33 +91,33 @@ private extension AppearanceView {
     var colorsSection: some View {
         Section {
             if TimeMediaPlayerStyle(rawValue: preferenceStorage.timeMediaPlayerStyle) != .mediaPlayer {
-                HexColorPicker(selectedColorHex: $preferenceStorage.timeColor, title: "Time color")
-                HexColorPicker(selectedColorHex: $preferenceStorage.dateColor, title: "Date color")
+                HexColorPicker(selectedColorHex: $preferenceStorage.timeColor, title: Copy.timeColor)
+                HexColorPicker(selectedColorHex: $preferenceStorage.dateColor, title: Copy.dateColor)
             }
             if TimeMediaPlayerStyle(rawValue: preferenceStorage.timeMediaPlayerStyle) != .time && preferenceStorage.showDivider {
-                HexColorPicker(selectedColorHex: $preferenceStorage.dividerColor, title: "Divider color")
+                HexColorPicker(selectedColorHex: $preferenceStorage.dividerColor, title: Copy.dividerColor)
             }
         } header: {
-            Text("Colors")
+            Text(Copy.colors)
         }
     }
     
     var playerButtonThemeSection: some View {
         Section {
-            NavigationLink("Player button theme") {
+            NavigationLink(Copy.playerButtonTheme) {
                 ThemePickerView()
                     .environmentObject(preferenceStorage)
             }
         } header: {
-            Text("Theming")
+            Text(Copy.theming)
         } footer: {
-            Text("Choose a theme for the previous, play and next buttons.")
+            Text(Copy.themingDesc)
         }
     }
     
     var fontSection: some View {
         Section {
-            Picker("Font", selection: $preferenceStorage.selectedFont) {
+            Picker(Copy.font, selection: $preferenceStorage.selectedFont) {
                 ForEach(FontType.allCases, id: \.rawValue) {
                     Text($0.title)
                         .tag($0.rawValue)
@@ -130,7 +130,7 @@ private extension AppearanceView {
                     in: 1...100
                 ) {
                     SubtitleText(
-                        title: "Time font size",
+                        title: Copy.timeFontSize,
                         subtitle: "\(preferenceStorage.timeFontSize)"
                     )
                 }
@@ -139,7 +139,7 @@ private extension AppearanceView {
                     in: 1...100
                 ) {
                     SubtitleText(
-                        title: "Date font size",
+                        title: Copy.dateFontSize,
                         subtitle: "\(preferenceStorage.dateFontSize)"
                     )
                 }
@@ -150,15 +150,15 @@ private extension AppearanceView {
                     in: 1...100
                 ) {
                     SubtitleText(
-                        title: "Weather font size",
+                        title: Copy.weatherFontSize,
                         subtitle: "\(preferenceStorage.weatherFontSize)"
                     )
                 }
             }
         } header: {
-            Text("Fonts")
+            Text(Copy.fonts)
         } footer: {
-            Text("Choose a font for Dodo.")
+            Text(Copy.fontsFooter)
         }
     }
 }
