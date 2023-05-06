@@ -11,11 +11,11 @@ extension UIDevice {
     var batteryLevelColorRepresentation: UIColor {
         switch (self.batteryLevel * 100) {
         case 0..<20:
-            return Colors.batteryMinColor
+            return Settings.Colors.batteryMinColor
         case 20..<80:
-            return Colors.batteryMidColor
+            return Settings.Colors.batteryMidColor
         default:
-            return Colors.batteryMaxColor
+            return Settings.Colors.batteryMaxColor
         }
     }
 }

@@ -11,21 +11,17 @@ import SwiftUI
 
 struct MediaPlayer: View {
     @Environment(\.isVisibleLockScreen) var isVisibleLockScreen
-    @EnvironmentObject var mediaModel: ViewModel
-    @EnvironmentObject var dimensions: Dimensions
-    private let style: Settings.MediaPlayerStyle
-    
-    init(style: Settings.MediaPlayerStyle) {
-        self.style = style
-    }
+    @Environment(\.isLandscape) var isLandscape
+    @ObservedObject var viewModel: ViewModel
+    let style: Settings.MediaPlayerStyle
 
     var body: some View {
         contentView
-            .onReceive(NotificationCenter.default.publisher(for: .didChangeIsPlaying).prepend(.prepended)) { [weak mediaModel] notification in
-                mediaModel?.didChangePlaybackState(notification: notification)
+            .onReceive(NotificationCenter.default.publisher(for: .didChangeIsPlaying).prepend(.prepended)) { [weak viewModel] notification in
+                viewModel?.didChangePlaybackState(notification: notification)
             }
-            .onReceive(NotificationCenter.default.publisher(for: .didChangeNowPlayingInfo).prepend(.prepended)) { [weak mediaModel] _ in
-                mediaModel?.didChangeNowPlayingInfo()
+            .onReceive(NotificationCenter.default.publisher(for: .didChangeNowPlayingInfo).prepend(.prepended)) { [weak viewModel] _ in
+                viewModel?.didChangeNowPlayingInfo()
             }
     }
 }
@@ -38,7 +34,7 @@ private extension MediaPlayer {
         switch style {
         case .modular:
             playerView
-                .padding(Dimensions.Padding.medium)
+                .padding(Padding.medium)
                 .background(modularBackground)
         case .classic:
             playerView
@@ -47,24 +43,26 @@ private extension MediaPlayer {
     
     var playerView: some View {
         Group {
-            switch (mediaModel.hasActiveMediaApp,
-                    PreferenceManager.shared.settings.showSuggestions
-            ) {
-            case (false, false):
-                EmptyView()
-            case (true, _):
+            if viewModel.hasActiveMediaApp {
                 HStack {
                     songDetailsButton
                     Spacer()
-                    MediaControls()
+                    MediaControlsView(
+                        visibleControls: viewModel.isPlaying
+                        ? MediaControlsView.MediaControl.isPlayingControls
+                        : MediaControlsView.MediaControl.isPausedControls
+                    ) { [weak viewModel] control in
+                        viewModel?.onDidTapMediaControl(control)
+                    }
+                    .foregroundColor(Color(viewModel.foregroundColour))
                 }
-            default:
+            } else if viewModel.settings.mediaPlayer.showSuggestions {
                 SuggestionView()
             }
         }
         // Take up all the space we need in portrait, only take up what we need in landscape.
         .fixedSize(
-            horizontal: dimensions.isLandscape,
+            horizontal: isLandscape,
             vertical: true
         )
     }
@@ -76,21 +74,21 @@ private extension MediaPlayer {
                 strokeBorder: Color.secondary.opacity(0.3),
                 lineWidth: 0.4
             )
-            .colorMultiply(Color(mediaModel.modularBackgroundColorMultiply))
+            .colorMultiply(Color(viewModel.modularBackgroundColorMultiply))
             .animation(
                 .easeInOut,
-                value: mediaModel.artworkColour
+                value: viewModel.artworkColour
             )
     }
     
     @ViewBuilder
     var songDetailsButton: some View {
         Button {
-            mediaModel.openNowPlayingApp()
+            viewModel.openNowPlayingApp()
         } label: {
             HStack {
                 albumArtwork
-                if !dimensions.isLandscape {
+                if !isLandscape {
                     trackDetails
                 }
             }
@@ -100,7 +98,7 @@ private extension MediaPlayer {
     
     @ViewBuilder
     var albumArtwork: some View {
-        if let image = mediaModel.albumArtwork {
+        if let image = viewModel.albumArtwork {
             Image(uiImage: image)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -118,44 +116,39 @@ private extension MediaPlayer {
     
     @ViewBuilder
     var trackDetails: some View {
-        if PreferenceManager.shared.settings.isMarqueeLabels {
-            VStack(alignment: .leading, spacing: 0.0) {
-                MarqueeText(
-                    text: mediaModel.trackName,
-                    color: mediaModel.foregroundColour,
-                    font: .systemFont(ofSize: 15),
-                    rate: 50,
-                    fadeLength: 10.0,
-                    isScrollable: isVisibleLockScreen
-                )
-                MarqueeText(
-                    text: mediaModel.artistName,
-                    color: mediaModel.foregroundColour,
-                    font: .systemFont(ofSize: 12),
-                    rate: 60,
-                    fadeLength: 20.0,
-                    isScrollable: isVisibleLockScreen
-                )
-            }
+        let isMarquee = viewModel.settings.mediaPlayer.isMarqueeLabels
+        
+        VStack(alignment: .leading, spacing: isMarquee ? 0.0 : 4.0) {
+            textView(isMarquee: isMarquee, isTrackLabel: true)
+            textView(isMarquee: isMarquee, isTrackLabel: false)
+        }
+    }
+    
+    @ViewBuilder
+    func textView(isMarquee: Bool, isTrackLabel: Bool) -> some View {
+        let text = isTrackLabel ? viewModel.trackName : viewModel.artistName
+        let fontSize = isTrackLabel ? 15.0 : 12.0
+        
+        if isMarquee {
+            MarqueeText(
+                text: text,
+                color: viewModel.foregroundColour,
+                font: .systemFont(ofSize: fontSize),
+                rate: isTrackLabel ? 50 : 60,
+                fadeLength: isTrackLabel ? 10.0 : 20.0,
+                isScrollable: isVisibleLockScreen
+            )
         } else {
-            VStack(alignment: .leading) {
-                Text(mediaModel.trackName)
-                    .font(
-                        .system(
-                            size: 15.0,
-                            design: PreferenceManager.shared.settings.selectedFont.representedFont
-                        )
+            Text(viewModel.trackName)
+                .font(
+                    .system(
+                        size: fontSize,
+                        design: viewModel.settings.appearance.selectedFont.representedFont
                     )
-                Text(mediaModel.artistName)
-                    .font(
-                        .system(
-                            size: 12.0,
-                            design: PreferenceManager.shared.settings.selectedFont.representedFont
-                        )
-                    )
-            }
-            .foregroundColor(Color(mediaModel.foregroundColour))
-            .lineLimit(1)
+                )
+                .foregroundColor(Color(viewModel.foregroundColour))
+                .lineLimit(1)
+
         }
     }
 }

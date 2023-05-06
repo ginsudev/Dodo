@@ -23,6 +23,12 @@ struct StatusIndicatorsView: View {
             }
             
             Section {
+                Toggle(isOn: $preferenceStorage.isVisibleWhenDisabled) {
+                    SubtitleText(
+                        title: "Show when disabled",
+                        subtitle: "Show a disabled version of the indication instead of removing it."
+                    )
+                }
                 Stepper(value: $preferenceStorage.indicatorSize, in: 13.0...30.0) {
                     SubtitleText(
                         title: "Indicator size",

@@ -6,8 +6,92 @@
 //
 
 import SwiftUI
+import GSCore
 
 extension Settings {
+    struct Dimensions {
+        let androBarHeight = AndroBar().barHeight
+        let notificationVerticalOffset: Double
+    }
+    
+    struct MediaPlayer {
+        let timeMediaPlayerStyle: TimeMediaPlayerStyle
+        let playerStyle: MediaPlayerStyle
+        let showSuggestions: Bool
+        let showDivider: Bool
+        let isMarqueeLabels: Bool
+        let themeName: String
+
+        var themePath: String {
+            "/Library/Application Support/Dodo/Themes/\(themeName)/".rootify
+        }
+    }
+    
+    struct Appearance {
+        let selectedFont: FontType
+        let timeFontSize: Double
+        let dateFontSize: Double
+        let weatherFontSize: Double
+        let hasChargingFlash: Bool
+    }
+    
+    struct TimeDate {
+        let timeTemplate: DateTemplate
+        let dateTemplate: DateTemplate
+        let isEnabled24HourMode: Bool
+    }
+    
+    struct FavouriteApps {
+        let hasFavouriteApps: Bool
+        let favouriteAppBundleIdentifiers: [String]
+        let isVisibleFavouriteAppsFade: Bool
+        let favouriteAppsGridSizeType: Settings.GridSizeType
+        let favouriteAppsFlexibleGridItemSize: Double
+        let favouriteAppsFlexibleGridColumnAmount: Int
+        let favouriteAppsFixedGridItemSize: Double
+        let favouriteAppsFixedGridColumnAmount: Int
+    }
+    
+    struct Weather {
+        let showWeather: Bool
+        let isActiveWeatherAutomaticRefresh: Bool
+    }
+    
+    struct StatusItems {
+        let hasStatusItems: Bool
+        let isVisibleWhenDisabled: Bool
+        let statusItemSize: CGSize
+        let hasLockIcon: Bool
+        let hasSecondsIcon: Bool
+        let hasChargingIcon: Bool
+        let hasAlarmIcon: Bool
+        let hasDNDIcon: Bool
+        let hasVibrationIcon: Bool
+        let hasMutedIcon: Bool
+        let hasFlashlightIcon: Bool
+    }
+    
+    struct Colors {
+        let timeColor: UIColor
+        let dateColor: UIColor
+        let dividerColor: UIColor
+        let weatherColor: UIColor
+        let lockIconColor: UIColor
+        let alarmIconColor: UIColor
+        let dndIconColor: UIColor
+        let flashlightIconColor: UIColor
+        let vibrationIconColor: UIColor
+        let mutedIconColor: UIColor
+        let secondsIconColor: UIColor
+                
+        /// Red
+        static let batteryMinColor: UIColor = .systemRed
+        /// Yellow
+        static let batteryMidColor: UIColor = .systemYellow
+        /// Green
+        static let batteryMaxColor: UIColor = .systemGreen
+    }
+    
     enum TimeMediaPlayerStyle: Int {
         case time
         case mediaPlayer
@@ -52,7 +136,7 @@ extension Settings {
         var artworkRadius: CGFloat {
             switch self {
             case .modular:
-                return cornerRadius - Dimensions.Padding.medium
+                return cornerRadius - Padding.medium
             case .classic:
                 return 5.0
             }
@@ -72,15 +156,79 @@ extension Settings {
         var id: Self { self }
 
         var isEnabled: Bool {
+            let settings = PreferenceManager.shared.settings.statusItems
             switch self {
-            case .lockIcon: return PreferenceManager.shared.settings.hasLockIcon
-            case .seconds: return PreferenceManager.shared.settings.hasSecondsIcon
-            case .chargingIcon: return PreferenceManager.shared.settings.hasChargingIcon
-            case .alarms: return PreferenceManager.shared.settings.hasAlarmIcon
-            case .dnd: return PreferenceManager.shared.settings.hasDNDIcon
-            case .vibration: return PreferenceManager.shared.settings.hasVibrationIcon
-            case .muted: return PreferenceManager.shared.settings.hasMutedIcon
-            case .flashlight: return PreferenceManager.shared.settings.hasFlashlightIcon
+            case .lockIcon: return settings.hasLockIcon
+            case .seconds: return settings.hasSecondsIcon
+            case .chargingIcon: return settings.hasChargingIcon
+            case .alarms: return settings.hasAlarmIcon
+            case .dnd: return settings.hasDNDIcon
+            case .vibration: return settings.hasVibrationIcon
+            case .muted: return settings.hasMutedIcon
+            case .flashlight: return settings.hasFlashlightIcon
+            }
+        }
+        
+        var enabledImageName: String? {
+            switch self {
+            case .lockIcon: return "lock.fill"
+            case .seconds: return nil
+            case .chargingIcon: return nil
+            case .alarms: return "alarm.fill"
+            case .dnd: return "moon.fill"
+            case .vibration:
+                if #available(iOS 15, *) {
+                    return "iphone.radiowaves.left.and.right.circle.fill"
+                } else {
+                    return "waveform.circle.fill"
+                }
+            case .muted: return "bell.slash.fill"
+            case .flashlight: return "flashlight.on.fill"
+            }
+        }
+        
+        var disabledImageName: String? {
+            switch self {
+            case .lockIcon: return "lock.open.fill"
+            case .seconds: return nil
+            case .chargingIcon: return nil
+            case .alarms: return enabledImageName
+            case .dnd: return enabledImageName
+            case .vibration: return enabledImageName
+            case .muted: return "bell.fill"
+            case .flashlight: return "flashlight.off.fill"
+            }
+        }
+        
+        var enabledColor: UIColor? {
+            let colors = PreferenceManager.shared.settings.colors
+            switch self {
+            case .lockIcon: return colors.lockIconColor
+            case .seconds: return colors.secondsIconColor
+            case .chargingIcon: return nil // Determined in `StatusItemGroupView.ViewModel`
+            case .alarms: return colors.alarmIconColor
+            case .dnd: return colors.dndIconColor
+            case .vibration: return colors.vibrationIconColor
+            case .muted: return colors.mutedIconColor
+            case .flashlight: return colors.flashlightIconColor
+            }
+        }
+        
+        var disabledColor: UIColor? {
+            switch self {
+            case .dnd,
+                 .vibration,
+                 .alarms:
+                return enabledColor?.withAlphaComponent(0.4)
+            default:
+                return enabledColor
+            }
+        }
+        
+        var isVisibleWhenDisabled: Bool {
+            switch self {
+            case .chargingIcon: return false
+            default: return true
             }
         }
     }

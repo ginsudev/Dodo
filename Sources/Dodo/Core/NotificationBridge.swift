@@ -28,6 +28,11 @@ final class NotificationBridge {
     init() {
         addObservers()
     }
+    
+    deinit {
+        darwinManager?.unregister(forNotificationName: DarwinNotification.ringVibrate.rawValue)
+        darwinManager?.unregister(forNotificationName: DarwinNotification.silentVibrate.rawValue)
+    }
 }
 
 private extension NotificationBridge {

@@ -9,37 +9,43 @@ import SwiftUI
 
 // MARK: - Public
 
-struct StatusItemView<Content: View>: View {
-    let text: String?
-    let tint: UIColor
-    @ViewBuilder let content: Content
-    let onTapAction: (() -> Void)?
-    let onLongHoldAction: (() -> Void)?
+struct StatusItemView: View {
+    enum ItemStyle {
+        case text(String)
+        case image(String)
+        case expanding(text: String, image: String)
+    }
     
-    @EnvironmentObject var dimensions: Dimensions
-    @Namespace private var namespace
     @State private var isExpanded = false
     
+    private let settings = PreferenceManager.shared.settings
+    private let isEnabled: Bool
+    private let style: ItemStyle
+    private let tint: UIColor
+    private let onTapAction: (() -> Void)?
+    private let onLongHoldAction: (() -> Void)?
+        
     init(
-        text: String? = nil,
+        isEnabled: Bool = true,
+        style: ItemStyle,
         tint: UIColor,
-        @ViewBuilder content: @escaping () -> Content,
         onTapAction: (() -> Void)? = nil,
         onLongHoldAction: (() -> Void)? = nil
     ) {
-        self.text = text
+        self.isEnabled = isEnabled
+        self.style = style
         self.tint = tint
-        self.content = content()
         self.onTapAction = onTapAction
         self.onLongHoldAction = onLongHoldAction
     }
     
     var body: some View {
-        if text == nil {
-            button
-        } else {
-            button
-                .background(backgroundView)
+        if isEnabled || (settings.statusItems.isVisibleWhenDisabled && !isEnabled) {
+            Button {} label: {
+                buttonLabel
+                    .background(backgroundView)
+                    .fixedSize()
+            }
         }
     }
 }
@@ -48,70 +54,79 @@ struct StatusItemView<Content: View>: View {
 
 private extension StatusItemView {
     @ViewBuilder
-    var backgroundView: some View {
-        if isExpanded {
-            RoundedRectangle(cornerRadius: 9)
-                .fill(Color(tint).opacity(0.7))
-        }
-    }
-    
-    var button: some View {
-        Button {} label: {
-            buttonLabel
-                .fixedSize(horizontal: true, vertical: true)
-                .onTapGesture {
-                    if text != nil {
-                        withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
-                            isExpanded.toggle()
-                        }
-                    }
-                    
-                    if let onTapAction {
-                        onTapAction()
-                    }
+    var itemView: some View {
+        switch style {
+        case let .text(string):
+            textView(string: string)
+                .frame(
+                    idealWidth: settings.statusItems.statusItemSize.width,
+                    idealHeight: settings.statusItems.statusItemSize.height
+                )
+        case let .image(imageName):
+            imageView(name: imageName)
+        case let .expanding(string, imageName):
+            HStack {
+                imageView(name: imageName)
+                if isExpanded {
+                    textView(string: string)
                 }
-                .onLongPressGesture {
-                    if let onLongHoldAction {
-                        onLongHoldAction()
-                    }
-                }
+            }
+            .padding(.horizontal, isExpanded ? 7 : 0)
         }
-        .frame(height: dimensions.statusItemSize.height)
     }
     
     var buttonLabel: some View {
-        HStack(spacing: 2.0) {
-            if isExpanded {
-                content
-                    .statusItem()
-                    .foregroundColor(Color(tint.suitableForegroundColour()))
-                    .scaleEffect(0.7)
-                    .matchedGeometryEffect(id: "statusIcon", in: namespace)
-            } else {
-                content
-                    .statusItem()
-                    .foregroundColor(Color(tint))
-                    .scaleEffect(1.0)
-                    .matchedGeometryEffect(id: "statusIcon", in: namespace)
+        itemView
+            .onTapGesture {
+                if case .expanding = style {
+                    withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
+                        isExpanded.toggle()
+                    }
+                } else if let onTapAction {
+                    onTapAction()
+                }
             }
-            textView
-                .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
-        }
-        .padding(.horizontal, isExpanded ? 7 : 0)
+            .onLongPressGesture {
+                if let onLongHoldAction {
+                    onLongHoldAction()
+                }
+            }
+    }
+    
+    func imageView(name: String) -> some View {
+        Image(systemName: name)
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            .frame(
+                idealWidth: settings.statusItems.statusItemSize.width,
+                idealHeight: settings.statusItems.statusItemSize.height
+            )
+            .scaleEffect(isExpanded ? 0.7 : 1.0)
+            .foregroundColor(isExpanded ? Color(tint.suitableForegroundColour()) : Color(tint))
+    }
+    
+    func textView(string: String) -> some View {
+        Text(string)
+            .foregroundColor(Color(tint.suitableForegroundColour()))
+            .font(.system(.caption2, design: settings.appearance.selectedFont.representedFont))
+            .fixedSize(horizontal: true, vertical: false)
+            .lineLimit(1)
     }
     
     @ViewBuilder
-    var textView: some View {
-        if let text, isExpanded {
-            Text(text)
-                .foregroundColor(Color(tint.suitableForegroundColour()))
-                .font(
-                    .system(
-                        size: 12.0,
-                        design: PreferenceManager.shared.settings.selectedFont.representedFont
-                    )
+    var backgroundView: some View {
+        if case .expanding = style, isExpanded {
+            Capsule()
+                .fill(Color(tint).opacity(0.7))
+        } else if case .text = style {
+            Circle()
+                .fill(Color(tint))
+                .frame(
+                    idealWidth: settings.statusItems.statusItemSize.width,
+                    idealHeight: settings.statusItems.statusItemSize.height
                 )
+                .fixedSize()
         }
     }
 }

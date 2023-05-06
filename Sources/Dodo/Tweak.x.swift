@@ -35,22 +35,22 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
         orig.viewWillAppear(animated)
         
         let isLandscape = (UIScreen.main.bounds.width > UIScreen.main.bounds.height) && !UIDevice.currentIsIPad()
-        Dimensions.shared.isLandscape = isLandscape
-        
-        trailingConstraint.isActive = !Dimensions.shared.isLandscape
+        GlobalState.shared.isLandscape = isLandscape
+
+        trailingConstraint.isActive = !GlobalState.shared.isLandscape
         target.view.setNeedsLayout()
     }
     
     func _listViewDefaultContentInsets() -> UIEdgeInsets {
         var insets = orig._listViewDefaultContentInsets()
         
-        guard !Dimensions.shared.isLandscape || UIDevice.currentIsIPad() else {
+        guard !GlobalState.shared.isLandscape || UIDevice.currentIsIPad() else {
             return insets
         }
         
-        insets.bottom = Dimensions.shared.dodoFrame.height + 50
+        insets.bottom = GlobalState.shared.dodoFrame.height + 50
         
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.mediaPlayer.timeMediaPlayerStyle != .mediaPlayer else {
             return insets
         }
         
@@ -60,10 +60,10 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     
     //orion: new
     func dodoNotificationVerticalOffset() -> Double {
-        guard !Dimensions.shared.isLandscape || UIDevice.currentIsIPad() else {
+        guard !GlobalState.shared.isLandscape || UIDevice.currentIsIPad() else {
             return 0
         }
-        return PreferenceManager.shared.settings.notificationVerticalOffset
+        return PreferenceManager.shared.settings.dimensions.notificationVerticalOffset
     }
 }
 
@@ -75,13 +75,13 @@ class SpringBoard_Hook: ClassHook<SpringBoard> {
     func applicationDidFinishLaunching(_ application: AnyObject) {
         orig.applicationDidFinishLaunching(application)
         
-        if PreferenceManager.shared.settings.timeMediaPlayerStyle != .time {
-            /* If media plays through a respring, we need this code to update the media info when SpringBoard
-             launches so that the play/pause button shows the correct image. */
-            SBMediaController.sharedInstance().setNowPlayingInfo(0)
+        guard PreferenceManager.shared.settings.mediaPlayer.timeMediaPlayerStyle != .time else {
+            return
         }
         
-        NotificationCenter.default.post(name: .didAppearLockScreen, object: nil)
+        /* If media plays through a respring, we need this code to update the media info when SpringBoard
+         launches so that the play/pause button shows the correct image. */
+        SBMediaController.sharedInstance().setNowPlayingInfo(0)
     }
 }
 
@@ -92,7 +92,7 @@ class CSAdjunctListModel_Hook: ClassHook<CSAdjunctListModel> {
     
     func addOrUpdateItem(_ item: AnyObject) {
         // Never show the default ls media player
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time,
+        guard PreferenceManager.shared.settings.mediaPlayer.timeMediaPlayerStyle != .time,
               let _ = item as? CSAdjunctListItem,
               item.identifier == "SBDashBoardNowPlayingAssertionIdentifier" else {
             orig.addOrUpdateItem(item)
@@ -105,7 +105,7 @@ class CSAdjunctItemView_Hook: ClassHook<CSAdjunctItemView> {
     typealias Group = MediaiOS14
 
     func initWithFrame(_ frame: CGRect) -> Target? {
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .time else {
+        guard PreferenceManager.shared.settings.mediaPlayer.timeMediaPlayerStyle != .time else {
             return orig.initWithFrame(frame)
         }
         return nil
@@ -117,19 +117,28 @@ class CSAdjunctItemView_Hook: ClassHook<CSAdjunctItemView> {
 class SBUIPreciseClockTimer_Hook: ClassHook<SBUIPreciseClockTimer> {
     func _handleTimePassed() {
         orig._handleTimePassed()
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else { return }
+        guard PreferenceManager.shared.settings.mediaPlayer.timeMediaPlayerStyle != .mediaPlayer else { return }
         NotificationCenter.default.post(name: .refreshContent, object: nil)
     }
 }
 
-//MARK: - Misc
+class SBLockScreenPluginManager_Hook: ClassHook<NSObject> {
+    static var targetName: String = "SBLockScreenPluginManager"
+    
+    func setEnabled(_ enabled: Bool) {
+        orig.setEnabled(enabled)
+        GlobalState.shared.isVisibleLockScreen = enabled
+    }
+}
+
+// MARK: - Misc
 
 class SBFLockScreenDateView_Hook: ClassHook<SBFLockScreenDateView> {
     typealias Group = Main
 
     func didMoveToWindow() {
         orig.didMoveToWindow()
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.mediaPlayer.timeMediaPlayerStyle != .mediaPlayer else {
             return
         }
         
@@ -161,7 +170,7 @@ class SBUIProudLockIconView_Hook: ClassHook<SBUIProudLockIconView> {
     func didMoveToWindow() {
         orig.didMoveToWindow()
         
-        guard PreferenceManager.shared.settings.timeMediaPlayerStyle != .mediaPlayer else {
+        guard PreferenceManager.shared.settings.mediaPlayer.timeMediaPlayerStyle != .mediaPlayer else {
             return
         }
         
@@ -195,11 +204,6 @@ class CSCoverSheetViewController_Hook: ClassHook<CSCoverSheetViewController> {
             animated: false
         )
     }
-    
-    func setInScreenOffMode(_ isScreenOff: Bool, forAutoUnlock autoUnlock: Bool, fromUnlockSource unlockSource: Int) {
-        orig.setInScreenOffMode(isScreenOff, forAutoUnlock: autoUnlock, fromUnlockSource: unlockSource)
-        Dimensions.shared.isScreenOff = isScreenOff
-    }
 }
 
 class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationStructuredListViewController> {
@@ -224,7 +228,7 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
     
     func viewDidAppear(_ animated: Bool) {
         orig.viewDidAppear(animated)
-        guard !Dimensions.shared.isLandscape || UIDevice.currentIsIPad() else {
+        guard !GlobalState.shared.isLandscape || UIDevice.currentIsIPad() else {
             target.view.layer.mask = nil
             return
         }
@@ -236,9 +240,10 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
         target.view.layer.mask = cropFrame
                 
         let screenHeight = target.view.bounds.maxY
-        let startY: CGFloat = (Dimensions.shared.dodoFrame.minY - Dimensions.shared.androBarHeight - 50) / screenHeight
-        let endY: CGFloat = (Dimensions.shared.dodoFrame.minY - Dimensions.shared.androBarHeight) / screenHeight
-        
+        let androBarHeight = PreferenceManager.shared.settings.dimensions.androBarHeight
+        let startY: CGFloat = (GlobalState.shared.dodoFrame.minY - androBarHeight - 50) / screenHeight
+        let endY: CGFloat = (GlobalState.shared.dodoFrame.minY - androBarHeight) / screenHeight
+
         cropFrame.startPoint = CGPoint(
             x: 0.5,
             y: startY
@@ -276,10 +281,25 @@ class SBRingerControl_Hook: ClassHook<NSObject> {
 }
 
 // MARK: - Preferences
+private func prefsDict() -> [String : Any]? {
+    let path = "/var/mobile/Library/Preferences/com.ginsu.dodo.plist"
+    let plistURL = URL(fileURLWithPath: path)
+    return plistURL.plistDict()
+}
+
+private func readPrefs() -> Bool {
+    if let dict = prefsDict() {
+        PreferenceManager.shared.loadSettings(withDictionary: dict)
+        return true
+    } else {
+        return false
+    }
+}
 
 struct Dodo: Tweak {
     init() {
-        if readPrefs(), PreferenceManager.shared.settings.isEnabled {
+        if readPrefs(),
+           PreferenceManager.shared.settings.isEnabled {
             Main().activate()
             
             if #available(iOS 15, *) {
@@ -287,21 +307,6 @@ struct Dodo: Tweak {
             } else {
                 MediaiOS14().activate()
             }
-        }
-    }
-    
-    private func prefsDict() -> [String : Any]? {
-        let path = "/var/mobile/Library/Preferences/com.ginsu.dodo.plist"
-        let plistURL = URL(fileURLWithPath: path)
-        return plistURL.plistDict()
-    }
-
-    private func readPrefs() -> Bool {
-        if let dict = prefsDict() {
-            PreferenceManager.shared.loadSettings(withDictionary: dict)
-            return true
-        } else {
-            return false
         }
     }
 }
