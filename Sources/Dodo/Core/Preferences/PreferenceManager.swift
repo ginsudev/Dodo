@@ -16,7 +16,6 @@ final class PreferenceManager {
     private(set) var settings: Settings!
     private let notificationBridge = NotificationBridge()
     let defaults = UserDefaults.standard
-    let dataRefresher = DataRefresher()
     
     func loadSettings(withDictionary dict: [String: Any]) {
         self.settings = Settings(withDictionary: dict)

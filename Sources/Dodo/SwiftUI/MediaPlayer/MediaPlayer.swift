@@ -21,10 +21,10 @@ struct MediaPlayer: View {
 
     var body: some View {
         contentView
-            .onReceive(NotificationCenter.default.publisher(for: .didChangeIsPlaying)) { [weak mediaModel] notification in
+            .onReceive(NotificationCenter.default.publisher(for: .didChangeIsPlaying).prepend(.prepended)) { [weak mediaModel] notification in
                 mediaModel?.didChangePlaybackState(notification: notification)
             }
-            .onReceive(NotificationCenter.default.publisher(for: .didChangeNowPlayingInfo)) { [weak mediaModel] _ in
+            .onReceive(NotificationCenter.default.publisher(for: .didChangeNowPlayingInfo).prepend(.prepended)) { [weak mediaModel] _ in
                 mediaModel?.didChangeNowPlayingInfo()
             }
     }

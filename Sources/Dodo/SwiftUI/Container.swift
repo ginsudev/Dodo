@@ -11,7 +11,7 @@ import DodoC
 //MARK: - Public
 
 struct Container: View {
-    @StateObject private var mediaModel = MediaPlayer.ViewModel.shared
+    @StateObject private var mediaModel = MediaPlayer.ViewModel()
     @StateObject private var dimensions = Dimensions.shared
     @StateObject private var appsManager = AppsManager.shared
     
@@ -34,6 +34,12 @@ struct Container: View {
         }
         .onDisappear {
             isVisibleLockScreen = false
+        }
+        .onReceive(
+            condition: PreferenceManager.shared.settings.hasChargingFlash,
+            publisher: NotificationCenter.default.publisher(for: .refreshOnceContent)
+        ) { [weak mediaModel] _ in
+            mediaModel?.temporarilySwapColor(.green)
         }
     }
 }

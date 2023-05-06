@@ -260,6 +260,21 @@ class DNDNotificationsService_Hook: ClassHook<DNDNotificationsService> {
     }
 }
 
+class SBRingerControl_Hook: ClassHook<NSObject> {
+    static var targetName: String = "SBRingerControl"
+    
+    func setRingerMuted(_ isMuted: Bool) {
+        orig.setRingerMuted(isMuted)
+        NotificationCenter.default.post(
+            name: .didChangeRinger,
+            object: nil,
+            userInfo: [
+                "isMuted" : isMuted
+            ]
+        )
+    }
+}
+
 // MARK: - Preferences
 
 struct Dodo: Tweak {

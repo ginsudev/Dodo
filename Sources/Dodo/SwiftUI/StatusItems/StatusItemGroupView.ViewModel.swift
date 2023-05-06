@@ -76,9 +76,12 @@ extension StatusItemGroupView {
             self.secondsString = Formatters.seconds.string(from: Date())
         }
         
-        func updateRingerState() {
+        func didChangeRingerState(notification: Notification) {
             // SBRingerMuted in SpringBoard stores ringer on/off state.
-            self.isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: Keys.sbRingerMuted)
+            guard let userInfo = notification.userInfo,
+                  let isMuted = userInfo["isMuted"] as? Bool
+            else { return }
+            self.isEnabledMute = isMuted
         }
         
         func updateVibrationState() {

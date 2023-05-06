@@ -24,7 +24,10 @@ struct WeatherView: View {
                     viewModel.openWeatherApp()
                 }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .refreshOnceContent)) { [weak viewModel] _ in
+        .onReceive(
+            condition: PreferenceManager.shared.settings.isActiveWeatherAutomaticRefresh,
+            publisher: NotificationCenter.default.publisher(for: .refreshOnceContent).prepend(.prepended)
+        ) { [weak viewModel] _ in
             viewModel?.updateWeather()
         }
     }

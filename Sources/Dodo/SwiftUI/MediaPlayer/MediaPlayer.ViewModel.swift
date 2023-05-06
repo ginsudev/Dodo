@@ -13,7 +13,6 @@ import GSCore
 
 extension MediaPlayer {
     final class ViewModel: ObservableObject {
-        static let shared = ViewModel()
         static let themePath: String = "/Library/Application Support/Dodo/Themes/\(PreferenceManager.shared.settings.themeName)/".rootify
                 
         var modularBackgroundColorMultiply: UIColor {
@@ -62,6 +61,12 @@ extension MediaPlayer {
 // MARK: - Internal
 
 extension MediaPlayer.ViewModel {
+    func chargingIndication() {
+        guard UIDevice.current.batteryState != .unplugged else { return }
+        let chargeColor = UIDevice.current.batteryLevelColorRepresentation
+        temporarilySwapColor(chargeColor)
+    }
+
     func temporarilySwapColor(_ newColor: UIColor) {
         let previousColor = artworkColour
         artworkColour = newColor

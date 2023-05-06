@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import Combine
 
 extension View {
     
@@ -34,6 +35,16 @@ extension View {
                     .onPreferenceChange(FramePreferenceKey.self, perform: reader)
             }
         )
+    }
+    
+    @ViewBuilder
+    func onReceive<P>(condition: Bool, publisher: P, perform action: @escaping (P.Output) -> Void) -> some View where P : Publisher, P.Failure == Never {
+        if condition {
+            self
+                .onReceive(publisher, perform: action)
+        } else {
+            self
+        }
     }
 }
 

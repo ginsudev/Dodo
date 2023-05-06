@@ -12,7 +12,11 @@ import GSCore
 final class Dimensions: ObservableObject {
     static let shared = Dimensions()
     @Published var isLandscape = false
-    @Published var isScreenOff = false
+    @Published var isScreenOff = false {
+        didSet {
+            NotificationCenter.default.post(name: .refreshOnceContent, object: nil)
+        }
+    }
 
     var dodoFrame: CGRect = .zero
     

@@ -11,12 +11,13 @@ import DodoC
 // MARK: - Public
 
 struct StatusItemGroupView: View {
+    @Environment(\.isVisibleLockScreen) var isVisibleLockScreen
     @EnvironmentObject var dimensions: Dimensions
     @EnvironmentObject var appsManager: AppsManager
     @StateObject private var viewModel = ViewModel()
-    
-    // TODO: - Merge these into the ViewModel and Combine-ify them.
     @StateObject private var alarmDataSource = AlarmTimerDataSource.shared
+
+    // TODO: - Merge this into the ViewModel and Combine-ify them.
     @StateObject private var dndViewModel = DNDViewModel.shared
     
     var body: some View {
@@ -166,34 +167,37 @@ private extension StatusItemGroupView {
                 }
         case .chargingIcon:
             chargingIcon
-                .onReceive(NotificationCenter.default.publisher(for: UIDevice.batteryStateDidChangeNotification)) { [weak viewModel] _ in
+                .onReceive(NotificationCenter.default.publisher(for: UIDevice.batteryStateDidChangeNotification).prepend(.prepended)) { [weak viewModel] _ in
                     viewModel?.updateChargingStatus()
                 }
-                .onReceive(NotificationCenter.default.publisher(for: UIDevice.batteryLevelDidChangeNotification)) { [weak viewModel] _ in
+                .onReceive(NotificationCenter.default.publisher(for: UIDevice.batteryLevelDidChangeNotification).prepend(.prepended)) { [weak viewModel] _ in
                     viewModel?.updateChargingVisuals()
                 }
         case .alarms:
             alarms
+                .onReceive(NotificationCenter.default.publisher(for: .refreshOnceContent).prepend(.prepended)) { [weak alarmDataSource] _ in
+                    alarmDataSource?.updateAlarms()
+                }
         case .dnd:
             dnd
         case .vibration:
             vibration
-                .onReceive(NotificationCenter.default.publisher(for: .didChangeRingVibrate)) { [weak viewModel] _ in
+                .onReceive(NotificationCenter.default.publisher(for: .didChangeRingVibrate).prepend(.prepended)) { [weak viewModel] _ in
                     viewModel?.updateVibrationState()
                 }
-                .onReceive(NotificationCenter.default.publisher(for: .didChangeSilentVibrate)) { [weak viewModel] _ in
+                .onReceive(NotificationCenter.default.publisher(for: .didChangeSilentVibrate).prepend(.prepended)) { [weak viewModel] _ in
                     viewModel?.updateVibrationState()
                 }
         case .muted:
             muted
-                .onReceive(NotificationCenter.default.publisher(for: .didChangeRinger)) { [weak viewModel] _ in
-                    viewModel?.updateRingerState()
+                .onReceive(NotificationCenter.default.publisher(for: .didChangeRinger)) { [weak viewModel] notification in
+                    viewModel?.didChangeRingerState(notification: notification)
                 }
         case .flashlight:
             flashlight
         case .seconds:
             seconds
-                .onReceive(NotificationCenter.default.publisher(for: .refreshContent)) { [weak viewModel] _ in
+                .onReceive(NotificationCenter.default.publisher(for: .refreshContent).prepend(.prepended)) { [weak viewModel] _ in
                     viewModel?.updateSeconds()
                 }
         }
