@@ -14,6 +14,7 @@ struct Container: View {
     @StateObject private var mediaModel = MediaPlayer.ViewModel()
     @StateObject private var globalState = GlobalState.shared
     @StateObject private var appsManager = AppsManager.shared
+    @State private var isVisibleLockScreen = true
     
     private let settings = PreferenceManager.shared.settings
 
@@ -27,13 +28,14 @@ struct Container: View {
         .readFrame(for: { frame in
             updateFrame(frame)
         })
-//        .environment(\.isVisibleLockScreen, !dimensions.isScreenOff && isVisibleLockScreen)
-//        .onAppear {
-//            isVisibleLockScreen = true
-//        }
-//        .onDisappear {
-//            isVisibleLockScreen = false
-//        }
+        .environment(\.isVisibleLockScreen, !globalState.isScreenOff && isVisibleLockScreen)
+        .environment(\.isLandscape, globalState.isLandscape)
+        .onAppear {
+            isVisibleLockScreen = true
+        }
+        .onDisappear {
+            isVisibleLockScreen = false
+        }
         .onReceive(
             condition: settings.appearance.hasChargingFlash,
             publisher: NotificationCenter.default.publisher(for: .refreshOnceContent)

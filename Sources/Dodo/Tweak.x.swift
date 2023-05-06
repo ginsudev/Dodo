@@ -127,7 +127,7 @@ class SBLockScreenPluginManager_Hook: ClassHook<NSObject> {
     
     func setEnabled(_ enabled: Bool) {
         orig.setEnabled(enabled)
-        GlobalState.shared.isVisibleLockScreen = enabled
+        GlobalState.shared.isScreenOff = !enabled
     }
 }
 

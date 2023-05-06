@@ -18,8 +18,13 @@ struct StatusItemView: View {
     
     @State private var isExpanded = false
     
+    var isReallyExpanded: Bool {
+        isExpanded && isEnabledExpansion
+    }
+    
     private let settings = PreferenceManager.shared.settings
     private let isEnabled: Bool
+    private let isEnabledExpansion: Bool
     private let style: ItemStyle
     private let tint: UIColor
     private let onTapAction: (() -> Void)?
@@ -27,12 +32,14 @@ struct StatusItemView: View {
         
     init(
         isEnabled: Bool = true,
+        isEnabledExpansion: Bool = false,
         style: ItemStyle,
         tint: UIColor,
         onTapAction: (() -> Void)? = nil,
         onLongHoldAction: (() -> Void)? = nil
     ) {
         self.isEnabled = isEnabled
+        self.isEnabledExpansion = isEnabledExpansion
         self.style = style
         self.tint = tint
         self.onTapAction = onTapAction
@@ -67,18 +74,18 @@ private extension StatusItemView {
         case let .expanding(string, imageName):
             HStack {
                 imageView(name: imageName)
-                if isExpanded {
+                if isReallyExpanded {
                     textView(string: string)
                 }
             }
-            .padding(.horizontal, isExpanded ? 7 : 0)
+            .padding(.horizontal, isReallyExpanded ? 7 : 0)
         }
     }
     
     var buttonLabel: some View {
         itemView
             .onTapGesture {
-                if case .expanding = style {
+                if case .expanding = style, isEnabledExpansion {
                     withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
                         isExpanded.toggle()
                     }
@@ -102,8 +109,8 @@ private extension StatusItemView {
                 idealWidth: settings.statusItems.statusItemSize.width,
                 idealHeight: settings.statusItems.statusItemSize.height
             )
-            .scaleEffect(isExpanded ? 0.7 : 1.0)
-            .foregroundColor(isExpanded ? Color(tint.suitableForegroundColour()) : Color(tint))
+            .scaleEffect(isReallyExpanded ? 0.7 : 1.0)
+            .foregroundColor(isReallyExpanded ? Color(tint.suitableForegroundColour()) : Color(tint))
     }
     
     func textView(string: String) -> some View {
@@ -116,7 +123,7 @@ private extension StatusItemView {
     
     @ViewBuilder
     var backgroundView: some View {
-        if case .expanding = style, isExpanded {
+        if case .expanding = style, isReallyExpanded {
             Capsule()
                 .fill(Color(tint).opacity(0.7))
         } else if case .text = style {

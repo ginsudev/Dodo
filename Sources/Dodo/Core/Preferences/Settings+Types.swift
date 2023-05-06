@@ -225,9 +225,14 @@ extension Settings {
             }
         }
         
-        var isVisibleWhenDisabled: Bool {
+        var canBecomeVisible: Bool {
             switch self {
             case .chargingIcon: return false
+            case .dnd,
+                 .alarms,
+                 .muted,
+                 .vibration:
+                return PreferenceManager.shared.settings.statusItems.isVisibleWhenDisabled
             default: return true
             }
         }

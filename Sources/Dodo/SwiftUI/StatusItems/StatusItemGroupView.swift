@@ -12,6 +12,7 @@ import DodoC
 
 struct StatusItemGroupView: View {
     @Environment(\.isVisibleLockScreen) var isVisibleLockScreen
+    @Environment(\.isLandscape) var isLandscape
     @EnvironmentObject var appsManager: AppsManager
     @StateObject private var viewModel = ViewModel()
     @StateObject private var alarmDataSource = AlarmTimerDataSource.shared
@@ -52,7 +53,7 @@ private extension StatusItemGroupView {
         let disabledColor = item.disabledColor ?? .white
         
         StatusItemView(
-            isEnabled: isEnabled || item.isVisibleWhenDisabled,
+            isEnabled: isEnabled || item.canBecomeVisible,
             style: .text(string),
             tint: isEnabled ? enabledColor : disabledColor,
             onTapAction: onTapAction,
@@ -84,7 +85,7 @@ private extension StatusItemGroupView {
         
         if let imageName {
             StatusItemView(
-                isEnabled: isEnabled || item.isVisibleWhenDisabled,
+                isEnabled: isEnabled || item.canBecomeVisible,
                 style: .image(imageName),
                 tint: isEnabled ? enabledColor : disabledColor,
                 onTapAction: onTapAction,
@@ -123,7 +124,8 @@ private extension StatusItemGroupView {
         
         if let imageName, let string {
             StatusItemView(
-                isEnabled: isEnabled || item.isVisibleWhenDisabled,
+                isEnabled: isEnabled || item.canBecomeVisible,
+                isEnabledExpansion: isEnabled && !isLandscape,
                 style: .expanding(text: string, image: imageName),
                 tint: isEnabled ? enabledColor : disabledColor,
                 onTapAction: onTapAction,
@@ -152,7 +154,11 @@ private extension StatusItemGroupView {
             expandingStatusItem(
                 .alarms,
                 isEnabled: alarmDataSource.nextEnabledAlarm != nil,
-                string: DateTemplate.time.dateString(date: alarmDataSource.nextEnabledAlarm?.nextFireDate)
+                string: DateTemplate.time.dateString(date: alarmDataSource.nextEnabledAlarm?.nextFireDate),
+                onLongHoldAction: { [weak appsManager] in
+                    appsManager?.open(app: .defined(.clock))
+                    HapticManager.playHaptic(withIntensity: .custom(.medium))
+                }
             )
             .onReceive(NotificationCenter.default.publisher(for: .refreshOnceContent).prepend(.prepended)) { [weak alarmDataSource] _ in
                 alarmDataSource?.updateAlarms()
