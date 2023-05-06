@@ -11,16 +11,17 @@ import DodoC
 // MARK: - Public
 
 struct StatusItemGroupView: View {
-    @EnvironmentObject var dimensions: Dimensions
+    @Environment(\.isVisibleLockScreen) var isVisibleLockScreen
+    @Environment(\.isLandscape) var isLandscape
     @EnvironmentObject var appsManager: AppsManager
     @StateObject private var viewModel = ViewModel()
-    
-    // TODO: - Merge these into the ViewModel and Combine-ify them.
     @StateObject private var alarmDataSource = AlarmTimerDataSource.shared
+    
+    // TODO: - Merge this into the ViewModel and Combine-ify them.
     @StateObject private var dndViewModel = DNDViewModel.shared
     
     var body: some View {
-        HStack(spacing: Dimensions.Padding.medium) {
+        HStack(spacing: Padding.medium) {
             ForEach(viewModel.statusItems) {
                 createStatusItem(type: $0)
             }
@@ -28,7 +29,7 @@ struct StatusItemGroupView: View {
         }
         .frame(
             maxWidth: .infinity,
-            idealHeight: dimensions.statusItemSize.height
+            idealHeight: viewModel.settings.statusItemSize.height
         )
         .fixedSize(
             horizontal: false,
@@ -41,118 +42,95 @@ struct StatusItemGroupView: View {
 
 private extension StatusItemGroupView {
     @ViewBuilder
-    var lockIcon: some View {
-        StatusItemView(tint: Colors.lockIconColor) {
-            Image(systemName: viewModel.isLocked ? "lock.fill" : "lock.open.fill")
-                .resizable()
-                .renderingMode(.template)
-        }
+    func textStatusItem(
+        _ item: Settings.StatusItem,
+        string: String,
+        isEnabled: Bool = true,
+        onTapAction: (() -> Void)? = nil,
+        onLongHoldAction: (() -> Void)? = nil
+    ) -> some View {
+        let enabledColor = item.enabledColor ?? .white
+        let disabledColor = item.disabledColor ?? .white
+        
+        StatusItemView(
+            isEnabled: isEnabled || item.canBecomeVisible,
+            style: .text(string),
+            tint: isEnabled ? enabledColor : disabledColor,
+            onTapAction: onTapAction,
+            onLongHoldAction: onLongHoldAction
+        )
     }
     
     @ViewBuilder
-    var chargingIcon: some View {
-        if viewModel.isCharging {
-            StatusItemView(
-                text: viewModel.batteryPercentage,
-                tint: viewModel.chargingIndicationColor
-            ) {
-                Image(systemName: viewModel.chargingImageName)
-                    .resizable()
-                    .renderingMode(.template)
-            }
-        }
-    }
-    
-    @ViewBuilder
-    var alarms: some View {
-        if let alarm = alarmDataSource.nextEnabledAlarm {
-            StatusItemView(
-                text: DateTemplate.time.dateString(date: alarm.nextFireDate),
-                tint: Colors.alarmIconColor) {
-                    Image(systemName: "alarm.fill")
-                        .resizable()
-                        .renderingMode(.template)
-                } onLongHoldAction: { [weak appsManager] in
-                    appsManager?.open(app: .defined(.clock))
-                    HapticManager.playHaptic(withIntensity: .custom(.medium))
-                }
-        }
-    }
-    
-    @ViewBuilder
-    var dnd: some View {
-        if dndViewModel.isEnabled {
-            StatusItemView(tint: Colors.dndIconColor) {
-                Image(systemName: "moon.fill")
-                    .resizable()
-                    .renderingMode(.template)
-            }
-        }
-    }
-    
-    @ViewBuilder
-    var vibration: some View {
-        let vibrationImageName: String = {
-            if #available(iOS 15, *) {
-                return "iphone.radiowaves.left.and.right.circle.fill"
+    func imageStatusItem(
+        _ item: Settings.StatusItem,
+        isEnabled: Bool = true,
+        onTapAction: (() -> Void)? = nil,
+        onLongHoldAction: (() -> Void)? = nil
+    ) -> some View {
+        let imageName: String? = {
+            if let enabledImage = item.enabledImageName,
+               let disabledImage = item.disabledImageName {
+                return isEnabled ? enabledImage : disabledImage
             } else {
-                return "waveform.circle.fill"
+                switch item {
+                case .chargingIcon: return viewModel.chargingImageName
+                default: return nil
+                }
             }
         }()
         
-        if viewModel.isEnabledVibration {
-            StatusItemView(tint: Colors.vibrationIconColor) {
-                Image(systemName: vibrationImageName)
-                    .resizable()
-                    .renderingMode(.template)
-            }
+        let enabledColor = item.enabledColor ?? .white
+        let disabledColor = item.disabledColor ?? .white
+        
+        if let imageName {
+            StatusItemView(
+                isEnabled: isEnabled || item.canBecomeVisible,
+                style: .image(imageName),
+                tint: isEnabled ? enabledColor : disabledColor,
+                onTapAction: onTapAction,
+                onLongHoldAction: onLongHoldAction
+            )
         }
     }
     
     @ViewBuilder
-    var muted: some View {
-        if viewModel.isEnabledMute {
-            StatusItemView(tint: Colors.mutedIconColor) {
-                Image(systemName: "bell.slash.fill")
-                    .resizable()
-                    .renderingMode(.template)
+    func expandingStatusItem(
+        _ item: Settings.StatusItem,
+        isEnabled: Bool = true,
+        string: String?,
+        onTapAction: (() -> Void)? = nil,
+        onLongHoldAction: (() -> Void)? = nil
+    ) -> some View {
+        let imageName: String? = {
+            if let enabledImage = item.enabledImageName,
+               let disabledImage = item.disabledImageName {
+                return isEnabled ? enabledImage : disabledImage
+            } else {
+                switch item {
+                case .chargingIcon: return viewModel.chargingImageName
+                default: return nil
+                }
             }
-        }
-    }
-    
-    @ViewBuilder
-    var flashlight: some View {
-        if AVFlashlight.hasFlashlight() {
-            HStack {
-                Divider()
-                    .overlay(Color.white)
-                StatusItemView(
-                    tint: Colors.flashlightIconColor,
-                    content: {
-                        Image(systemName: viewModel.isActiveFlashlight ? "flashlight.on.fill" : "flashlight.off.fill")
-                            .resizable()
-                            .renderingMode(.template)
-                    },
-                    onTapAction: { [weak viewModel] in
-                        viewModel?.isActiveFlashlight.toggle()
-                    }
-                )
+        }()
+        
+        let enabledColor: UIColor = {
+            switch item {
+            case .chargingIcon: return viewModel.chargingIndicationColor
+            default: return item.enabledColor ?? .white
             }
-        }
-    }
-    
-    @ViewBuilder
-    var seconds: some View {
-        StatusItemView(tint: Colors.vibrationIconColor) {
-            Text(viewModel.secondsString)
-                .font(.caption2)
-                .bold()
-                .foregroundColor(Color(Colors.secondsIconColor.suitableForegroundColour()))
-                .background(
-                    Circle()
-                        .foregroundColor(Color(Colors.secondsIconColor))
-                        .statusItem()
-                )
+        }()
+        let disabledColor = item.disabledColor ?? .white
+        
+        if let imageName, let string {
+            StatusItemView(
+                isEnabled: isEnabled || item.canBecomeVisible,
+                isEnabledExpansion: isEnabled && !isLandscape,
+                style: .expanding(text: string, image: imageName),
+                tint: isEnabled ? enabledColor : disabledColor,
+                onTapAction: onTapAction,
+                onLongHoldAction: onLongHoldAction
+            )
         }
     }
     
@@ -160,40 +138,57 @@ private extension StatusItemGroupView {
     func createStatusItem(type: Settings.StatusItem) -> some View {
         switch type {
         case .lockIcon:
-            lockIcon
+            imageStatusItem(.lockIcon, isEnabled: viewModel.isLocked)
                 .onReceive(NotificationCenter.default.publisher(for: .didChangeLockState)) { [weak viewModel] notification in
                     viewModel?.didChangeLockStatus(notification: notification)
                 }
         case .chargingIcon:
-            chargingIcon
-                .onReceive(NotificationCenter.default.publisher(for: UIDevice.batteryStateDidChangeNotification)) { [weak viewModel] _ in
+            expandingStatusItem(.chargingIcon, isEnabled: viewModel.isCharging, string: viewModel.batteryPercentage)
+                .onReceive(NotificationCenter.default.publisher(for: UIDevice.batteryStateDidChangeNotification).prepend(.prepended)) { [weak viewModel] _ in
                     viewModel?.updateChargingStatus()
                 }
-                .onReceive(NotificationCenter.default.publisher(for: UIDevice.batteryLevelDidChangeNotification)) { [weak viewModel] _ in
+                .onReceive(NotificationCenter.default.publisher(for: UIDevice.batteryLevelDidChangeNotification).prepend(.prepended)) { [weak viewModel] _ in
                     viewModel?.updateChargingVisuals()
                 }
         case .alarms:
-            alarms
+            expandingStatusItem(
+                .alarms,
+                isEnabled: alarmDataSource.nextEnabledAlarm != nil,
+                string: DateTemplate.time.dateString(date: alarmDataSource.nextEnabledAlarm?.nextFireDate),
+                onLongHoldAction: { [weak appsManager] in
+                    appsManager?.open(app: .defined(.clock))
+                    HapticManager.playHaptic(withIntensity: .custom(.medium))
+                }
+            )
+            .onReceive(NotificationCenter.default.publisher(for: .refreshOnceContent).prepend(.prepended)) { [weak alarmDataSource] _ in
+                alarmDataSource?.updateAlarms()
+            }
         case .dnd:
-            dnd
+            imageStatusItem(.dnd, isEnabled: dndViewModel.isEnabled)
         case .vibration:
-            vibration
-                .onReceive(NotificationCenter.default.publisher(for: .didChangeRingVibrate)) { [weak viewModel] _ in
+            imageStatusItem(.vibration, isEnabled: viewModel.isEnabledVibration)
+                .onReceive(NotificationCenter.default.publisher(for: .didChangeRingVibrate).prepend(.prepended)) { [weak viewModel] _ in
                     viewModel?.updateVibrationState()
                 }
-                .onReceive(NotificationCenter.default.publisher(for: .didChangeSilentVibrate)) { [weak viewModel] _ in
+                .onReceive(NotificationCenter.default.publisher(for: .didChangeSilentVibrate).prepend(.prepended)) { [weak viewModel] _ in
                     viewModel?.updateVibrationState()
                 }
         case .muted:
-            muted
-                .onReceive(NotificationCenter.default.publisher(for: .didChangeRinger)) { [weak viewModel] _ in
-                    viewModel?.updateRingerState()
+            imageStatusItem(.muted, isEnabled: viewModel.isEnabledMute)
+                .onReceive(NotificationCenter.default.publisher(for: .didChangeRinger)) { [weak viewModel] notification in
+                    viewModel?.didChangeRingerState(notification: notification)
                 }
         case .flashlight:
-            flashlight
+            HStack {
+                Divider()
+                    .overlay(Color.white)
+                imageStatusItem(.flashlight, isEnabled: viewModel.isActiveFlashlight, onTapAction: { [weak viewModel] in
+                    viewModel?.isActiveFlashlight.toggle()
+                })
+            }
         case .seconds:
-            seconds
-                .onReceive(NotificationCenter.default.publisher(for: .refreshContent)) { [weak viewModel] _ in
+            textStatusItem(.seconds, string: viewModel.secondsString)
+                .onReceive(NotificationCenter.default.publisher(for: .refreshContent).prepend(.prepended)) { [weak viewModel] _ in
                     viewModel?.updateSeconds()
                 }
         }

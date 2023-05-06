@@ -15,7 +15,6 @@ import GSCore
 final class AppsManager: ObservableObject {
     static let shared = AppsManager()
     
-    @Published var favouriteAppBundleIdentifiers: [String] = []
     @Published var suggestedAppBundleIdentifier = PreferenceManager.shared.defaults.string(forKey: Keys.suggestedMediaApp) ?? "com.apple.camera" {
         didSet {
             PreferenceManager.shared.defaults.set(suggestedAppBundleIdentifier, forKey: Keys.suggestedMediaApp)

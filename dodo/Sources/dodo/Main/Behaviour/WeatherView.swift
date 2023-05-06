@@ -16,27 +16,27 @@ struct WeatherView: View {
         Form {
             if Ecosystem.jailbreakType == .rootless {
                 Section {
-                    Text("This feature is unavailable for rootless jailbreaks at the moment.")
+                    Text(Copy.unavailableRootless)
                         .foregroundColor(.red)
                 }
             }
             
             Section {
-                Toggle("Enabled", isOn: $preferenceStorage.showWeather)
+                Toggle(Copy.enabled, isOn: $preferenceStorage.showWeather)
             } footer: {
-                Text("Display the weather above Dodo's clock. Long hold the weather to refresh.")
+                Text(Copy.weatherFooter)
             }
 
             Section {
-                Toggle("Auto refresh", isOn: $preferenceStorage.isActiveWeatherAutomaticRefresh)
-                HexColorPicker(selectedColorHex: $preferenceStorage.weatherColor, title: "Color")
+                Toggle(Copy.autoRefresh, isOn: $preferenceStorage.isActiveWeatherAutomaticRefresh)
+                HexColorPicker(selectedColorHex: $preferenceStorage.weatherColor, title: Copy.color)
             } header: {
-                Text("Options")
+                Text(Copy.options)
             }
             .disabled(!preferenceStorage.showWeather)
         }
         .disabled(Ecosystem.jailbreakType == .rootless)
-        .navigationTitle("Weather")
+        .navigationTitle(Copy.weather)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 AlertRespringButton()

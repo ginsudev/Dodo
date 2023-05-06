@@ -14,6 +14,7 @@ import DodoC
 extension StatusItemGroupView {
     final class ViewModel: ObservableObject {
         let statusItems: [Settings.StatusItem] = Settings.StatusItem.allCases.filter(\.isEnabled)
+        let settings = PreferenceManager.shared.settings.statusItems
 
         // Seconds
         @Published var secondsString = ""
@@ -76,9 +77,12 @@ extension StatusItemGroupView {
             self.secondsString = Formatters.seconds.string(from: Date())
         }
         
-        func updateRingerState() {
+        func didChangeRingerState(notification: Notification) {
             // SBRingerMuted in SpringBoard stores ringer on/off state.
-            self.isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: Keys.sbRingerMuted)
+            guard let userInfo = notification.userInfo,
+                  let isMuted = userInfo["isMuted"] as? Bool
+            else { return }
+            self.isEnabledMute = isMuted
         }
         
         func updateVibrationState() {
@@ -86,7 +90,7 @@ extension StatusItemGroupView {
             // ring-vibrate in SpringBoard stores vibration on/off state for ring mode.
             let silentVibrate = PreferenceManager.shared.defaults.bool(forKey: Keys.silentVibrate)
             let ringVibrate = PreferenceManager.shared.defaults.bool(forKey: Keys.ringVibrate)
-            self.isEnabledVibration = silentVibrate && ringVibrate
+            self.isEnabledVibration = silentVibrate && ringVibrate && !UIDevice.currentIsIPad()
         }
         
         func toggleFlashlight(enabled: Bool) {

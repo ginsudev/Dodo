@@ -13,147 +13,129 @@ import GSCore
 final class PreferenceManager {
     static let shared = PreferenceManager()
     
-    private(set) var settings: Settings!
+    var settings: Settings {
+        underlyingSettings
+    }
+    
+    private var underlyingSettings: Settings!
     private let notificationBridge = NotificationBridge()
     let defaults = UserDefaults.standard
-    let dataRefresher = DataRefresher()
     
     func loadSettings(withDictionary dict: [String: Any]) {
-        self.settings = Settings(withDictionary: dict)
+        self.underlyingSettings = .init(withDictionary: dict)
     }
 }
 
 struct Settings {
-    // Global on/off
     let isEnabled: Bool
-    // Media player
-    let timeMediaPlayerStyle: TimeMediaPlayerStyle
-    let playerStyle: MediaPlayerStyle
-    let showSuggestions: Bool
-    let showDivider: Bool
-    let isMarqueeLabels: Bool
-    // Charging
-    let hasChargingFlash: Bool
-    // Aesthetics
-    let selectedFont: FontType
-    let timeFontSize: Double
-    let dateFontSize: Double
-    let weatherFontSize: Double
-    let themeName: String
-    // Positioning & Dimensions
-    let notificationVerticalOffset: Double
-    // TimeDate
-    let timeTemplate: DateTemplate
-    let dateTemplate: DateTemplate
-    let isEnabled24HourMode: Bool
-    // Favourite apps
-    let hasFavouriteApps: Bool
-    let isVisibleFavouriteAppsFade: Bool
-    // Weather
-    let showWeather: Bool
-    let isActiveWeatherAutomaticRefresh: Bool
-    // Status items
-    let hasStatusItems: Bool
-    let hasLockIcon: Bool
-    let hasSecondsIcon: Bool
-    let hasChargingIcon: Bool
-    let hasAlarmIcon: Bool
-    let hasDNDIcon: Bool
-    let hasVibrationIcon: Bool
-    let hasMutedIcon: Bool
-    let hasFlashlightIcon: Bool
+    let dimensions: Dimensions
+    let mediaPlayer: MediaPlayer
+    let appearance: Appearance
+    let timeDate: TimeDate
+    let favouriteApps: FavouriteApps
+    let weather: Weather
+    let statusItems: StatusItems
+    let colors: Colors
     
     init(withDictionary dict: [String: Any]) {
-        isEnabled = dict["isEnabled", default: true] as! Bool
-        timeMediaPlayerStyle = TimeMediaPlayerStyle(rawValue: dict["timeMediaPlayerStyle", default: 2] as! Int)!
-        playerStyle = MediaPlayerStyle(rawValue: dict["playerStyle", default: 0] as! Int)!
-        showWeather = dict["showWeather", default: true] as! Bool && Ecosystem.jailbreakType == .root
-        showSuggestions = dict["showSuggestions", default: true] as! Bool
-        showDivider = dict["showDivider", default: true] as! Bool
-        hasChargingFlash = dict["hasChargingFlash", default: false] as! Bool
-        themeName = dict["themeName", default: "Rounded"] as! String
-        isEnabled24HourMode = dict["isEnabled24HourMode", default: false] as! Bool
-        hasFavouriteApps = dict["hasFavouriteApps", default: true] as! Bool
-        isVisibleFavouriteAppsFade = dict["isVisibleFavouriteAppsFade", default: false] as! Bool
-        notificationVerticalOffset = dict["notificationVerticalOffset", default: 190.0] as! Double
-        timeFontSize = dict["timeFontSize", default: 50.0] as! Double
-        dateFontSize = dict["dateFontSize", default: 15.0] as! Double
-        weatherFontSize = dict["weatherFontSize", default: 15.0] as! Double
-        isActiveWeatherAutomaticRefresh = dict["isActiveWeatherAutomaticRefresh", default: true] as! Bool
-        isMarqueeLabels = dict["isMarqueeLabels", default: false] as! Bool
-        selectedFont = FontType(rawValue: dict["selectedFont", default: 0] as! Int)!
+        isEnabled = dict["isEnabled"] as? Bool ?? true
+        dimensions = .init(notificationVerticalOffset: dict["notificationVerticalOffset"] as? Double ?? 190.0)
         
-        hasStatusItems = dict["hasStatusItems", default: true] as! Bool
-        hasLockIcon = dict["hasLockIcon", default: true] as! Bool
-        hasSecondsIcon = dict["hasSecondsIcon", default: true] as! Bool
-        hasChargingIcon = dict["hasChargingIcon", default: true] as! Bool
-        hasAlarmIcon = dict["hasAlarmIcon", default: true] as! Bool
-        hasDNDIcon = dict["hasDNDIcon", default: true] as! Bool
-        hasVibrationIcon = dict["hasVibrationIcon", default: false] as! Bool
-        hasMutedIcon = dict["hasMutedIcon", default: true] as! Bool
-        hasFlashlightIcon = dict["hasFlashlightIcon", default: true] as! Bool
+        mediaPlayer = .init(
+            timeMediaPlayerStyle: TimeMediaPlayerStyle(rawValue: dict["timeMediaPlayerStyle"] as? Int ?? 2)!,
+            playerStyle: MediaPlayerStyle(rawValue: dict["playerStyle"] as? Int ?? 0)!,
+            showSuggestions: dict["showSuggestions"] as? Bool ?? true,
+            showDivider: dict["showDivider"] as? Bool ?? true,
+            isMarqueeLabels: dict["isMarqueeLabels"] as? Bool ?? false,
+            themeName: dict["themeName"] as? String ?? "Rounded"
+        )
         
-        let timeTemplate = dict["timeTemplate", default: 0] as! Int
-        switch timeTemplate {
-        case 0:
-            self.timeTemplate = .time
-            break
-        case 1:
-            self.timeTemplate = .timeWithSeconds
-            break
-        case 2:
-            self.timeTemplate = .timeCustom(dict["timeTemplateCustomFormat", default: "h:mm"] as! String)
-            break
-        default:
-            self.timeTemplate = .time
-            break
-        }
+        appearance = .init(
+            selectedFont: FontType(rawValue: dict["selectedFont"] as? Int ?? 0)!,
+            timeFontSize: dict["timeFontSize"] as? Double ?? 50.0,
+            dateFontSize: dict["dateFontSize"] as? Double ?? 15.0,
+            weatherFontSize: dict["weatherFontSize"] as? Double ?? 15.0,
+            hasChargingFlash: dict["hasChargingFlash"] as? Bool ?? false
+        )
         
-        let dateTemplate = dict["dateTemplate", default: 0] as! Int
-        switch dateTemplate {
-        case 0:
-            self.dateTemplate = .date
-            break
-        case 1:
-            self.dateTemplate = .dateCustom(dict["dateTemplateCustomFormat", default: "EEEE, MMMM d"] as! String)
-            break
-        default:
-            self.dateTemplate = .date
-            break
-        }
+        let timeTemplate: DateTemplate = {
+            switch dict["timeTemplate"] as? Int ?? 0 {
+            case 0:
+                return .time
+            case 1:
+                return .timeWithSeconds
+            case 2:
+                return .timeCustom(dict["timeTemplateCustomFormat"] as? String ?? "h:mm")
+            default:
+                return .time
+            }
+        }()
         
-        AppsManager.shared.favouriteAppBundleIdentifiers = dict[
-            "selectedFavouriteApps",
-            default: [
+        let dateTemplate: DateTemplate = {
+            switch dict["dateTemplate"] as? Int ?? 0 {
+            case 0:
+                return .date
+            case 1:
+                return .dateCustom(dict["dateTemplateCustomFormat"] as? String ?? "EEEE, MMMM d")
+            default:
+                return .date
+            }
+        }()
+        
+        timeDate = .init(
+            timeTemplate: timeTemplate,
+            dateTemplate: dateTemplate,
+            isEnabled24HourMode: dict["isEnabled24HourMode"] as? Bool ?? false
+        )
+
+        favouriteApps = .init(
+            hasFavouriteApps: dict["hasFavouriteApps"] as? Bool ?? true,
+            favouriteAppBundleIdentifiers: dict["selectedFavouriteApps"] as? [String] ?? [
                 "com.apple.camera",
                 "com.apple.Preferences",
                 "com.apple.MobileSMS",
                 "com.apple.mobilemail"
-            ]
-        ] as! [String]
+            ],
+            isVisibleFavouriteAppsFade: dict["isVisibleFavouriteAppsFade"] as? Bool ?? false,
+            favouriteAppsGridSizeType: GridSizeType(rawValue: dict["favouriteAppsGridSizeType"] as? Int ?? 0)!,
+            favouriteAppsFlexibleGridItemSize: dict["favouriteAppsFlexibleGridItemSize"] as? Double ?? 40.0,
+            favouriteAppsFlexibleGridColumnAmount: dict["favouriteAppsFlexibleGridColumnAmount"] as? Int ?? 3,
+            favouriteAppsFixedGridItemSize: dict["favouriteAppsFixedGridItemSize"] as? Double ?? 40.0,
+            favouriteAppsFixedGridColumnAmount: dict["favouriteAppsFixedGridColumnAmount"] as? Int ?? 3
+        )
         
-        Colors.timeColor = UIColor(hex: dict["timeColor", default: "FFFFFF"] as! String)
-        Colors.dateColor = UIColor(hex: dict["dateColor", default: "FFFFFF"] as! String)
-        Colors.dividerColor = UIColor(hex: dict["dividerColor", default: "FFFFFF"] as! String)
-        Colors.weatherColor = UIColor(hex: dict["weatherColor", default: "FFFFFF"] as! String)
-        Colors.lockIconColor = UIColor(hex: dict["lockIconColor", default: "FFFFFF"] as! String)
-        Colors.alarmIconColor = UIColor(hex: dict["alarmIconColor", default: "FFFFFF"] as! String)
-        Colors.dndIconColor = UIColor(hex: dict["dndIconColor", default: "FFFFFF"] as! String)
-        Colors.flashlightIconColor = UIColor(hex: dict["flashlightIconColor", default: "FFFFFF"] as! String)
-        Colors.vibrationIconColor = UIColor(hex: dict["vibrationIconColor", default: "FFFFFF"] as! String)
-        Colors.mutedIconColor = UIColor(hex: dict["mutedIconColor", default: "FFFFFF"] as! String)
-        Colors.secondsIconColor = UIColor(hex: dict["secondsIconColor", default: "FFFFFF"] as! String)
+        weather = .init(
+            showWeather: dict["showWeather"] as? Bool ?? true && Ecosystem.jailbreakType == .root,
+            isActiveWeatherAutomaticRefresh: dict["isActiveWeatherAutomaticRefresh"] as? Bool ?? true
+        )
+        
+        let itemSize = dict["indicatorSize"] as? Double ?? 18.0
+        statusItems = .init(
+            hasStatusItems: dict["hasStatusItems"] as? Bool ?? true,
+            isVisibleWhenDisabled: dict["isVisibleWhenDisabled"] as? Bool ?? false,
+            statusItemSize: .init(width: itemSize, height: itemSize),
+            hasLockIcon: dict["hasLockIcon"] as? Bool ?? true,
+            hasSecondsIcon: dict["hasSecondsIcon"] as? Bool ?? true,
+            hasChargingIcon: dict["hasChargingIcon"] as? Bool ?? true,
+            hasAlarmIcon: dict["hasAlarmIcon"] as? Bool ?? true,
+            hasDNDIcon: dict["hasDNDIcon"] as? Bool ?? true,
+            hasVibrationIcon: dict["hasVibrationIcon"] as? Bool ?? false,
+            hasMutedIcon: dict["hasMutedIcon"] as? Bool ?? true,
+            hasFlashlightIcon: dict["hasFlashlightIcon"] as? Bool ?? true
+        )
 
-        Dimensions.shared.favouriteAppsGridSizeType = GridSizeType(rawValue: dict["favouriteAppsGridSizeType", default: 0] as! Int)!
-        Dimensions.shared.favouriteAppsFlexibleGridItemSize = dict["favouriteAppsFlexibleGridItemSize", default: 40.0] as! Double
-        Dimensions.shared.favouriteAppsFlexibleGridColumnAmount = dict["favouriteAppsFlexibleGridColumnAmount", default: 3] as! Int
-        Dimensions.shared.favouriteAppsFixedGridItemSize = dict["favouriteAppsFixedGridItemSize", default: 40.0] as! Double
-        Dimensions.shared.favouriteAppsFixedGridColumnAmount = dict["favouriteAppsFixedGridColumnAmount", default: 3] as! Int
-        
-        let indicatorSize = dict["indicatorSize", default: 18.0] as! Double
-        Dimensions.shared.statusItemSize = CGSize(
-            width: indicatorSize,
-            height: indicatorSize
+        colors = .init(
+            timeColor: UIColor(hex: dict["timeColor"] as? String ?? "FFFFFF"),
+            dateColor: UIColor(hex: dict["dateColor"] as? String ?? "FFFFFF"),
+            dividerColor: UIColor(hex: dict["dividerColor"] as? String ?? "FFFFFF"),
+            weatherColor: UIColor(hex: dict["weatherColor"] as? String ?? "FFFFFF"),
+            lockIconColor: UIColor(hex: dict["lockIconColor"] as? String ?? "FFFFFF"),
+            alarmIconColor: UIColor(hex: dict["alarmIconColor"] as? String ?? "FFFFFF"),
+            dndIconColor: UIColor(hex: dict["dndIconColor"] as? String ?? "FFFFFF"),
+            flashlightIconColor: UIColor(hex: dict["flashlightIconColor"] as? String ?? "FFFFFF"),
+            vibrationIconColor: UIColor(hex: dict["vibrationIconColor"] as? String ?? "FFFFFF"),
+            mutedIconColor: UIColor(hex: dict["mutedIconColor"] as? String ?? "FFFFFF"),
+            secondsIconColor: UIColor(hex: dict["secondsIconColor"] as? String ?? "FFFFFF")
         )
     }
 }

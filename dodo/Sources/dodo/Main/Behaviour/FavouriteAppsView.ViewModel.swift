@@ -15,14 +15,10 @@ extension FavouriteAppsView {
         
         var title: String {
             switch self {
-            case .flexible: return "Flexible"
-            case .fixed: return "Fixed"
-            case .adaptive: return "Adaptive"
+            case .flexible: return Copy.flexible
+            case .fixed: return Copy.fixed
+            case .adaptive: return Copy.adaptive
             }
         }
-    }
-    
-    struct ViewModel {
-        
     }
 }

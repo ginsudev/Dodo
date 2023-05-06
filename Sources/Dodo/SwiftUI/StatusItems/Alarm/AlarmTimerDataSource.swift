@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import CoreGraphics
+import Orion
 import DodoC
 
 struct DDAlarm: Identifiable {
@@ -20,11 +20,41 @@ struct DDAlarm: Identifiable {
 final class AlarmTimerDataSource: ObservableObject {
     static let shared = AlarmTimerDataSource()
     
+    private var alarmCache: MTAlarmCache? = {
+        if let observer = SBScheduledAlarmObserver.sharedInstance() {
+            let manager = Ivars<MTAlarmManager>(observer)._alarmManager
+            return manager.cache
+        } else {
+            return nil
+        }
+    }()
+    
     @Published var nextEnabledAlarm: DDAlarm?
     
     @Published var alarms = [DDAlarm]() {
         didSet {
             nextEnabledAlarm = alarms.first(where: \.isEnabled)
         }
+    }
+    
+    func updateAlarms() {
+        if let cache = self.alarmCache,
+           let orderedAlarms = cache.orderedAlarms as? [MTAlarm] {
+            let alarms = orderedAlarms
+                .compactMap { self.convertMobileAlarm($0) }
+            DispatchQueue.main.async {
+                self.alarms = alarms
+            }
+        }
+    }
+    
+    private func convertMobileAlarm(_ alarm: MTAlarm) -> DDAlarm {
+        .init(
+            id: alarm.alarmID,
+            url: alarm.alarmURL,
+            nextFireDate: alarm.nextFireDate,
+            displayTitle: alarm.displayTitle,
+            isEnabled: alarm.isEnabled
+        )
     }
 }

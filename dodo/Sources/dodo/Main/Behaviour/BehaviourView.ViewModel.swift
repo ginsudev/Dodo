@@ -15,9 +15,9 @@ extension BehaviourView {
         
         var title: String {
             switch self {
-            case .default: return "Default"
-            case .showSeconds: return "Show seconds"
-            case .custom: return "Custom"
+            case .default: return Copy.default
+            case .showSeconds: return Copy.showSeconds
+            case .custom: return Copy.custom
             }
         }
         
@@ -36,8 +36,8 @@ extension BehaviourView {
         
         var title: String {
             switch self {
-            case .default: return "Default"
-            case .custom: return "Custom"
+            case .default: return Copy.default
+            case .custom: return Copy.custom
             }
         }
         

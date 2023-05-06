@@ -12,7 +12,8 @@ import DodoC
 
 struct WeatherView: View {
     @StateObject private var viewModel = ViewModel()
-    
+    private let settings = PreferenceManager.shared.settings
+
     var body: some View {
         Button { } label: {
             weatherInfo
@@ -24,7 +25,10 @@ struct WeatherView: View {
                     viewModel.openWeatherApp()
                 }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .refreshOnceContent)) { [weak viewModel] _ in
+        .onReceive(
+            condition: settings.weather.isActiveWeatherAutomaticRefresh,
+            publisher: NotificationCenter.default.publisher(for: .refreshOnceContent).prepend(.prepended)
+        ) { [weak viewModel] _ in
             viewModel?.updateWeather()
         }
     }
@@ -38,16 +42,20 @@ private extension WeatherView {
             Image(uiImage: viewModel.conditionImage)
                 .resizable()
                 .renderingMode(.original)
-                .statusItem()
+                .frame(
+                    width: settings.statusItems.statusItemSize.width,
+                    height: settings.statusItems.statusItemSize.height
+                )
+                .aspectRatio(contentMode: .fit)
             Text("\(viewModel.locationName) | \(viewModel.temperature)")
                 .font(
                     .system(
-                        size: PreferenceManager.shared.settings.weatherFontSize,
-                        design: PreferenceManager.shared.settings.selectedFont.representedFont
+                        size: settings.appearance.weatherFontSize,
+                        design: settings.appearance.selectedFont.representedFont
                     )
                 )
                 .lineLimit(1)
-                .foregroundColor(Color(Colors.weatherColor))
+                .foregroundColor(Color(settings.colors.weatherColor))
         }
     }
 }

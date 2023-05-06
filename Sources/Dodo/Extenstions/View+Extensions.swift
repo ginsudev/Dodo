@@ -3,9 +3,9 @@
 //
 
 import SwiftUI
+import Combine
 
 extension View {
-    
     /// Reads the view frame and bind it to the reader.
     /// - Parameters:
     ///   - coordinateSpace: a coordinate space for the geometry reader.
@@ -35,6 +35,20 @@ extension View {
             }
         )
     }
+    
+    @ViewBuilder
+    func onReceive<P>(
+        condition: Bool,
+        publisher: P,
+        perform action: @escaping (P.Output) -> Void
+    ) -> some View where P : Publisher, P.Failure == Never {
+        if condition {
+            self
+                .onReceive(publisher, perform: action)
+        } else {
+            self
+        }
+    }
 }
 
 private struct FramePreferenceKey: PreferenceKey {
@@ -42,5 +56,12 @@ private struct FramePreferenceKey: PreferenceKey {
     
     static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
         value = nextValue()
+    }
+}
+
+struct ScaleButtonStyle: ButtonStyle {
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.7 : 1)
     }
 }

@@ -67,6 +67,7 @@ final class PreferenceStorage: ObservableObject {
     
     // MARK: - Status indicators
     @Published(key: "hasStatusItems", registry: registry) var hasStatusItems = true
+    @Published(key: "isVisibleWhenDisabled", registry: registry) var isVisibleWhenDisabled = false
     @Published(key: "indicatorSize", registry: registry) var indicatorSize = 18.0
     
     // Items

@@ -10,9 +10,12 @@ import SwiftUI
 //MARK: - Public
 
 struct MainContent: View {
-    @EnvironmentObject var dimensions: Dimensions
+    @Environment(\.isVisibleLockScreen) var isVisibleLockScreen
+    @Environment(\.isLandscape) var isLandscape
     @State private var infoViewFrame: CGRect = .zero
     
+    private let settings = PreferenceManager.shared.settings
+
     var body: some View {
         HStack(
             alignment: .center,
@@ -44,7 +47,7 @@ private extension MainContent {
     
     @ViewBuilder
     var favouriteApps: some View {
-        if PreferenceManager.shared.settings.hasFavouriteApps, !dimensions.isLandscape {
+        if settings.favouriteApps.hasFavouriteApps, !isLandscape {
             AppView()
                 .layoutPriority(-1)
                 .frame(
@@ -61,7 +64,7 @@ private extension MainContent {
     
     @ViewBuilder
     var weatherView: some View {
-        if PreferenceManager.shared.settings.showWeather {
+        if settings.weather.showWeather {
             WeatherView()
         }
     }

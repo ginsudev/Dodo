@@ -13,9 +13,9 @@ import GSCore
 
 extension MediaPlayer {
     final class ViewModel: ObservableObject {
-        static let shared = ViewModel()
-        static let themePath: String = "/Library/Application Support/Dodo/Themes/\(PreferenceManager.shared.settings.themeName)/".rootify
-                
+        static let themePath: String = PreferenceManager.shared.settings.mediaPlayer.themePath
+        let settings = PreferenceManager.shared.settings
+        
         var modularBackgroundColorMultiply: UIColor {
             if !hasActiveMediaApp,
                let image = UIImage.icon(bundleIdentifier: AppsManager.shared.suggestedAppBundleIdentifier) {
@@ -24,6 +24,8 @@ extension MediaPlayer {
                 return artworkColour
             }
         }
+        
+        var previousBackgroundColor: UIColor?
         
         @Published var hasActiveMediaApp = false {
             didSet {
@@ -45,16 +47,14 @@ extension MediaPlayer {
         
         @Published var artworkColour: UIColor = .black {
             didSet {
-                guard PreferenceManager.shared.settings.playerStyle == .modular else {
-                    return
-                }
+                guard settings.mediaPlayer.playerStyle == .modular else { return }
                 self.foregroundColour = self.artworkColour.suitableForegroundColour()
             }
         }
 
+        @Published private(set) var isPlaying = false
         @Published var trackName = ""
         @Published var artistName = ""
-        @Published var playPauseIcon = UIImage(named: MediaPlayer.ViewModel.themePath + "pause.png")
         @Published var foregroundColour: UIColor = .white
     }
 }
@@ -62,18 +62,32 @@ extension MediaPlayer {
 // MARK: - Internal
 
 extension MediaPlayer.ViewModel {
-    func temporarilySwapColor(_ newColor: UIColor) {
-        let previousColor = artworkColour
-        artworkColour = newColor
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) { [weak self] in
-            self?.artworkColour = previousColor
+    func onDidTapMediaControl(_ control: MediaControlsView.MediaControl) {
+        switch control {
+        case .previous:
+            SBMediaController.sharedInstance().changeTrack(-1, eventSource: 0)
+        case .play, .pause:
+            SBMediaController.sharedInstance().togglePlayPause(forEventSource: 0)
+        case .next:
+            SBMediaController.sharedInstance().changeTrack(1, eventSource: 0)
         }
     }
     
-    func togglePlayPause(shouldPlay play: Bool) {
-        let iconPath = MediaPlayer.ViewModel.themePath + (play ? "pause": "play") + ".png"
-        DispatchQueue.main.async {
-            self.playPauseIcon = UIImage(named: iconPath)
+    func activateChargeIndication() {
+        guard UIDevice.current.batteryState != .unplugged else { return }
+        temporarilySwapColor(UIDevice.current.batteryLevelColorRepresentation)
+    }
+
+    func temporarilySwapColor(_ newColor: UIColor) {
+        // Don't go further if this function is already being executed.
+        guard previousBackgroundColor == nil else { return }
+        
+        previousBackgroundColor = artworkColour
+        artworkColour = newColor
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) { [weak self] in
+            guard let self, let previousBackgroundColor else { return }
+            artworkColour = previousBackgroundColor
+            self.previousBackgroundColor = nil
         }
     }
     
@@ -88,18 +102,6 @@ extension MediaPlayer.ViewModel {
         }
     }
     
-    func didChangePlaybackState(notification: Notification) {
-        DispatchQueue.main.async { [weak self] in
-            self?.hasActiveMediaApp = self?.nowPlayingAppIdentifier() != nil
-            guard self?.hasActiveMediaApp == true else { return }
-            
-            if let userInfo = notification.userInfo,
-               let isPlaying = userInfo["kMRMediaRemoteNowPlayingApplicationIsPlayingUserInfoKey"] as? Bool {
-                self?.togglePlayPause(shouldPlay: isPlaying)
-            }
-        }
-    }
-    
     func didChangeNowPlayingInfo() {
         //Update track info (Artwork, title, artist, etc..).
         MRMediaRemoteGetNowPlayingInfo(
@@ -109,21 +111,35 @@ extension MediaPlayer.ViewModel {
                 if let contentItem = MRContentItem(nowPlayingInfo: dict),
                    let metadata = contentItem.metadata {
                     //Track name & artist
-                    DispatchQueue.main.async {
-                        if let title = metadata.title {
-                            self?.trackName = title
-                        }
-                        if let trackArtistName = metadata.trackArtistName {
-                            self?.artistName = trackArtistName
-                        }
-                        //Album artwork
-                        if let artworkData = dict["kMRMediaRemoteNowPlayingInfoArtworkData"] as? Data,
-                           let image = UIImage(data: artworkData) {
-                            self?.albumArtwork = image
-                        }
+                    if let title = metadata.title {
+                        self?.trackName = title
+                    }
+                    if let trackArtistName = metadata.trackArtistName {
+                        self?.artistName = trackArtistName
+                    }
+                    //Album artwork
+                    if let artworkData = dict["kMRMediaRemoteNowPlayingInfoArtworkData"] as? Data,
+                       let image = UIImage(data: artworkData) {
+                        self?.albumArtwork = image
                     }
                 }
             }
         )
+    }
+    
+    func didChangePlaybackState(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let isPlaying = userInfo["kMRMediaRemoteNowPlayingApplicationIsPlayingUserInfoKey"] as? Bool
+        else { return }
+        didChangePlaybackState(isPlaying: isPlaying)
+    }
+}
+
+// MARK: - Private
+
+private extension MediaPlayer.ViewModel {
+    func didChangePlaybackState(isPlaying: Bool) {
+        hasActiveMediaApp = nowPlayingAppIdentifier() != nil
+        self.isPlaying = hasActiveMediaApp && isPlaying
     }
 }
