@@ -47,7 +47,7 @@ struct StatusItemView: View {
     }
     
     var body: some View {
-        if isEnabled || (settings.statusItems.isVisibleWhenDisabled && !isEnabled) {
+        if isEnabled {
             Button {} label: {
                 buttonLabel
                     .background(backgroundView)

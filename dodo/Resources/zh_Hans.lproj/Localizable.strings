@@ -95,4 +95,4 @@
 "WEATHER_FOOTER" = "在Dodo的时钟上面显示天气。长按也可以很方便打开天气APP。";
 "AUTO_REFRESH" = "自动刷新";
 "OPTIONS" = "设置";
-"INDICATOR" = "%@ 状态";
+"INDICATOR" = "%@状态";
