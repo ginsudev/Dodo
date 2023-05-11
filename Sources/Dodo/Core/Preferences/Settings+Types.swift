@@ -144,6 +144,12 @@ extension Settings {
     }
     
     enum StatusItem: CaseIterable, Identifiable {
+        enum PresentationMode {
+            case persistent
+            case visibleWhenEnabled
+            case visible
+        }
+        
         case lockIcon
         case seconds
         case chargingIcon
@@ -216,24 +222,41 @@ extension Settings {
         
         var disabledColor: UIColor? {
             switch self {
-            case .dnd,
-                 .vibration,
-                 .alarms:
-                return enabledColor?.withAlphaComponent(0.4)
-            default:
+            case .lockIcon,
+                 .seconds,
+                 .chargingIcon,
+                 .muted,
+                 .flashlight:
                 return enabledColor
+            case .alarms, .dnd, .vibration:
+                return enabledColor?.withAlphaComponent(0.4)
             }
         }
         
-        var canBecomeVisible: Bool {
+        var presentationMode: PresentationMode {
             switch self {
-            case .chargingIcon: return false
-            case .dnd,
-                 .alarms,
-                 .muted,
-                 .vibration:
-                return PreferenceManager.shared.settings.statusItems.isVisibleWhenDisabled
-            default: return true
+            case .lockIcon,
+                 .seconds,
+                 .flashlight:
+                return .persistent
+            case .alarms,
+                .dnd,
+                .vibration,
+                .muted:
+                return .visible
+            case .chargingIcon:
+                return .visibleWhenEnabled
+            }
+        }
+        
+        func isVisible(isStatusEnabled: Bool) -> Bool {
+            switch presentationMode {
+            case .persistent:
+                return true
+            case .visibleWhenEnabled:
+                return isStatusEnabled
+            case .visible:
+                return isStatusEnabled || PreferenceManager.shared.settings.statusItems.isVisibleWhenDisabled
             }
         }
     }

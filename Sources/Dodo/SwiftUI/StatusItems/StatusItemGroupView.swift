@@ -51,9 +51,10 @@ private extension StatusItemGroupView {
     ) -> some View {
         let enabledColor = item.enabledColor ?? .white
         let disabledColor = item.disabledColor ?? .white
+        let isStatusEnabled = item.isVisible(isStatusEnabled: isEnabled)
         
         StatusItemView(
-            isEnabled: isEnabled || item.canBecomeVisible,
+            isEnabled: isStatusEnabled,
             style: .text(string),
             tint: isEnabled ? enabledColor : disabledColor,
             onTapAction: onTapAction,
@@ -82,10 +83,11 @@ private extension StatusItemGroupView {
         
         let enabledColor = item.enabledColor ?? .white
         let disabledColor = item.disabledColor ?? .white
-        
+        let isStatusEnabled = item.isVisible(isStatusEnabled: isEnabled)
+
         if let imageName {
             StatusItemView(
-                isEnabled: isEnabled || item.canBecomeVisible,
+                isEnabled: isStatusEnabled,
                 style: .image(imageName),
                 tint: isEnabled ? enabledColor : disabledColor,
                 onTapAction: onTapAction,
@@ -121,10 +123,11 @@ private extension StatusItemGroupView {
             }
         }()
         let disabledColor = item.disabledColor ?? .white
-        
+        let isStatusEnabled = item.isVisible(isStatusEnabled: isEnabled)
+
         if let imageName, let string {
             StatusItemView(
-                isEnabled: isEnabled || item.canBecomeVisible,
+                isEnabled: isStatusEnabled,
                 isEnabledExpansion: isEnabled && !isLandscape,
                 style: .expanding(text: string, image: imageName),
                 tint: isEnabled ? enabledColor : disabledColor,
