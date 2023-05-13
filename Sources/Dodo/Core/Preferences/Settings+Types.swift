@@ -10,8 +10,10 @@ import GSCore
 
 extension Settings {
     struct Dimensions {
-        let androBarHeight = AndroBar().barHeight
         let notificationVerticalOffset: Double
+        let androBarHeight: CGFloat = AndroBar().isInstalledAndEnabled
+        ? AndroBar().barHeight
+        : 0
     }
     
     struct MediaPlayer {
