@@ -9,13 +9,14 @@ import SwiftUI
 
 // MARK: - Public
 
-struct StatusItemView: View {
+struct StatusItemView: View, Identifiable {
     enum ItemStyle {
         case text(String)
         case image(String)
         case expanding(text: String, image: String)
     }
     
+    @State var id = UUID().uuidString
     @State private var isExpanded = false
     
     var isReallyExpanded: Bool {
@@ -53,6 +54,12 @@ struct StatusItemView: View {
                     .background(backgroundView)
                     .fixedSize()
             }
+            .onReceive(NotificationCenter.default.publisher(for: .collapseStatusItems)) { notif in
+                guard let id = notif.object as? String, id != self.id else { return }
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
+                    isExpanded = false
+                }
+            }
         }
     }
 }
@@ -86,9 +93,7 @@ private extension StatusItemView {
         itemView
             .onTapGesture {
                 if case .expanding = style, isEnabledExpansion {
-                    withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
-                        isExpanded.toggle()
-                    }
+                    expand()
                 } else if let onTapAction {
                     onTapAction()
                 }
@@ -98,6 +103,22 @@ private extension StatusItemView {
                     onLongHoldAction()
                 }
             }
+    }
+    
+    @ViewBuilder
+    var backgroundView: some View {
+        if case .expanding = style, isReallyExpanded {
+            Capsule()
+                .fill(Color(tint).opacity(0.7))
+        } else if case .text = style {
+            Circle()
+                .fill(Color(tint))
+                .frame(
+                    idealWidth: settings.statusItems.statusItemSize.width,
+                    idealHeight: settings.statusItems.statusItemSize.height
+                )
+                .fixedSize()
+        }
     }
     
     func imageView(name: String) -> some View {
@@ -121,19 +142,14 @@ private extension StatusItemView {
             .lineLimit(1)
     }
     
-    @ViewBuilder
-    var backgroundView: some View {
-        if case .expanding = style, isReallyExpanded {
-            Capsule()
-                .fill(Color(tint).opacity(0.7))
-        } else if case .text = style {
-            Circle()
-                .fill(Color(tint))
-                .frame(
-                    idealWidth: settings.statusItems.statusItemSize.width,
-                    idealHeight: settings.statusItems.statusItemSize.height
-                )
-                .fixedSize()
+    func expand() {
+        if !isExpanded {
+            // Collapse all other items before expanding this one.
+            NotificationCenter.default.post(name: .collapseStatusItems, object: id)
+        }
+        
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
+            isExpanded.toggle()
         }
     }
 }

@@ -13,6 +13,8 @@ struct Keys {
     static let isActiveVibration = "Dodo.isActiveVibration"
     static let isActiveMute = "Dodo.isActiveMute"
     static let isActiveFlashlight = "Dodo.isActiveFlashlight"
+    static let nextTimer = "Dodo.nextTimer"
+    static let nextAlarm = "Dodo.nextAlarm"
     
     // System
     static let silentVibrate = "silent-vibrate"

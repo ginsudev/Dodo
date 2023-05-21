@@ -13,14 +13,25 @@ import DodoC
 
 extension StatusItemGroupView {
     final class ViewModel: ObservableObject {
+        private static let dateComponentsFormatter: DateComponentsFormatter = {
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.hour, .minute, .second]
+            formatter.unitsStyle = .positional
+            formatter.zeroFormattingBehavior = .pad
+            return formatter
+        }()
+        
         let statusItems: [Settings.StatusItem] = Settings.StatusItem.allCases.filter(\.isEnabled)
         let settings = PreferenceManager.shared.settings.statusItems
+        
+        // Timer countdown
+        @Published private(set) var timerRemainingTime = ""
 
         // Seconds
-        @Published var secondsString = ""
+        @Published private(set) var secondsString = ""
         
         // Lock
-        @Published var isLocked = false
+        @Published private(set) var isLocked = false
         
         // Charging
         @Published private(set) var isCharging: Bool = false
@@ -50,6 +61,10 @@ extension StatusItemGroupView {
             }
         }
         
+        init() {
+            
+        }
+        
         func didChangeLockStatus(notification: Notification) {
             if let info = notification.userInfo,
                let state = info["SBAggregateLockStateKey"] as? Int {
@@ -71,6 +86,15 @@ extension StatusItemGroupView {
             default:
                 self.chargingImageName = "bolt.slash.circle.fill"
             }
+        }
+        
+        func updateTimerRemainingTime(interval: TimeInterval?) {
+            guard let interval else {
+                self.timerRemainingTime = ""
+                return
+            }
+            
+            self.timerRemainingTime = Self.dateComponentsFormatter.string(from: interval) ?? ""
         }
         
         func updateSeconds() {

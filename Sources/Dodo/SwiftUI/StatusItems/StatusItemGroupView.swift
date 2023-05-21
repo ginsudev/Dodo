@@ -15,26 +15,17 @@ struct StatusItemGroupView: View {
     @Environment(\.isLandscape) var isLandscape
     @EnvironmentObject var appsManager: AppsManager
     @StateObject private var viewModel = ViewModel()
-    @StateObject private var alarmDataSource = AlarmTimerDataSource.shared
+    @StateObject private var alarmTimerManager = AlarmTimerManager()
     
     // TODO: - Merge this into the ViewModel and Combine-ify them.
     @StateObject private var dndViewModel = DNDViewModel.shared
-    
+
     var body: some View {
         HStack(spacing: Padding.medium) {
-            ForEach(viewModel.statusItems) {
-                createStatusItem(type: $0)
+            ForEach(viewModel.statusItems) { item in
+                createStatusItem(type: item)
             }
-            Spacer()
         }
-        .frame(
-            maxWidth: .infinity,
-            idealHeight: viewModel.settings.statusItemSize.height
-        )
-        .fixedSize(
-            horizontal: false,
-            vertical: true
-        )
     }
 }
 
@@ -156,15 +147,25 @@ private extension StatusItemGroupView {
         case .alarms:
             expandingStatusItem(
                 .alarms,
-                isEnabled: alarmDataSource.nextEnabledAlarm != nil,
-                string: DateTemplate.time.dateString(date: alarmDataSource.nextEnabledAlarm?.nextFireDate),
+                isEnabled: alarmTimerManager.nextAlarm != nil,
+                string: DateTemplate.time.dateString(date: alarmTimerManager.nextAlarm?.nextFireDate),
                 onLongHoldAction: { [weak appsManager] in
                     appsManager?.open(app: .defined(.clock))
                     HapticManager.playHaptic(withIntensity: .custom(.medium))
                 }
             )
-            .onReceive(NotificationCenter.default.publisher(for: .refreshOnceContent).prepend(.prepended)) { [weak alarmDataSource] _ in
-                alarmDataSource?.updateAlarms()
+        case .timer:
+            expandingStatusItem(
+                .timer,
+                isEnabled: alarmTimerManager.nextTimer != nil,
+                string: viewModel.timerRemainingTime,
+                onLongHoldAction: { [weak appsManager] in
+                    appsManager?.open(app: .defined(.clock))
+                    HapticManager.playHaptic(withIntensity: .custom(.medium))
+                }
+            )
+            .onReceive(NotificationCenter.default.publisher(for: .refreshContent).prepend(.prepended)) { [weak viewModel] _ in
+                viewModel?.updateTimerRemainingTime(interval: alarmTimerManager.nextTimer?.fireDate.timeIntervalSinceNow)
             }
         case .dnd:
             imageStatusItem(.dnd, isEnabled: dndViewModel.isEnabled)

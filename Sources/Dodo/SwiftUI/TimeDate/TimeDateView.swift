@@ -8,46 +8,59 @@
 import SwiftUI
 
 struct TimeDateView: View {
-    @State private var timeString = "--:--"
-    @State private var dateString = "--/--/--"
-    private let settings = PreferenceManager.shared.settings
-
+    @StateObject private var viewModel = ViewModel()
+    
     var body: some View {
         VStack(
             alignment: .leading,
             spacing: 0.0
         ) {
-            Text(timeString)
-                .foregroundColor(Color(settings.colors.timeColor))
+            Text(viewModel.timeString)
+                .foregroundColor(Color(viewModel.settings.colors.timeColor))
                 .font(
                     .system(
-                        size: settings.appearance.timeFontSize,
-                        design: settings.appearance.selectedFont.representedFont
+                        size: viewModel.settings.appearance.timeFontSize,
+                        design: viewModel.settings.appearance.selectedFont.representedFont
                     )
                 )
-            Text(dateString)
-                .foregroundColor(Color(settings.colors.dateColor))
-                .font(
-                    .system(
-                        size: settings.appearance.dateFontSize,
-                        design: settings.appearance.selectedFont.representedFont
-                    )
-                )
+            dateView
+                .animation(.easeInOut)
         }
+        .disabled(viewModel.isDisplayingLocationName)
         .lineLimit(1)
         .onReceive(NotificationCenter.default.publisher(for: .refreshContent)) { _ in
-            refreshDates()
+            viewModel.refreshTime()
+        }
+        .onTapGesture {
+            viewModel.onDidTapTime()
         }
     }
 }
 
 private extension TimeDateView {
-    func refreshDates() {
-        if let time = settings.timeDate.timeTemplate.dateString() {
-            timeString = time
+    var dateView: some View {
+        HStack {
+            if let imageName = viewModel.locationImageName {
+                Image(systemName: imageName)
+                    .opacity(0.4)
+            }
+            
+            if viewModel.isDisplayingLocationName,
+               let locationName = viewModel.locationName {
+                Text(locationName)
+                    .transition(.opacity.combined(with: .slide))
+            } else {
+                Text(viewModel.dateString)
+                    .transition(.opacity.combined(with: .slide))
+            }
+            
         }
-        if let date = settings.timeDate.dateTemplate.dateString() {
-            dateString = date
-        }
+        .foregroundColor(Color(viewModel.settings.colors.dateColor))
+        .font(
+            .system(
+                size: viewModel.settings.appearance.dateFontSize,
+                design: viewModel.settings.appearance.selectedFont.representedFont
+            )
+        )
     }
 }

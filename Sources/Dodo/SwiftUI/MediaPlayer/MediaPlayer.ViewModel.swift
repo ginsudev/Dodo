@@ -41,6 +41,7 @@ extension MediaPlayer {
         
         @Published var albumArtwork: UIImage? = UIImage(systemName: "play.rectangle.fill") {
             didSet {
+                guard settings.mediaPlayer.isEnabledMediaBackdrop else { return }
                 self.artworkColour = self.albumArtwork?.dominantColour() ?? .black
             }
         }

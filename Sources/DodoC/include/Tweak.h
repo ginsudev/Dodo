@@ -139,6 +139,8 @@
 @property (readonly, nonatomic) NSUUID *timerID;
 @property (readonly, nonatomic) NSDate *fireDate;
 @property (readonly, nonatomic) CGFloat remainingTime;
+@property (readonly, nonatomic) NSURL *timerURL;
+@property (readonly, nonatomic) NSUInteger state;
 @end
 
 @interface MTTimerCache : NSObject

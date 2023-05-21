@@ -96,3 +96,5 @@
 "AUTO_REFRESH" = "自动刷新";
 "OPTIONS" = "设置";
 "INDICATOR" = "%@状态";
+"SHOW_MEDIA_BACKDROP" = "显示彩色背景";
+"SHOW_MEDIA_BACKDROP_DESC" = "播放音乐时，用专辑封面的主色当Dodo的背景颜色";

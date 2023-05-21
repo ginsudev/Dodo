@@ -17,9 +17,10 @@ enum DateTemplate: Equatable {
     
     var id: Self { self }
     
-    func dateString(date: Date? = nil) -> String? {
+    func dateString(date: Date? = nil, timeZone: TimeZone = .autoupdatingCurrent) -> String? {
         guard let formatter = Formatters.formatter(template: self) else { return nil }
         formatter.locale = .current
+        formatter.timeZone = timeZone
         return formatter.string(from: date ?? Date())
     }
 }

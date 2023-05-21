@@ -15,6 +15,7 @@ final class PreferenceStorage: ObservableObject {
     @Published(key: "isEnabled24HourMode", registry: registry) var isEnabled24HourMode = false
     @Published(key: "dateTemplate", registry: registry) var selectedDateTemplate = 0
     @Published(key: "dateTemplateCustomFormat", registry: registry) var dateTemplateCustomFormat = "EEEE, MMMM d"
+    @Published(key: "isEnabledMediaBackdrop", registry: registry) var isEnabledMediaBackdrop = true
 
     // Dimensions
     @Published(key: "notificationVerticalOffset", registry: registry) var notificationVerticalOffset = 190.0

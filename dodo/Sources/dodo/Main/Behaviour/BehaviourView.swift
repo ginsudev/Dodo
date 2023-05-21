@@ -22,6 +22,7 @@ struct BehaviourView: View {
             favouriteAppsSection
             statusIndicatorsSection
             weatherSection
+            mediaSection
             dimensionsSection
             chargingSection
         }
@@ -111,6 +112,16 @@ private extension BehaviourView {
             }
         } footer: {
             Text(Copy.weatherDesc)
+        }
+    }
+    
+    var mediaSection: some View {
+        Section {
+            Toggle(Copy.showMediaBackdrop, isOn: $preferenceStorage.isEnabledMediaBackdrop)
+        } header: {
+            Text(Copy.mediaPlayer)
+        } footer: {
+            Text(Copy.showMediaBackdropDesc)
         }
     }
     

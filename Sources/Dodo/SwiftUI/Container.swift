@@ -103,7 +103,7 @@ private extension Container {
             spacing: 10.0
         ) {
             if settings.statusItems.hasStatusItems {
-                StatusItemGroupView()
+                 StatusItemGroupView()
             }
             switch settings.mediaPlayer.timeMediaPlayerStyle {
             case .time:
@@ -119,6 +119,7 @@ private extension Container {
         .padding(.horizontal, Padding.system)
         .padding(.bottom, UIDevice._hasHomeButton() ? Padding.system : Padding.small)
         .padding(.bottom, settings.dimensions.androBarHeight)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     func updateFrame(_ frame: CGRect) {

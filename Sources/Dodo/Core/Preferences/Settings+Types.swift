@@ -23,7 +23,8 @@ extension Settings {
         let showDivider: Bool
         let isMarqueeLabels: Bool
         let themeName: String
-
+        let isEnabledMediaBackdrop: Bool
+        
         var themePath: String {
             "/Library/Application Support/Dodo/Themes/\(themeName)/".rootify
         }
@@ -71,6 +72,7 @@ extension Settings {
         let hasVibrationIcon: Bool
         let hasMutedIcon: Bool
         let hasFlashlightIcon: Bool
+        let hasTimerIcon: Bool
     }
     
     struct Colors {
@@ -85,6 +87,7 @@ extension Settings {
         let vibrationIconColor: UIColor
         let mutedIconColor: UIColor
         let secondsIconColor: UIColor
+        let timerIconColor: UIColor
                 
         /// Red
         static let batteryMinColor: UIColor = .systemRed
@@ -156,6 +159,7 @@ extension Settings {
         case seconds
         case chargingIcon
         case alarms
+        case timer
         case dnd
         case vibration
         case muted
@@ -174,6 +178,7 @@ extension Settings {
             case .vibration: return settings.hasVibrationIcon
             case .muted: return settings.hasMutedIcon
             case .flashlight: return settings.hasFlashlightIcon
+            case .timer: return settings.hasTimerIcon
             }
         }
         
@@ -192,6 +197,7 @@ extension Settings {
                 }
             case .muted: return "bell.slash.fill"
             case .flashlight: return "flashlight.on.fill"
+            case .timer: return "timer"
             }
         }
         
@@ -205,6 +211,7 @@ extension Settings {
             case .vibration: return enabledImageName
             case .muted: return "bell.fill"
             case .flashlight: return "flashlight.off.fill"
+            case .timer: return enabledImageName
             }
         }
         
@@ -219,6 +226,7 @@ extension Settings {
             case .vibration: return colors.vibrationIconColor
             case .muted: return colors.mutedIconColor
             case .flashlight: return colors.flashlightIconColor
+            case .timer: return colors.timerIconColor
             }
         }
         
@@ -230,7 +238,7 @@ extension Settings {
                  .muted,
                  .flashlight:
                 return enabledColor
-            case .alarms, .dnd, .vibration:
+            case .alarms, .dnd, .vibration, .timer:
                 return enabledColor?.withAlphaComponent(0.4)
             }
         }
@@ -244,7 +252,8 @@ extension Settings {
             case .alarms,
                 .dnd,
                 .vibration,
-                .muted:
+                .muted,
+                .timer:
                 return .visible
             case .chargingIcon:
                 return .visibleWhenEnabled

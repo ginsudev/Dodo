@@ -98,7 +98,9 @@ enum Copy {
     static let weatherFooter = "WEATHER_FOOTER".localize(bundle: .dodo)
     static let autoRefresh = "AUTO_REFRESH".localize(bundle: .dodo)
     static let options = "OPTIONS".localize(bundle: .dodo)
-    
+    static let showMediaBackdrop = "SHOW_MEDIA_BACKDROP".localize(bundle: .dodo)
+    static let showMediaBackdropDesc = "SHOW_MEDIA_BACKDROP_DESC".localize(bundle: .dodo)
+
     static func indicator(_ string: String) -> String {
         .init(format: "INDICATOR".localize(bundle: .dodo), string)
     }

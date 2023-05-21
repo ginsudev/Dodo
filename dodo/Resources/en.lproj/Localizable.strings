@@ -96,3 +96,5 @@
 "AUTO_REFRESH" = "Auto refresh";
 "OPTIONS" = "Options";
 "INDICATOR" = "%@ indicator";
+"SHOW_MEDIA_BACKDROP" = "Show media backdrop";
+"SHOW_MEDIA_BACKDROP_DESC" = "Show the album artwork's dominant colour as Dodo's background tint.";

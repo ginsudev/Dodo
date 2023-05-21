@@ -13,6 +13,9 @@ extension Notification.Name {
     static let refreshOnceContent = Notification.Name("Dodo.RefreshOnceContent")
     static let didUpdateHeight = Notification.Name("Dodo.didUpdateHeight")
     
+    // Status item
+    static let collapseStatusItems = Notification.Name("Dodo.CollapseStatusItems")
+    
     // Ringer
     /// Vibration on ringer state changed notification.
     static let didChangeRingVibrate = Notification.Name("Dodo.DidChangeRingVibrate")
@@ -34,6 +37,12 @@ extension Notification.Name {
     static let didChangeIsPlaying = Notification.Name("kMRMediaRemoteOriginNowPlayingApplicationIsPlayingDidChangeNotification")
     /// Media info did change notification.
     static let didChangeNowPlayingInfo = Notification.Name("kMRMediaRemotePlayerNowPlayingInfoDidChangeNotification")
+    
+    // Timer & Alarm
+    /// Next timer did change notification
+    static let didChangeNextTimer = Notification.Name("MTTimerManagerNextTimerChanged")
+    /// Next alarm did change notification
+    static let didChangeNextAlarm = Notification.Name("MTAlarmManagerNextAlarmChanged")
 }
 
 extension Notification {

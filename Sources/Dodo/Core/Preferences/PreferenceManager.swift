@@ -47,7 +47,8 @@ struct Settings {
             showSuggestions: dict["showSuggestions"] as? Bool ?? true,
             showDivider: dict["showDivider"] as? Bool ?? true,
             isMarqueeLabels: dict["isMarqueeLabels"] as? Bool ?? false,
-            themeName: dict["themeName"] as? String ?? "Rounded"
+            themeName: dict["themeName"] as? String ?? "Rounded",
+            isEnabledMediaBackdrop: dict["isEnabledMediaBackdrop"] as? Bool ?? true
         )
         
         appearance = .init(
@@ -121,7 +122,8 @@ struct Settings {
             hasDNDIcon: dict["hasDNDIcon"] as? Bool ?? true,
             hasVibrationIcon: dict["hasVibrationIcon"] as? Bool ?? false,
             hasMutedIcon: dict["hasMutedIcon"] as? Bool ?? true,
-            hasFlashlightIcon: dict["hasFlashlightIcon"] as? Bool ?? true
+            hasFlashlightIcon: dict["hasFlashlightIcon"] as? Bool ?? true,
+            hasTimerIcon: dict["hasTimerIcon"] as? Bool ?? true
         )
 
         colors = .init(
@@ -135,7 +137,8 @@ struct Settings {
             flashlightIconColor: UIColor(hex: dict["flashlightIconColor"] as? String ?? "FFFFFF"),
             vibrationIconColor: UIColor(hex: dict["vibrationIconColor"] as? String ?? "FFFFFF"),
             mutedIconColor: UIColor(hex: dict["mutedIconColor"] as? String ?? "FFFFFF"),
-            secondsIconColor: UIColor(hex: dict["secondsIconColor"] as? String ?? "FFFFFF")
+            secondsIconColor: UIColor(hex: dict["secondsIconColor"] as? String ?? "FFFFFF"),
+            timerIconColor: UIColor(hex: dict["timerIconColor"] as? String ?? "FFFFFF")
         )
     }
 }
