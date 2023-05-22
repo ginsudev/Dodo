@@ -60,11 +60,7 @@ extension StatusItemGroupView {
                 PreferenceManager.shared.defaults.set(isActiveFlashlight, forKey: Keys.isActiveFlashlight)
             }
         }
-        
-        init() {
-            
-        }
-        
+
         func didChangeLockStatus(notification: Notification) {
             if let info = notification.userInfo,
                let state = info["SBAggregateLockStateKey"] as? Int {

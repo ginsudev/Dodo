@@ -43,7 +43,6 @@ private extension MainContent {
             vertical: false
         )
         .readFrame(for: $infoViewFrame)
-        .frame(width: infoViewFrame.width)
     }
     
     @ViewBuilder

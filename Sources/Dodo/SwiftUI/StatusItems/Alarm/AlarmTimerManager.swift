@@ -16,8 +16,6 @@ final class AlarmTimerManager: ObservableObject {
     private static let nextAlarmKey = "NextAlarm"
     private static let nextTimerKey = "NextTimer"
     
-    private var bag: Set<AnyCancellable> = []
-    
     @Published private(set) var nextTimer: Timer? = PreferenceManager.shared.defaults.timer(forKey: Keys.nextTimer) {
         didSet {
             PreferenceManager.shared.defaults.set(timer: nextTimer, forKey: Keys.nextTimer)
@@ -45,10 +43,7 @@ private extension AlarmTimerManager {
                 guard let alarm = $0.userInfo?[Self.nextAlarmKey] as? MTAlarm else { return nil }
                 return self?.convert(alarm: alarm)
             }
-            .sink { [weak self] in
-                self?.nextAlarm = $0
-            }
-            .store(in: &bag)
+            .assign(to: &$nextAlarm)
         
         NotificationCenter.default.publisher(for: .didChangeNextTimer)
             .receive(on: DispatchQueue.main)
@@ -56,10 +51,7 @@ private extension AlarmTimerManager {
                 guard let timer = $0.userInfo?[Self.nextTimerKey] as? MTTimer else { return nil }
                 return self?.convert(timer: timer)
             }
-            .sink { [weak self] in
-                self?.nextTimer = $0
-            }
-            .store(in: &bag)
+            .assign(to: &$nextTimer)
     }
     
     func convert(alarm: MTAlarm?) -> Alarm? {
