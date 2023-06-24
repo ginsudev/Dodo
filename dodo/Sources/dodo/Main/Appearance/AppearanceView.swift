@@ -144,16 +144,14 @@ private extension AppearanceView {
                     )
                 }
             }
-            if Ecosystem.jailbreakType == .root {
-                Stepper(
-                    value: $preferenceStorage.weatherFontSize,
-                    in: 1...100
-                ) {
-                    SubtitleText(
-                        title: Copy.weatherFontSize,
-                        subtitle: "\(preferenceStorage.weatherFontSize)"
-                    )
-                }
+            Stepper(
+                value: $preferenceStorage.weatherFontSize,
+                in: 1...100
+            ) {
+                SubtitleText(
+                    title: Copy.weatherFontSize,
+                    subtitle: "\(preferenceStorage.weatherFontSize)"
+                )
             }
         } header: {
             Text(Copy.fonts)

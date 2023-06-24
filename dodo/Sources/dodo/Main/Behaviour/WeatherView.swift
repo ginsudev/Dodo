@@ -14,13 +14,6 @@ struct WeatherView: View {
     
     var body: some View {
         Form {
-            if Ecosystem.jailbreakType == .rootless {
-                Section {
-                    Text(Copy.unavailableRootless)
-                        .foregroundColor(.red)
-                }
-            }
-            
             Section {
                 Toggle(Copy.enabled, isOn: $preferenceStorage.showWeather)
             } footer: {
@@ -35,7 +28,6 @@ struct WeatherView: View {
             }
             .disabled(!preferenceStorage.showWeather)
         }
-        .disabled(Ecosystem.jailbreakType == .rootless)
         .navigationTitle(Copy.weather)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

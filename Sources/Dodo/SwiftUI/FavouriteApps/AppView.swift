@@ -12,7 +12,9 @@ import GSCore
 //MARK: - Public
 
 struct AppView: View {
-    @EnvironmentObject private var appsManager: AppsManager
+    @EnvironmentObject
+    private var appsManager: AppsManager
+    
     private let settings = PreferenceManager.shared.settings.favouriteApps
 
     private var installedApplications: [String] {

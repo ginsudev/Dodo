@@ -10,27 +10,18 @@ import SwiftUI
 //MARK: Public
 
 struct MediaPlayer: View {
-    @Environment(\.isVisibleLockScreen) var isVisibleLockScreen
-    @Environment(\.isLandscape) var isLandscape
-    @ObservedObject var viewModel: ViewModel
+    @Environment(\.isVisibleLockScreen)
+    var isVisibleLockScreen
+    
+    @Environment(\.isLandscape)
+    var isLandscape
+    
+    @ObservedObject
+    var viewModel: ViewModel
+    
     let style: Settings.MediaPlayerStyle
 
     var body: some View {
-        contentView
-            .onReceive(NotificationCenter.default.publisher(for: .didChangeIsPlaying).prepend(.prepended)) { [weak viewModel] notification in
-                viewModel?.didChangePlaybackState(notification: notification)
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .didChangeNowPlayingInfo).prepend(.prepended)) { [weak viewModel] _ in
-                viewModel?.didChangeNowPlayingInfo()
-            }
-    }
-}
-
-//MARK: - Private
-
-private extension MediaPlayer {
-    @ViewBuilder
-    var contentView: some View {
         switch style {
         case .modular:
             playerView
@@ -40,7 +31,11 @@ private extension MediaPlayer {
             playerView
         }
     }
-    
+}
+
+//MARK: - Private
+
+private extension MediaPlayer {    
     var playerView: some View {
         Group {
             if viewModel.hasActiveMediaApp {
@@ -75,10 +70,7 @@ private extension MediaPlayer {
                 lineWidth: 0.4
             )
             .colorMultiply(Color(viewModel.modularBackgroundColorMultiply))
-            .animation(
-                .easeInOut,
-                value: viewModel.artworkColour
-            )
+            .animation(.easeInOut, value: viewModel.artworkColour)
     }
     
     @ViewBuilder
@@ -102,15 +94,9 @@ private extension MediaPlayer {
             Image(uiImage: image)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(
-                    maxWidth: 45,
-                    maxHeight: 45
-                )
+                .frame(maxWidth: 45, maxHeight: 45)
                 .cornerRadius(style.artworkRadius)
-                .shadow(
-                    color: .black.opacity(0.4),
-                    radius: style.artworkRadius
-                )
+                .shadow(color: .black.opacity(0.4), radius: style.artworkRadius)
         }
     }
     
@@ -140,15 +126,9 @@ private extension MediaPlayer {
             )
         } else {
             Text(viewModel.trackName)
-                .font(
-                    .system(
-                        size: fontSize,
-                        design: viewModel.settings.appearance.selectedFont.representedFont
-                    )
-                )
+                .dodoFont(size: fontSize)
                 .foregroundColor(Color(viewModel.foregroundColour))
                 .lineLimit(1)
-
         }
     }
 }

@@ -6,14 +6,19 @@
 //
 
 import Foundation
+import GSCore
 
-final class GlobalState: ObservableObject {
-    static let shared = GlobalState()
-    @Published var isLandscape = false
-    @Published var isScreenOff = false {
+final class LocalState: ObservableObject {
+    static let shared = LocalState()
+    
+    var isLandscape: Bool { GlobalState.shared.isLandscapeExcludingiPad }
+    
+    @Published
+    var isScreenOff = false {
         didSet {
             NotificationCenter.default.post(name: .refreshOnceContent, object: nil)
         }
     }
+    
     var dodoFrame: CGRect = .zero
 }

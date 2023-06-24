@@ -8,6 +8,7 @@
 import DodoC
 import SwiftUI
 import GSCore
+import Combine
 
 /// AppsManager
 /// Storing app identifiers and shortcuts to opening applications.
@@ -15,10 +16,15 @@ import GSCore
 final class AppsManager: ObservableObject {
     static let shared = AppsManager()
     
-    @Published var suggestedAppBundleIdentifier = PreferenceManager.shared.defaults.string(forKey: Keys.suggestedMediaApp) ?? "com.apple.camera" {
-        didSet {
-            PreferenceManager.shared.defaults.set(suggestedAppBundleIdentifier, forKey: Keys.suggestedMediaApp)
-        }
+    private var bag: Set<AnyCancellable> = []
+    
+    @Published
+    var suggestedAppBundleIdentifier = PreferenceManager.shared.defaults.string(forKey: Keys.suggestedMediaApp) ?? "com.apple.camera"
+    
+    private init() {
+        $suggestedAppBundleIdentifier
+            .sink { PreferenceManager.shared.defaults.set($0, forKey: Keys.suggestedMediaApp) }
+            .store(in: &bag)
     }
 }
 

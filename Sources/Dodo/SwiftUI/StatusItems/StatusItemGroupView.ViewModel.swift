@@ -24,37 +24,50 @@ extension StatusItemGroupView {
         let statusItems: [Settings.StatusItem] = Settings.StatusItem.allCases.filter(\.isEnabled)
         let settings = PreferenceManager.shared.settings.statusItems
         
-        // Timer countdown
-        @Published private(set) var timerRemainingTime = ""
+        // MARK: Timer countdown
+        @Published
+        private(set) var timerRemainingTime = ""
 
-        // Seconds
-        @Published private(set) var secondsString = ""
+        // MARK: Seconds
+        @Published
+        private(set) var secondsString = ""
         
-        // Lock
-        @Published private(set) var isLocked = false
+        // MARK: Lock
+        @Published
+        private(set) var isLocked = false
         
-        // Charging
-        @Published private(set) var isCharging: Bool = false
-        @Published private(set) var chargingIndicationColor: UIColor = .white
-        @Published private(set) var chargingImageName: String = "bolt.slash.circle.fill"
-        @Published private(set) var batteryPercentage: String = ""
+        // MARK: Charging
+        @Published
+        private(set) var isCharging: Bool = false
         
-        // Vibrate
-        @Published var isEnabledVibration = PreferenceManager.shared.defaults.bool(forKey: Keys.isActiveVibration) {
+        @Published
+        private(set) var chargingIndicationColor: UIColor = .white
+        
+        @Published
+        private(set) var chargingImageName: String = "bolt.slash.circle.fill"
+        
+        @Published
+        private(set) var batteryPercentage: String = ""
+        
+        // MARK: Vibrate
+        @Published
+        var isEnabledVibration = PreferenceManager.shared.defaults.bool(forKey: Keys.isActiveVibration) {
             didSet {
                 PreferenceManager.shared.defaults.set(isEnabledVibration, forKey: Keys.isActiveVibration)
             }
         }
         
-        // Ringer
-        @Published var isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: Keys.isActiveMute) {
+        // MARK: Ringer
+        @Published
+        var isEnabledMute = PreferenceManager.shared.defaults.bool(forKey: Keys.isActiveMute) {
             didSet {
                 PreferenceManager.shared.defaults.set(isEnabledMute, forKey: Keys.isActiveMute)
             }
         }
         
-        // Flashlight
-        @Published var isActiveFlashlight = PreferenceManager.shared.defaults.bool(forKey: Keys.isActiveFlashlight) {
+        // MARK: Flashlight
+        @Published
+        var isActiveFlashlight = PreferenceManager.shared.defaults.bool(forKey: Keys.isActiveFlashlight) {
             didSet {
                 toggleFlashlight(enabled: isActiveFlashlight)
                 PreferenceManager.shared.defaults.set(isActiveFlashlight, forKey: Keys.isActiveFlashlight)

@@ -6,7 +6,7 @@ struct Main: HookGroup {}
 struct MediaiOS15: HookGroup {}
 struct MediaiOS14: HookGroup {}
 
-//MARK: - Dodo view
+// MARK: - Dodo view
 class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController> {
     typealias Group = Main
     
@@ -33,22 +33,16 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     
     func viewWillAppear(_ animated: Bool) {
         orig.viewWillAppear(animated)
-        
-        let isLandscape = (UIScreen.main.bounds.width > UIScreen.main.bounds.height) && !UIDevice.currentIsIPad()
-        GlobalState.shared.isLandscape = isLandscape
-
-        trailingConstraint.isActive = !GlobalState.shared.isLandscape
+        trailingConstraint.isActive = !LocalState.shared.isLandscape
         target.view.setNeedsLayout()
     }
     
     func _listViewDefaultContentInsets() -> UIEdgeInsets {
         var insets = orig._listViewDefaultContentInsets()
         
-        guard !GlobalState.shared.isLandscape || UIDevice.currentIsIPad() else {
-            return insets
-        }
+        guard !LocalState.shared.isLandscape else { return insets }
         
-        insets.bottom = GlobalState.shared.dodoFrame.height + 50
+        insets.bottom = LocalState.shared.dodoFrame.height + 50
         
         guard PreferenceManager.shared.settings.mediaPlayer.timeMediaPlayerStyle != .mediaPlayer else {
             return insets
@@ -60,14 +54,12 @@ class CSCombinedListViewController_Hook: ClassHook<CSCombinedListViewController>
     
     //orion: new
     func dodoNotificationVerticalOffset() -> Double {
-        guard !GlobalState.shared.isLandscape || UIDevice.currentIsIPad() else {
-            return 0
-        }
+        guard !LocalState.shared.isLandscape else { return 0 }
         return PreferenceManager.shared.settings.dimensions.notificationVerticalOffset
     }
 }
 
-//MARK: - Refresh media info on SpringBoard launch.
+// MARK: - Refresh media info on SpringBoard launch.
 
 class SpringBoard_Hook: ClassHook<SpringBoard> {
     typealias Group = Main
@@ -127,7 +119,7 @@ class SBLockScreenPluginManager_Hook: ClassHook<NSObject> {
     
     func setEnabled(_ enabled: Bool) {
         orig.setEnabled(enabled)
-        GlobalState.shared.isScreenOff = !enabled
+        LocalState.shared.isScreenOff = !enabled
     }
 }
 
@@ -209,7 +201,7 @@ class CSCoverSheetViewController_Hook: ClassHook<CSCoverSheetViewController> {
 class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationStructuredListViewController> {
     typealias Group = Main
     
-    @Property (.nonatomic, .retain) var cropFrame = CAGradientLayer()
+    @Property(.nonatomic, .retain) var cropFrame = CAGradientLayer()
 
     func viewDidLoad() {
         orig.viewDidLoad()
@@ -228,10 +220,11 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
     
     func viewDidAppear(_ animated: Bool) {
         orig.viewDidAppear(animated)
-        guard !GlobalState.shared.isLandscape || UIDevice.currentIsIPad() else {
+        guard !LocalState.shared.isLandscape else {
             target.view.layer.mask = nil
             return
         }
+        
         dodoSetupMask()
     }
     
@@ -241,8 +234,8 @@ class NCNotificationStructuredListViewController_Hook: ClassHook<NCNotificationS
                 
         let screenHeight = target.view.bounds.maxY
         let androBarHeight = PreferenceManager.shared.settings.dimensions.androBarHeight
-        let startY: CGFloat = (GlobalState.shared.dodoFrame.minY - androBarHeight - 50) / screenHeight
-        let endY: CGFloat = (GlobalState.shared.dodoFrame.minY - androBarHeight) / screenHeight
+        let startY: CGFloat = (LocalState.shared.dodoFrame.minY - androBarHeight - 50) / screenHeight
+        let endY: CGFloat = (LocalState.shared.dodoFrame.minY - androBarHeight) / screenHeight
 
         cropFrame.startPoint = CGPoint(
             x: 0.5,

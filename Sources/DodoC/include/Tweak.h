@@ -1,8 +1,15 @@
 #import <UIKit/UIKit.h>
 #import <PeterDev/libpddokdo.h>
 #import <AVKit/AVKit.h>
+#import <CoreLocation/CoreLocation.h>
 #include "MediaRemote.h"
 #include "DarwinNotificationsManager.h"
+
+#pragma mark - Location
+
+@interface CLLocationManager (Private)
+- (instancetype)initWithEffectiveBundleIdentifier:(NSString *)bundleIdentifier;
+@end
 
 #pragma mark - Icon stuff
 

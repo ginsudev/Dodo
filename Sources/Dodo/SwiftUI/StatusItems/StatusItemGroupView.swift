@@ -11,14 +11,24 @@ import DodoC
 // MARK: - Public
 
 struct StatusItemGroupView: View {
-    @Environment(\.isVisibleLockScreen) var isVisibleLockScreen
-    @Environment(\.isLandscape) var isLandscape
-    @EnvironmentObject var appsManager: AppsManager
-    @StateObject private var viewModel = ViewModel()
-    @StateObject private var alarmTimerManager = AlarmTimerManager()
+    @Environment(\.isVisibleLockScreen)
+    var isVisibleLockScreen
+    
+    @Environment(\.isLandscape)
+    var isLandscape
+    
+    @EnvironmentObject
+    var appsManager: AppsManager
+    
+    @StateObject
+    private var viewModel = ViewModel()
+    
+    @StateObject
+    private var alarmTimerManager = AlarmTimerManager()
     
     // TODO: - Merge this into the ViewModel and Combine-ify them.
-    @StateObject private var dndViewModel = DNDViewModel.shared
+    @StateObject
+    private var dndViewModel = DNDViewModel.shared
 
     var body: some View {
         HStack(spacing: Padding.medium) {

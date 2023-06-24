@@ -11,10 +11,17 @@ import DodoC
 // MARK: - Public
 
 struct Container: View {
-    @StateObject private var mediaModel = MediaPlayer.ViewModel()
-    @StateObject private var globalState = GlobalState.shared
-    @StateObject private var appsManager = AppsManager.shared
-    @State private var isVisibleLockScreen = true
+    @StateObject
+    private var mediaModel = MediaPlayer.ViewModel()
+    
+    @StateObject
+    private var localState = LocalState.shared
+    
+    @StateObject
+    private var appsManager = AppsManager.shared
+    
+    @State
+    private var isVisibleLockScreen = true
     
     private let settings = PreferenceManager.shared.settings
 
@@ -28,8 +35,8 @@ struct Container: View {
         .readFrame(for: { frame in
             updateFrame(frame)
         })
-        .environment(\.isVisibleLockScreen, !globalState.isScreenOff && isVisibleLockScreen)
-        .environment(\.isLandscape, globalState.isLandscape)
+        .environment(\.isVisibleLockScreen, !localState.isScreenOff && isVisibleLockScreen)
+        .environment(\.isLandscape, localState.isLandscape)
         .onAppear {
             isVisibleLockScreen = true
         }
@@ -50,7 +57,7 @@ struct Container: View {
 private extension Container {
     @ViewBuilder
     var gradient: some View {
-        if !globalState.isLandscape {
+        if !localState.isLandscape {
             LinearGradient(
                 colors: [
                     Color.white.opacity(0.0),
@@ -79,7 +86,7 @@ private extension Container {
     @ViewBuilder
     var divider: some View {
         if settings.mediaPlayer.showDivider,
-           !globalState.isLandscape,
+           !localState.isLandscape,
            (settings.mediaPlayer.showSuggestions || mediaModel.hasActiveMediaApp) {
             Divider()
                 .overlay(Color(settings.colors.dividerColor).opacity(0.5))
@@ -88,12 +95,9 @@ private extension Container {
     
     @ViewBuilder
     var favouriteApps: some View {
-        if settings.favouriteApps.hasFavouriteApps, !globalState.isLandscape {
+        if settings.favouriteApps.hasFavouriteApps, !localState.isLandscape {
             AppView()
-                .frame(
-                    height: 80,
-                    alignment: .bottom
-                )
+                .frame(height: 80, alignment: .bottom)
         }
     }
     
@@ -123,7 +127,7 @@ private extension Container {
     
     func updateFrame(_ frame: CGRect) {
         DispatchQueue.main.async {
-            globalState.dodoFrame = frame
+            localState.dodoFrame = frame
             NotificationCenter.default.post(
                 name: .didUpdateHeight,
                 object: nil

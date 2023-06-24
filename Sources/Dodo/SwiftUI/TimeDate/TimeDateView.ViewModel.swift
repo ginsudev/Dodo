@@ -12,10 +12,17 @@ import GSCore
 
 extension TimeDateView {
     final class ViewModel: ObservableObject {
-        @Published private(set) var isDisplayingPrimary: Bool = true
-        @Published private(set) var timeString = "--:--"
-        @Published private(set) var dateString = "--/--/--"
-        @Published var isDisplayingLocationName: Bool = false
+        @Published
+        private(set) var isDisplayingPrimary = true
+        
+        @Published
+        private(set) var timeString = "--:--"
+        
+        @Published
+        private(set) var dateString = "--/--/--"
+        
+        @Published
+        var isDisplayingLocationName = false
         
         private let dualClock: DualClock = .init()
         let settings = PreferenceManager.shared.settings

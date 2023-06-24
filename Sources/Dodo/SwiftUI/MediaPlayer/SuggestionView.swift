@@ -11,8 +11,12 @@ import DodoC
 //MARK: - Public
 
 struct SuggestionView: View {
-    @Environment(\.isLandscape) var isLandscape
-    @EnvironmentObject var appsManager: AppsManager
+    @Environment(\.isLandscape)
+    var isLandscape
+    
+    @EnvironmentObject
+    var appsManager: AppsManager
+    
     private let viewModel = ViewModel()
     
     var body: some View {
@@ -32,36 +36,28 @@ private extension SuggestionView {
             appsManager.open(app: .custom(appsManager.suggestedAppBundleIdentifier))
         } label: {
             HStack {
-                Image(uiImage: viewModel.suggestedAppIcon)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(
-                        maxWidth: 45,
-                        maxHeight: 45
-                    )
+                openAppButtonImage
                 openAppButtonText
             }
         }
+    }
+    
+    var openAppButtonImage: some View {
+        Image(uiImage: viewModel.suggestedAppIcon)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(maxWidth: 45, maxHeight: 45)
     }
     
     var openAppButtonText: some View {
         VStack(alignment: .leading) {
             Text(LocalisedText.recommended.text)
                 .foregroundColor(.white)
-                .font(
-                    .system(
-                        size: 15.0,
-                        design: viewModel.settings.appearance.selectedFont.representedFont
-                    )
-                )
+                .dodoFont(size: 15.0)
+            
             Text(LocalisedText.tap.text)
                 .foregroundColor(Color(UIColor.lightText))
-                .font(
-                    .system(
-                        size: 13.0,
-                        design: viewModel.settings.appearance.selectedFont.representedFont
-                    )
-                )
+                .dodoFont(size: 13.0)
         }
         .multilineTextAlignment(.leading)
     }
@@ -89,12 +85,7 @@ private extension SuggestionView {
         
         if bluetoothButtonType == .iconWithText {
             Text("\(Image(systemName: "airplayaudio")) \(LocalisedText.bluetooth.text)")
-                .font(
-                    .system(
-                        size: 13.0,
-                        design: viewModel.settings.appearance.selectedFont.representedFont
-                    )
-                )
+                .dodoFont(size: 13.0)
                 .padding(
                     EdgeInsets(
                         top: 10,

@@ -43,11 +43,17 @@ extension View {
         perform action: @escaping (P.Output) -> Void
     ) -> some View where P : Publisher, P.Failure == Never {
         if condition {
-            self
-                .onReceive(publisher, perform: action)
+            self.onReceive(publisher, perform: action)
         } else {
             self
         }
+    }
+    
+    func dodoFont(size: CGFloat) -> some View {
+        self.font(.system(
+            size: size,
+            design: PreferenceManager.shared.settings.appearance.selectedFont.representedFont
+        ))
     }
 }
 

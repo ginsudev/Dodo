@@ -33,7 +33,7 @@ final class DDBaseController: UIViewController {
         hostingController.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = !GlobalState.shared.isLandscape
+        hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = !LocalState.shared.isLandscape
         hostingController.view.updateConstraints()
     }
 }

@@ -11,7 +11,9 @@ import DodoC
 //MARK: - Public
 
 struct WeatherView: View {
-    @StateObject private var viewModel = ViewModel()
+    @StateObject
+    private var viewModel = ViewModel()
+    
     private let settings = PreferenceManager.shared.settings
 
     var body: some View {
@@ -39,23 +41,23 @@ struct WeatherView: View {
 private extension WeatherView {
     var weatherInfo: some View {
         HStack {
-            Image(uiImage: viewModel.conditionImage)
-                .resizable()
-                .renderingMode(.original)
-                .frame(
-                    width: settings.statusItems.statusItemSize.width,
-                    height: settings.statusItems.statusItemSize.height
-                )
-                .aspectRatio(contentMode: .fit)
-            Text("\(viewModel.locationName) | \(viewModel.temperature)")
-                .font(
-                    .system(
-                        size: settings.appearance.weatherFontSize,
-                        design: settings.appearance.selectedFont.representedFont
+            if let imageName = viewModel.conditionImageName {
+                Image(imageName)
+                    .resizable()
+                    .renderingMode(.original)
+                    .frame(
+                        width: settings.statusItems.statusItemSize.width,
+                        height: settings.statusItems.statusItemSize.height
                     )
-                )
-                .lineLimit(1)
-                .foregroundColor(Color(settings.colors.weatherColor))
+                    .aspectRatio(contentMode: .fit)
+            }
+            
+            if let displayedString = viewModel.displayedString {
+                Text(displayedString)
+                    .dodoFont(size: settings.appearance.weatherFontSize)
+                    .lineLimit(1)
+                    .foregroundColor(Color(settings.colors.weatherColor))
+            }
         }
     }
 }

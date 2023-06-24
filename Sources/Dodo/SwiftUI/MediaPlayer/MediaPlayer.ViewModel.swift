@@ -8,13 +8,42 @@
 import Foundation
 import DodoC
 import GSCore
+import Combine
 
 // MARK: - Public
 
 extension MediaPlayer {
     final class ViewModel: ObservableObject {
+        // Private keys
+        private static let isPlayingKey = "kMRMediaRemoteNowPlayingApplicationIsPlayingUserInfoKey"
+        private static let artworkDataKey = "kMRMediaRemoteNowPlayingInfoArtworkData"
+
         static let themePath: String = PreferenceManager.shared.settings.mediaPlayer.themePath
-        let settings = PreferenceManager.shared.settings
+        
+        private var bag: Set<AnyCancellable> = []
+        
+        @Published
+        private var mediaAppBundleID: String?
+        
+        @Published
+        var albumArtwork: UIImage? = UIImage(systemName: "play.rectangle.fill")
+        
+        @Published
+        var artworkColour: UIColor = .black
+
+        @Published
+        private(set) var isPlaying = false
+        
+        @Published
+        var trackName = ""
+        
+        @Published
+        var artistName = ""
+        
+        @Published
+        var foregroundColour: UIColor = .white
+        
+        var hasActiveMediaApp: Bool { mediaAppBundleID != nil }
         
         var modularBackgroundColorMultiply: UIColor {
             if !hasActiveMediaApp,
@@ -27,36 +56,11 @@ extension MediaPlayer {
         
         var previousBackgroundColor: UIColor?
         
-        @Published var hasActiveMediaApp = false {
-            didSet {
-                guard !hasActiveMediaApp else {
-                    if let identifier = nowPlayingAppIdentifier() {
-                        AppsManager.shared.suggestedAppBundleIdentifier = identifier
-                    }
-                    return
-                }
-                artworkColour = .black
-            }
-        }
+        let settings = PreferenceManager.shared.settings
         
-        @Published var albumArtwork: UIImage? = UIImage(systemName: "play.rectangle.fill") {
-            didSet {
-                guard settings.mediaPlayer.isEnabledMediaBackdrop else { return }
-                self.artworkColour = self.albumArtwork?.dominantColour() ?? .black
-            }
+        init() {
+            subscribe()
         }
-        
-        @Published var artworkColour: UIColor = .black {
-            didSet {
-                guard settings.mediaPlayer.playerStyle == .modular else { return }
-                self.foregroundColour = self.artworkColour.suitableForegroundColour()
-            }
-        }
-
-        @Published private(set) var isPlaying = false
-        @Published var trackName = ""
-        @Published var artistName = ""
-        @Published var foregroundColour: UIColor = .white
     }
 }
 
@@ -92,55 +96,80 @@ extension MediaPlayer.ViewModel {
         }
     }
     
-    func nowPlayingAppIdentifier() -> String? {
-        guard let app = SBMediaController.sharedInstance().nowPlayingApplication() else { return nil }
-        return app.bundleIdentifier
-    }
-    
     func openNowPlayingApp() {
-        if let nowPlayingIdentifier = nowPlayingAppIdentifier() {
-            AppsManager.shared.open(app: .custom(nowPlayingIdentifier))
-        }
-    }
-    
-    func didChangeNowPlayingInfo() {
-        //Update track info (Artwork, title, artist, etc..).
-        MRMediaRemoteGetNowPlayingInfo(
-            .main,
-            { [weak self] information in
-                guard let dict = information as? [String: AnyObject] else { return }
-                if let contentItem = MRContentItem(nowPlayingInfo: dict),
-                   let metadata = contentItem.metadata {
-                    //Track name & artist
-                    if let title = metadata.title {
-                        self?.trackName = title
-                    }
-                    if let trackArtistName = metadata.trackArtistName {
-                        self?.artistName = trackArtistName
-                    }
-                    //Album artwork
-                    if let artworkData = dict["kMRMediaRemoteNowPlayingInfoArtworkData"] as? Data,
-                       let image = UIImage(data: artworkData) {
-                        self?.albumArtwork = image
-                    }
-                }
-            }
-        )
-    }
-    
-    func didChangePlaybackState(notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let isPlaying = userInfo["kMRMediaRemoteNowPlayingApplicationIsPlayingUserInfoKey"] as? Bool
-        else { return }
-        didChangePlaybackState(isPlaying: isPlaying)
+        guard let mediaAppBundleID else { return }
+        AppsManager.shared.open(app: .custom(mediaAppBundleID))
     }
 }
 
 // MARK: - Private
 
 private extension MediaPlayer.ViewModel {
+    func subscribe() {
+        NotificationCenter.default.publisher(for: .didChangeIsPlaying)
+            .map { $0.userInfo?[Self.isPlayingKey] as? Bool ?? false }
+            .sink { [weak self] in self?.didChangePlaybackState(isPlaying: $0) }
+            .store(in: &bag)
+        
+        NotificationCenter.default.publisher(for: .didChangeNowPlayingInfo)
+            .prepend(.prepended)
+            .sink { [weak self] _ in self?.didChangeNowPlayingInfo() }
+            .store(in: &bag)
+        
+        $mediaAppBundleID
+            .sink { [ weak self] in
+                if let identifier = $0 {
+                    AppsManager.shared.suggestedAppBundleIdentifier = identifier
+                } else {
+                    self?.artworkColour = .black
+                }
+            }
+            .store(in: &bag)
+        
+        if settings.mediaPlayer.isEnabledMediaBackdrop {
+            $albumArtwork
+                .map { $0?.dominantColour() }
+                .replaceNil(with: .black)
+                .assign(to: &$artworkColour)
+        }
+        
+        if settings.mediaPlayer.playerStyle == .modular {
+            $artworkColour
+                .map { $0.suitableForegroundColour() }
+                .assign(to: &$foregroundColour)
+        }
+    }
+    
     func didChangePlaybackState(isPlaying: Bool) {
-        hasActiveMediaApp = nowPlayingAppIdentifier() != nil
+        mediaAppBundleID = nowPlayingAppIdentifier()
         self.isPlaying = hasActiveMediaApp && isPlaying
+    }
+    
+    func nowPlayingAppIdentifier() -> String? {
+        guard let app = SBMediaController.sharedInstance().nowPlayingApplication() else { return nil }
+        return app.bundleIdentifier
+    }
+    
+    func didChangeNowPlayingInfo() {
+        // Update track info (Artwork, title, artist, etc..).
+        MRMediaRemoteGetNowPlayingInfo(.main) { [weak self] dict in
+            guard let dict = dict as? [String: Any],
+                  let contentItem = MRContentItem(nowPlayingInfo: dict),
+                  let metadata = contentItem.metadata
+            else { return }
+            
+            if let title = metadata.title {
+                self?.trackName = title
+            }
+            
+            if let trackArtistName = metadata.trackArtistName {
+                self?.artistName = trackArtistName
+            }
+            
+            if let artworkData = dict[Self.artworkDataKey] as? Data,
+               let image = UIImage(data: artworkData) {
+                self?.albumArtwork = image
+            }
+        }
     }
 }

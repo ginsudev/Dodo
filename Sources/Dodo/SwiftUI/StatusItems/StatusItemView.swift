@@ -16,8 +16,11 @@ struct StatusItemView: View, Identifiable {
         case expanding(text: String, image: String)
     }
     
-    @State var id = UUID().uuidString
-    @State private var isExpanded = false
+    @State
+    var id = UUID().uuidString
+    
+    @State
+    private var isExpanded = false
     
     var isReallyExpanded: Bool {
         isExpanded && isEnabledExpansion

@@ -16,17 +16,13 @@ final class AlarmTimerManager: ObservableObject {
     private static let nextAlarmKey = "NextAlarm"
     private static let nextTimerKey = "NextTimer"
     
-    @Published private(set) var nextTimer: Timer? = PreferenceManager.shared.defaults.timer(forKey: Keys.nextTimer) {
-        didSet {
-            PreferenceManager.shared.defaults.set(timer: nextTimer, forKey: Keys.nextTimer)
-        }
-    }
+    private var bag: Set<AnyCancellable> = []
     
-    @Published private(set) var nextAlarm: Alarm? = PreferenceManager.shared.defaults.alarm(forKey: Keys.nextAlarm) {
-        didSet {
-            PreferenceManager.shared.defaults.set(alarm: nextAlarm, forKey: Keys.nextAlarm)
-        }
-    }
+    @Published
+    private(set) var nextTimer: Timer? = PreferenceManager.shared.defaults.timer(forKey: Keys.nextTimer)
+    
+    @Published
+    private(set) var nextAlarm: Alarm? = PreferenceManager.shared.defaults.alarm(forKey: Keys.nextAlarm)
     
     init() {
         subscribe()
@@ -39,19 +35,27 @@ private extension AlarmTimerManager {
     func subscribe() {
         NotificationCenter.default.publisher(for: .didChangeNextAlarm)
             .receive(on: DispatchQueue.main)
-            .map { [weak self] in
-                guard let alarm = $0.userInfo?[Self.nextAlarmKey] as? MTAlarm else { return nil }
-                return self?.convert(alarm: alarm)
-            }
+            .map { $0.userInfo?[Self.nextAlarmKey] as? MTAlarm }
+            .map { [weak self] in self?.convert(alarm: $0) }
             .assign(to: &$nextAlarm)
         
         NotificationCenter.default.publisher(for: .didChangeNextTimer)
             .receive(on: DispatchQueue.main)
-            .map { [weak self] in
-                guard let timer = $0.userInfo?[Self.nextTimerKey] as? MTTimer else { return nil }
-                return self?.convert(timer: timer)
-            }
+            .map { $0.userInfo?[Self.nextTimerKey] as? MTTimer }
+            .map { [weak self] in self?.convert(timer: $0) }
             .assign(to: &$nextTimer)
+        
+        $nextAlarm
+            .sink {
+                PreferenceManager.shared.defaults.set(alarm: $0, forKey: Keys.nextAlarm)
+            }
+            .store(in: &bag)
+        
+        $nextTimer
+            .sink {
+                PreferenceManager.shared.defaults.set(timer: $0, forKey: Keys.nextTimer)
+            }
+            .store(in: &bag)
     }
     
     func convert(alarm: MTAlarm?) -> Alarm? {

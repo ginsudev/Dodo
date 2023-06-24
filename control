@@ -6,5 +6,5 @@ Description: The perfect Lock Screen redesign.
 Maintainer: Ginsu
 Author: Ginsu
 Section: Tweaks
-Depends: dev.theos.orion14, firmware (>= 14.0), preferenceloader, com.ginsu.comet, com.ginsu.gscore${WEATHER_DEPENDENCY}
+Depends: dev.theos.orion14, firmware (>= 14.0), preferenceloader, com.ginsu.comet, com.ginsu.gscore, com.ginsu.gsweather
 

@@ -106,7 +106,7 @@ struct Settings {
         )
         
         weather = .init(
-            showWeather: dict["showWeather"] as? Bool ?? true && Ecosystem.jailbreakType == .root,
+            showWeather: dict["showWeather"] as? Bool ?? true,
             isActiveWeatherAutomaticRefresh: dict["isActiveWeatherAutomaticRefresh"] as? Bool ?? true
         )
         

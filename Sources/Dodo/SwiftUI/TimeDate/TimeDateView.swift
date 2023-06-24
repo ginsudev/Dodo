@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct TimeDateView: View {
-    @StateObject private var viewModel = ViewModel()
+    @StateObject
+    private var viewModel = ViewModel()
     
     var body: some View {
         VStack(
@@ -17,12 +18,7 @@ struct TimeDateView: View {
         ) {
             Text(viewModel.timeString)
                 .foregroundColor(Color(viewModel.settings.colors.timeColor))
-                .font(
-                    .system(
-                        size: viewModel.settings.appearance.timeFontSize,
-                        design: viewModel.settings.appearance.selectedFont.representedFont
-                    )
-                )
+                .dodoFont(size: viewModel.settings.appearance.timeFontSize)
             dateView
                 .animation(.easeInOut)
         }
@@ -45,22 +41,15 @@ private extension TimeDateView {
                     .opacity(0.4)
             }
             
-            if viewModel.isDisplayingLocationName,
-               let locationName = viewModel.locationName {
+            if viewModel.isDisplayingLocationName, let locationName = viewModel.locationName {
                 Text(locationName)
                     .transition(.opacity.combined(with: .slide))
             } else {
                 Text(viewModel.dateString)
                     .transition(.opacity.combined(with: .slide))
             }
-            
         }
         .foregroundColor(Color(viewModel.settings.colors.dateColor))
-        .font(
-            .system(
-                size: viewModel.settings.appearance.dateFontSize,
-                design: viewModel.settings.appearance.selectedFont.representedFont
-            )
-        )
+        .dodoFont(size: viewModel.settings.appearance.dateFontSize)
     }
 }

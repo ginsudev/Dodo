@@ -4,7 +4,7 @@ ARCHS = arm64 arm64e
 THEOS_DEVICE_IP = localhost -p 2222
 INSTALL_TARGET_PROCESSES = SpringBoard
 TARGET = iphone:clang:16.4:14.5
-PACKAGE_VERSION = 4.1.0
+PACKAGE_VERSION = 4.2.0
 
 Dodo_SWIFTFLAGS = -ISources/DodoC/include
 
@@ -13,11 +13,6 @@ ifeq ($(ROOTLESS),1)
 	THEOS_PACKAGE_SCHEME = rootless
 	# Control
 	PKG_NAME_SUFFIX = (Rootless)
-	Dodo_SWIFTFLAGS += -DROOTLESS
-else
-	WEATHER_DEPENDENCY = , com.peterdev.libpddokdo
-	Dodo_LIBRARIES = pddokdo
-	Dodo_SWIFTFLAGS += -DROOTFUL
 endif
 
 include $(THEOS)/makefiles/common.mk
@@ -36,5 +31,4 @@ before-package::
 	# Append values to control file
 	$(ECHO_NOTHING)sed -i '' \
 		-e 's/\$${PKG_NAME_SUFFIX}/$(PKG_NAME_SUFFIX)/g' \
-		-e 's/\$${WEATHER_DEPENDENCY}/$(WEATHER_DEPENDENCY)/g' \
 		$(THEOS_STAGING_DIR)/DEBIAN/control$(ECHO_END)
