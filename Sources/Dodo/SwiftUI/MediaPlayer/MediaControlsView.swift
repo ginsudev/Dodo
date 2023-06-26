@@ -57,10 +57,7 @@ struct MediaControlsView: View {
                         Image(uiImage: image)
                             .resizable()
                             .renderingMode(.template)
-                            .frame(
-                                width: control.size,
-                                height: control.size
-                            )
+                            .frame(width: control.size, height: control.size)
                     }
                     .buttonStyle(ScaleButtonStyle())
                 }

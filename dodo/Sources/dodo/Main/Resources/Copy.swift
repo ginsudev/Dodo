@@ -100,6 +100,16 @@ enum Copy {
     static let options = "OPTIONS".localize(bundle: .dodo)
     static let showMediaBackdrop = "SHOW_MEDIA_BACKDROP".localize(bundle: .dodo)
     static let showMediaBackdropDesc = "SHOW_MEDIA_BACKDROP_DESC".localize(bundle: .dodo)
+    static let system = "SYSTEM".localize(bundle: .dodo)
+    static let celsius = "CELSIUS".localize(bundle: .dodo)
+    static let fahrenheit = "FAHRENHEIT".localize(bundle: .dodo)
+    static let tapAction = "TAP_ACTION".localize(bundle: .dodo)
+    static let showHighLow = "SHOW_HIGH_LOW".localize(bundle: .dodo)
+    static let showSunriseSunset = "SHOW_SUNRISE_SUNSET".localize(bundle: .dodo)
+    static let temperatureUnit = "TEMPERATURE_UNIT".localize(bundle: .dodo)
+    static let none = "NONE".localize(bundle: .dodo)
+    static let refresh = "REFRESH".localize(bundle: .dodo)
+    static let celsiusToFahrenheit = "CELSIUS_TO_FAHRENHEIT".localize(bundle: .dodo)
 
     static func indicator(_ string: String) -> String {
         .init(format: "INDICATOR".localize(bundle: .dodo), string)

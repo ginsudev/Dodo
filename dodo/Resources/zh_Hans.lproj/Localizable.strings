@@ -98,3 +98,13 @@
 "INDICATOR" = "%@状态";
 "SHOW_MEDIA_BACKDROP" = "显示彩色背景";
 "SHOW_MEDIA_BACKDROP_DESC" = "播放音乐时，用专辑封面的主色当Dodo的背景颜色";
+"SYSTEM" = "根据系统";
+"CELSIUS" = "ºC";
+"FAHRENHEIT" = "ºF";
+"TAP_ACTION" = "点击操作";
+"SHOW_HIGH_LOW" = "显示最高和最低的温度";
+"SHOW_SUNRISE_SUNSET" = "显示日出和日落时间";
+"TEMPERATURE_UNIT" = "温度单位";
+"NONE" = "无";
+"REFRESH" = "刷新";
+"CELSIUS_TO_FAHRENHEIT" = "摄氏度换成华氏度";

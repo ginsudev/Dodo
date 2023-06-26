@@ -8,7 +8,7 @@
 import SwiftUI
 import DodoC
 
-//MARK: - Public
+// MARK: - Internal
 
 struct WeatherView: View {
     @StateObject
@@ -18,14 +18,7 @@ struct WeatherView: View {
 
     var body: some View {
         Button { } label: {
-            weatherInfo
-                .onTapGesture {
-                    viewModel.updateWeather()
-                    HapticManager.playHaptic(withIntensity: .success)
-                }
-                .onLongPressGesture {
-                    viewModel.openWeatherApp()
-                }
+            buttonLabelView
         }
         .onReceive(
             condition: settings.weather.isActiveWeatherAutomaticRefresh,
@@ -36,28 +29,47 @@ struct WeatherView: View {
     }
 }
 
-//MARK: - Private
+// MARK: - Private
 
 private extension WeatherView {
-    var weatherInfo: some View {
-        HStack {
-            if let imageName = viewModel.conditionImageName {
-                Image(imageName)
-                    .resizable()
-                    .renderingMode(.original)
-                    .frame(
-                        width: settings.statusItems.statusItemSize.width,
-                        height: settings.statusItems.statusItemSize.height
-                    )
-                    .aspectRatio(contentMode: .fit)
+    var buttonLabelView: some View {
+        VStack(alignment: .leading, spacing: 4.0) {
+            weatherTextView
+            sunriseSunsetView
+        }
+        .dodoFont(size: settings.appearance.weatherFontSize)
+        .lineLimit(1)
+        .foregroundColor(Color(settings.colors.weatherColor))
+        .onTapGesture {
+            viewModel.onTapWeather()
+        }
+        .onLongPressGesture {
+            viewModel.openWeatherApp()
+        }
+    }
+    
+    @ViewBuilder
+    var weatherTextView: some View {
+        if let weatherString = viewModel.weatherString {
+            Text(weatherString)
+        }
+    }
+    
+    @ViewBuilder
+    var sunriseSunsetView: some View {
+        if let sunrise = viewModel.sunriseString,
+           let sunset = viewModel.sunsetString {
+            HStack(spacing: 4.0) {
+                weatherLabel(imageName: "sunrise.fill", text: sunrise)
+                weatherLabel(imageName: "sunset.fill", text: sunset)
             }
-            
-            if let displayedString = viewModel.displayedString {
-                Text(displayedString)
-                    .dodoFont(size: settings.appearance.weatherFontSize)
-                    .lineLimit(1)
-                    .foregroundColor(Color(settings.colors.weatherColor))
-            }
+        }
+    }
+    
+    func weatherLabel(imageName: String, text: String) -> some View {
+        HStack(spacing: 2.0) {
+            Image(systemName: imageName)
+            Text(text)
         }
     }
 }

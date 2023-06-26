@@ -98,3 +98,13 @@
 "INDICATOR" = "%@ indicator";
 "SHOW_MEDIA_BACKDROP" = "Show media backdrop";
 "SHOW_MEDIA_BACKDROP_DESC" = "Show the album artwork's dominant colour as Dodo's background tint.";
+"SYSTEM" = "System";
+"CELSIUS" = "ºC";
+"FAHRENHEIT" = "ºF";
+"TAP_ACTION" = "Tap action";
+"SHOW_HIGH_LOW" = "Show high/low";
+"SHOW_SUNRISE_SUNSET" = "Show sunrise/sunset";
+"TEMPERATURE_UNIT" = "Temperature unit";
+"NONE" = "None";
+"REFRESH" = "Refresh";
+"CELSIUS_TO_FAHRENHEIT" = "Celsius to fahrenheit";

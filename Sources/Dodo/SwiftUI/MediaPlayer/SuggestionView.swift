@@ -51,11 +51,11 @@ private extension SuggestionView {
     
     var openAppButtonText: some View {
         VStack(alignment: .leading) {
-            Text(LocalisedText.recommended.text)
+            Text(Copy.Media.recommended)
                 .foregroundColor(.white)
                 .dodoFont(size: 15.0)
             
-            Text(LocalisedText.tap.text)
+            Text(Copy.Media.tap)
                 .foregroundColor(Color(UIColor.lightText))
                 .dodoFont(size: 13.0)
         }
@@ -71,7 +71,7 @@ private extension SuggestionView {
     }
     
     var bluetoothButtonType: BluetoothButtonType  {
-        if (UIDevice._hasHomeButton() || isLandscape) && !UIDevice.currentIsIPad() {
+        if UIDevice._hasHomeButton() || isLandscape {
             return .icon
         } else {
             return .iconWithText
@@ -84,7 +84,7 @@ private extension SuggestionView {
         let backgroundColor = Color(viewModel.bluetoothColor)
         
         if bluetoothButtonType == .iconWithText {
-            Text("\(Image(systemName: "airplayaudio")) \(LocalisedText.bluetooth.text)")
+            Text("\(Image(systemName: "airplayaudio")) \(Copy.Media.bluetooth)")
                 .dodoFont(size: 13.0)
                 .padding(
                     EdgeInsets(

@@ -58,6 +58,9 @@ extension Settings {
     struct Weather {
         let showWeather: Bool
         let isActiveWeatherAutomaticRefresh: Bool
+        let tapAction: WeatherTapAction
+        let isVisibleHighLow: Bool
+        let isVisibleSunriseSunset: Bool
     }
     
     struct StatusItems {
@@ -270,5 +273,11 @@ extension Settings {
                 return isStatusEnabled || PreferenceManager.shared.settings.statusItems.isVisibleWhenDisabled
             }
         }
+    }
+    
+    enum WeatherTapAction: Int {
+        case none
+        case refresh
+        case celsiusToFahrenheit
     }
 }

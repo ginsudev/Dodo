@@ -5,10 +5,19 @@
 #include "MediaRemote.h"
 #include "DarwinNotificationsManager.h"
 
-#pragma mark - Location
+#pragma mark - Location / Weather
 
 @interface CLLocationManager (Private)
 - (instancetype)initWithEffectiveBundleIdentifier:(NSString *)bundleIdentifier;
+@end
+
+@interface WFTemperatureUnitProvider : NSObject
+@property (readonly) int userTemperatureUnit;
+@end
+
+@interface WeatherService : NSObject
+@property (retain, nonatomic) WFTemperatureUnitProvider *temperatureUnitProvider;
++ (instancetype)sharedService;
 @end
 
 #pragma mark - Icon stuff

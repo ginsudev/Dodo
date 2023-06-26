@@ -107,7 +107,10 @@ struct Settings {
         
         weather = .init(
             showWeather: dict["showWeather"] as? Bool ?? true,
-            isActiveWeatherAutomaticRefresh: dict["isActiveWeatherAutomaticRefresh"] as? Bool ?? true
+            isActiveWeatherAutomaticRefresh: dict["isActiveWeatherAutomaticRefresh"] as? Bool ?? true,
+            tapAction: WeatherTapAction(rawValue: dict["weatherTapAction"] as? Int ?? 0)!,
+            isVisibleHighLow: dict["isVisibleHighLow"] as? Bool ?? false,
+            isVisibleSunriseSunset: dict["isVisibleSunriseSunset"] as? Bool ?? false
         )
         
         let itemSize = dict["indicatorSize"] as? Double ?? 18.0

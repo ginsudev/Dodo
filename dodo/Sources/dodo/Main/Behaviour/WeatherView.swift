@@ -19,20 +19,43 @@ struct WeatherView: View {
             } footer: {
                 Text(Copy.weatherFooter)
             }
-
-            Section {
-                Toggle(Copy.autoRefresh, isOn: $preferenceStorage.isActiveWeatherAutomaticRefresh)
-                HexColorPicker(selectedColorHex: $preferenceStorage.weatherColor, title: Copy.color)
-            } header: {
-                Text(Copy.options)
-            }
-            .disabled(!preferenceStorage.showWeather)
+            
+            sections
+                .disabled(!preferenceStorage.showWeather)
         }
         .navigationTitle(Copy.weather)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 AlertRespringButton()
             }
+        }
+    }
+    
+    @ViewBuilder
+    private var sections: some View {
+        Section {
+            Toggle(Copy.autoRefresh, isOn: $preferenceStorage.isActiveWeatherAutomaticRefresh)
+            HexColorPicker(selectedColorHex: $preferenceStorage.weatherColor, title: Copy.color)
+        } header: {
+            Text(Copy.options)
+        }
+        
+        Section {
+            Picker(Copy.tapAction, selection: $preferenceStorage.weatherTapAction) {
+                ForEach(TapAction.allCases, id: \.rawValue) {
+                    Text($0.title)
+                        .tag($0.rawValue)
+                }
+            }
+        } header: {
+            Text(Copy.tapAction)
+        }
+        
+        Section {
+            Toggle(Copy.showHighLow, isOn: $preferenceStorage.isVisibleHighLow)
+            Toggle(Copy.showSunriseSunset, isOn: $preferenceStorage.isVisibleSunriseSunset)
+        } header: {
+            Text(Copy.misc)
         }
     }
 }

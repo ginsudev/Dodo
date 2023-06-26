@@ -63,6 +63,9 @@ final class PreferenceStorage: ObservableObject {
     // MARK: - Weather
     @Published(key: "showWeather", registry: registry) var showWeather = true
     @Published(key: "isActiveWeatherAutomaticRefresh", registry: registry) var isActiveWeatherAutomaticRefresh = true
+    @Published(key: "weatherTapAction", registry: registry) var weatherTapAction = 0
+    @Published(key: "isVisibleHighLow", registry: registry) var isVisibleHighLow = false
+    @Published(key: "isVisibleSunriseSunset", registry: registry) var isVisibleSunriseSunset = false
     @Published(key: "weatherColor", registry: registry) var weatherColor = "FFFFFF"
 
     
