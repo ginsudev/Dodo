@@ -8,6 +8,7 @@
 import Foundation
 import DodoC
 import GSWeather
+import GSCore
 import Combine
 import CoreLocation
 
@@ -111,7 +112,7 @@ private extension WeatherView.ViewModel {
     
     func subscribe() {
         // Store weather locally
-        weatherProvider.currentWeather
+        weatherProvider.currentWeatherPublisher
             .receive(on: DispatchQueue.main)
             .compactMap { $0 }
             .sink { [weak self] in self?.weather.send($0)}
@@ -177,7 +178,8 @@ private extension WeatherView.ViewModel {
             .store(in: &bag)
         
         // Store location locally
-        locationProvider.location
+        locationProvider.locationPublisher
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] in self?.location.send($0)}
             .store(in: &bag)
         

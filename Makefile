@@ -3,7 +3,7 @@ ROOTLESS ?= 0
 ARCHS = arm64 arm64e
 THEOS_DEVICE_IP = localhost -p 2222
 INSTALL_TARGET_PROCESSES = SpringBoard
-TARGET = iphone:clang:16.4:14.5
+TARGET = iphone:clang:17.0.2:14.5
 PACKAGE_VERSION = 4.2.1
 
 Dodo_SWIFTFLAGS = -ISources/DodoC/include

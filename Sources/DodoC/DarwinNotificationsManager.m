@@ -67,5 +67,4 @@ void defaultNotificationCallback (CFNotificationCenterRef center,
     CFNotificationCenterRemoveEveryObserver(center, (__bridge const void *)(self));
 }
 
-
 @end
