@@ -46,22 +46,9 @@ final class LayoutHooks {
         @Hook("_listViewDefaultContentInsets")
         func _listViewDefaultContentInsets() -> UIEdgeInsets {
             var insets = orig._listViewDefaultContentInsets()
-            
             guard !LocalState.shared.isLandscape else { return insets }
-            
             insets.bottom = LocalState.shared.dodoFrame.height + 50
-            
-            guard PreferenceManager.shared.settings.mediaPlayer.timeMediaPlayerStyle != .mediaPlayer else {
-                return insets
-            }
-            
-            insets.top -= dodoNotificationVerticalOffset()
             return insets
-        }
-        
-        private func dodoNotificationVerticalOffset() -> Double {
-            guard !LocalState.shared.isLandscape else { return 0 }
-            return PreferenceManager.shared.settings.dimensions.notificationVerticalOffset
         }
     }
 }

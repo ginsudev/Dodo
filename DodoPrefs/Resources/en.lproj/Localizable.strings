@@ -54,8 +54,6 @@
 "STATUS_INDICATORS_DESC" = "Add indicators for various system statuses.";
 "WEATHER" = "Weather";
 "WEATHER_DESC" = "Configure weather options.";
-"NOTIFICATION_Y_OFFSET" = "Notification Y offset";
-"DIMENSIONS" = "Dimensions";
 "CHARGING_FLASH" = "Charging flash";
 "CHARGING_FLASH_DESC" = "Flash screen green while charging";
 "MISC" = "Misc";

@@ -13,6 +13,37 @@ import CydiaSubstrate
 @HookGroup
 final class NotificationsLayoutHooks {
     
+    // Disables layout from bottom for iOS 16+ notification list
+    @ClassHook("NCNotificationMasterList", type: NSObject.self)
+    final class NCNotificationMasterList_Hook {
+        
+        @Hook("isCollapsibleNotificationListSupported")
+        func isCollapsibleNotificationListSupported() -> Bool {
+            false
+        }
+    }
+    
+    // Disables layout from bottom for iOS 16+ notification list (In case master list gets (re)set).
+    @ClassHook("NCNotificationListView", type: NSObject.self)
+    final class NCNotificationListView_Hook {
+        
+        @Hook("layoutFromBottom")
+        func layoutFromBottom() -> Bool {
+            false
+        }
+    }
+    
+    // Remove time offset from the listMinY, otherwise big empty gap appears.
+    @ClassHook("CSCoverSheetViewController", type: CSCoverSheetViewController.self)
+    final class CSCoverSheetViewController_Hook: NSObject {
+
+        @Hook("listMinY")
+        func listMinY() -> CGFloat {
+            let topBuffer: CGFloat = 20.00
+            return (target.view?.safeAreaInsets.top ?? 0.0) + topBuffer
+        }
+    }
+    
     @ClassHook("NCNotificationStructuredListViewController", type: NCNotificationStructuredListViewController.self)
     final class NCNotificationStructuredListViewController_Hook {
         @Property private var cropFrame: CAGradientLayer = .init()

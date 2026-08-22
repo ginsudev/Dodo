@@ -23,7 +23,6 @@ struct BehaviourView: View {
             statusIndicatorsSection
             weatherSection
             mediaSection
-            dimensionsSection
             chargingSection
         }
         .navigationTitle(Copy.behaviour)
@@ -122,18 +121,6 @@ private extension BehaviourView {
             Text(Copy.mediaPlayer)
         } footer: {
             Text(Copy.showMediaBackdropDesc)
-        }
-    }
-    
-    var dimensionsSection: some View {
-        Section {
-            DetailedSlider(
-                value: $preferenceStorage.notificationVerticalOffset,
-                range: 0...1000,
-                title: Copy.notificationVerticalOffset
-            )
-        } header: {
-            Text(Copy.dimensions)
         }
     }
     

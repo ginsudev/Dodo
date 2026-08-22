@@ -12,12 +12,45 @@ import AudioToolbox
 
 @HookGroup
 final class HideLockScreenComponentsHooks {
+
+    /// Hides background artwork on iOS 16+
+    @ClassHook("CSCoverSheetViewController", type: CSCoverSheetViewController.self)
+    final class CSCoverSheetViewController_Hook_Background {
+
+        @Hook("_addBackgroundContentViewControllerForAction:")
+        func _addBackgroundContentViewControllerForAction(_ action: SBSLockScreenContentAction) {
+            guard action.configurationObject.clientBundleIdentifier != "com.apple.MediaRemoteUI" else { return }
+            orig._addBackgroundContentViewControllerForAction(action)
+        }
+    }
+
+    // Hides system media player on iOS 16+
+    @ClassHook("CSListItemManager", type: NSObject.self)
+    final class CSListItemManager_Hook {
+
+        @Hook("setNowPlayingItem:")
+        func setNowPlayingItem(_ item: CSListItem?) {
+            orig.setNowPlayingItem(nil)
+        }
+
+        @Hook("addItem:")
+        func addItem(_ item: CSListItem) {
+            guard item.groupingIdentifier != "com.apple.MediaRemoteUI" else { return }
+            orig.addItem(item)
+        }
+
+        @Hook("updateItem:")
+        func updateItem(_ item: CSListItem) {
+            guard item.groupingIdentifier != "com.apple.MediaRemoteUI" else { return }
+            orig.updateItem(item)
+        }
+    }
     
     /// Hides system media player on iOS 15+.
     @ClassHook("CSAdjunctListModel", type: CSAdjunctListModel.self)
     final class CSAdjunctListModel_Hook {
         
-        @Hook("addOrUpdateItem")
+        @Hook("addOrUpdateItem:")
         func addOrUpdateItem(_ item: AnyObject) {
             // Never show the default ls media player
             guard
@@ -122,7 +155,7 @@ final class HideLockScreenComponentsHooks {
     
     /// Hides charging indicator + date subtitle on battery
     @ClassHook("CSCoverSheetViewController", type: NSObject.self)
-    final class CSCoverSheetViewController_Hook {
+    final class CSCoverSheetViewController_Hook_Battery {
         
         // iOS 14
         @Hook("_transitionChargingViewToVisible:showBattery:animated:")

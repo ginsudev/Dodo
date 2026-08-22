@@ -29,7 +29,7 @@ private extension RootView {
         HeaderView(
             viewModel: .init(
                 title: "Dodo",
-                version: "5.0.0",
+                version: Bundle.dodo.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown",
                 author: .ginsu
             )
         )

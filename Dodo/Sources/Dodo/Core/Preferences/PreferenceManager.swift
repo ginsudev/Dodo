@@ -39,7 +39,7 @@ struct Settings {
     
     init(withDictionary dict: [String: Any]) {
         isEnabled = dict["isEnabled"] as? Bool ?? true
-        dimensions = .init(notificationVerticalOffset: dict["notificationVerticalOffset"] as? Double ?? 190.0)
+        dimensions = .init()
         
         mediaPlayer = .init(
             timeMediaPlayerStyle: TimeMediaPlayerStyle(rawValue: dict["timeMediaPlayerStyle"] as? Int ?? 2)!,

@@ -85,7 +85,19 @@
 @interface CSCoverSheetViewController : UIViewController
 @end
 
+@interface SBSBackgroundContentDefinition : NSObject
+@property (readonly, nonatomic) NSString *clientBundleIdentifier;
+@end
+
+@interface SBSLockScreenContentAction : NSObject
+@property (nonatomic, strong, readwrite) SBSBackgroundContentDefinition *configurationObject;
+@end
+
 #pragma mark - Fetching media data
+
+@interface CSListItem: NSObject
+@property (readonly, nonatomic) NSString *groupingIdentifier;
+@end
 
 @interface CSAdjunctListItem : NSObject
 @property (readonly, nonatomic) NSString *identifier;

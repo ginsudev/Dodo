@@ -57,8 +57,6 @@ enum Copy {
     static let statusIndicatorsDesc = "STATUS_INDICATORS_DESC".localize(bundle: .dodo)
     static let weather = "WEATHER".localize(bundle: .dodo)
     static let weatherDesc = "WEATHER_DESC".localize(bundle: .dodo)
-    static let notificationVerticalOffset = "NOTIFICATION_Y_OFFSET".localize(bundle: .dodo)
-    static let dimensions = "DIMENSIONS".localize(bundle: .dodo)
     static let chargingFlash = "CHARGING_FLASH".localize(bundle: .dodo)
     static let chargingFlashDesc = "CHARGING_FLASH_DESC".localize(bundle: .dodo)
     static let misc = "MISC".localize(bundle: .dodo)

@@ -16,9 +16,6 @@ final class PreferenceStorage: ObservableObject {
     @Published(key: "dateTemplate", registry: registry) var selectedDateTemplate = 0
     @Published(key: "dateTemplateCustomFormat", registry: registry) var dateTemplateCustomFormat = "EEEE, MMMM d"
     @Published(key: "isEnabledMediaBackdrop", registry: registry) var isEnabledMediaBackdrop = true
-
-    // Dimensions
-    @Published(key: "notificationVerticalOffset", registry: registry) var notificationVerticalOffset = 190.0
     
     // Charging indication
     @Published(key: "hasChargingFlash", registry: registry) var hasChargingFlash = false

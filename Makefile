@@ -5,7 +5,7 @@ export TARGET = iphone:clang:16.5:14.5
 
 ROOTLESS ?= 0
 INSTALL_TARGET_PROCESSES = SpringBoard
-PACKAGE_VERSION = 5.0.0
+export PACKAGE_VERSION = 5.0.1
 
 ifeq ($(ROOTLESS),1)
 	export THEOS_PACKAGE_SCHEME = rootless
