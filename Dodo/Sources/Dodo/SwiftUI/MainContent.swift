@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-//MARK: - Public
+// MARK: - Public
 
 struct MainContent: View {
     @Environment(\.isVisibleLockScreen) var isVisibleLockScreen
@@ -25,6 +25,7 @@ struct MainContent: View {
             Spacer()
             favouriteApps
         }
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 
@@ -38,11 +39,6 @@ private extension MainContent {
             weatherView
             TimeDateView()
         }
-        .fixedSize(
-            horizontal: true,
-            vertical: false
-        )
-        .readFrame(for: $infoViewFrame)
     }
     
     @ViewBuilder
@@ -50,15 +46,7 @@ private extension MainContent {
         if settings.favouriteApps.hasFavouriteApps, !isLandscape {
             AppView()
                 .layoutPriority(-1)
-                .frame(
-                    minWidth: 0.0,
-                    maxWidth: .infinity,
-                    maxHeight: infoViewFrame.height
-                )
-                .fixedSize(
-                    horizontal: false,
-                    vertical: true
-                )
+                .frame(minHeight: 0, idealHeight: 0, maxHeight: .infinity)
         }
     }
     
