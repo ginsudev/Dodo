@@ -6,4 +6,4 @@ Description: The perfect Lock Screen redesign.
 Maintainer: Ginsu
 Author: Ginsu
 Section: Tweaks
-Depends: firmware (>= 14.0), preferenceloader, com.ginsu.comet, com.ginsu.gscore, com.ginsu.gsweather
+Depends: firmware (>= 14.0), preferenceloader, com.ginsu.comet, com.ginsu.gscore
